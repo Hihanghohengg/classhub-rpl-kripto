@@ -2,13 +2,11 @@
 /* eslint-disable no-undef */
 
 /*
-  Service Worker untuk Firebase Cloud Messaging.
-  File di folder public tidak bisa membaca import.meta.env secara langsung,
-  jadi Firebase web config harus ditulis langsung di sini.
+  Service Worker Firebase Cloud Messaging.
+  File ini berada di folder public, jadi tidak bisa membaca import.meta.env.
+  Firebase web config ditulis langsung di sini.
 */
 
-// Handler klik notifikasi diletakkan sebelum import Firebase.
-// Firebase juga menyarankan custom notificationclick ditangani sebelum import FCM agar tidak tertimpa handler FCM.
 self.addEventListener('notificationclick', (event) => {
   event.notification.close();
 
@@ -37,8 +35,8 @@ self.addEventListener('notificationclick', (event) => {
   );
 });
 
-importScripts('https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js');
-importScripts('https://www.gstatic.com/firebasejs/10.12.5/firebase-messaging-compat.js');
+importScripts('/vendor/firebase-app-compat.js');
+importScripts('/vendor/firebase-messaging-compat.js');
 
 firebase.initializeApp({
   apiKey: 'AIzaSyDLTwAN8nCEfpLJsmQ2T-BoU4RF1rwmxY',
@@ -67,9 +65,7 @@ messaging.onBackgroundMessage((payload) => {
     payload?.data?.icon ||
     '/assets/logo.png';
 
-  const url =
-    payload?.data?.url ||
-    '/';
+  const url = payload?.data?.url || '/';
 
   self.registration.showNotification(title, {
     body,
