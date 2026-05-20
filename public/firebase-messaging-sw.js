@@ -1,11 +1,73 @@
 /* public/firebase-messaging-sw.js */
-/* eslint-disable no-undef */
+/* eslint-disable no-restricted-globals */
 
-/*
-  Service Worker Firebase Cloud Messaging.
-  File ini berada di folder public, jadi tidak bisa membaca import.meta.env.
-  Firebase web config ditulis langsung di sini.
-*/
+self.addEventListener('install', () => {
+  self.skipWaiting();
+});
+
+self.addEventListener('activate', (event) => {
+  event.waitUntil(self.clients.claim());
+});
+
+function safeJsonParse(value) {
+  try {
+    return value ? JSON.parse(value) : {};
+  } catch {
+    return {};
+  }
+}
+
+function getPayloadData(event) {
+  if (!event.data) return {};
+
+  try {
+    return event.data.json();
+  } catch {
+    return safeJsonParse(event.data.text());
+  }
+}
+
+self.addEventListener('push', (event) => {
+  const payload = getPayloadData(event);
+
+  const notification = payload.notification || {};
+  const data = payload.data || {};
+
+  const title =
+    notification.title ||
+    data.title ||
+    'ClassHub RPL Kripto';
+
+  const body =
+    notification.body ||
+    data.body ||
+    'Ada informasi baru di ClassHub.';
+
+  const icon =
+    notification.icon ||
+    data.icon ||
+    '/assets/logo.png';
+
+  const badge =
+    data.badge ||
+    '/assets/logo.png';
+
+  const url =
+    data.url ||
+    payload.fcm_options?.link ||
+    '/';
+
+  event.waitUntil(
+    self.registration.showNotification(title, {
+      body,
+      icon,
+      badge,
+      data: {
+        url
+      }
+    })
+  );
+});
 
 self.addEventListener('notificationclick', (event) => {
   event.notification.close();
@@ -13,7 +75,7 @@ self.addEventListener('notificationclick', (event) => {
   const targetUrl = event.notification?.data?.url || '/';
 
   event.waitUntil(
-    clients
+    self.clients
       .matchAll({
         type: 'window',
         includeUncontrolled: true
@@ -26,53 +88,11 @@ self.addEventListener('notificationclick', (event) => {
           }
         }
 
-        if (clients.openWindow) {
-          return clients.openWindow(targetUrl);
+        if (self.clients.openWindow) {
+          return self.clients.openWindow(targetUrl);
         }
 
         return null;
       })
   );
-});
-
-importScripts('/vendor/firebase-app-compat.js');
-importScripts('/vendor/firebase-messaging-compat.js');
-
-firebase.initializeApp({
-  apiKey: 'AIzaSyDLTwAN8nCEfpLJsmQ2T-BoU4RF1rwmxY',
-  authDomain: 'classhub-rpl-kripto.firebaseapp.com',
-  projectId: 'classhub-rpl-kripto',
-  storageBucket: 'classhub-rpl-kripto.appspot.com',
-  messagingSenderId: '377214037577',
-  appId: '1:377214037577:web:863714967645fc8d739998'
-});
-
-const messaging = firebase.messaging();
-
-messaging.onBackgroundMessage((payload) => {
-  const title =
-    payload?.notification?.title ||
-    payload?.data?.title ||
-    'ClassHub RPL Kripto';
-
-  const body =
-    payload?.notification?.body ||
-    payload?.data?.body ||
-    'Ada informasi baru di ClassHub.';
-
-  const icon =
-    payload?.notification?.icon ||
-    payload?.data?.icon ||
-    '/assets/logo.png';
-
-  const url = payload?.data?.url || '/';
-
-  self.registration.showNotification(title, {
-    body,
-    icon,
-    badge: '/assets/logo.png',
-    data: {
-      url
-    }
-  });
 });
