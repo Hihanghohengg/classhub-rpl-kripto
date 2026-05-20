@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import { supabase } from '../lib/supabase.js';
 import { useAuth } from '../context/AuthContext.jsx';
+import { sendPushNotification } from '../lib/push.js';
 import Modal from '../components/Modal.jsx';
 import { formatDateOnlyID } from '../utils/date.js';
 
@@ -985,6 +986,20 @@ function TaskForm({ courses, profile, members, initialData, onDone }) {
         return;
       }
     }
+
+    const selectedCourseName =
+      courses.find((course) => String(course.id) === String(f.course_id))?.name ||
+      'Mata Kuliah';
+
+    await sendPushNotification({
+      type: 'assignment_created',
+      title: 'Tugas baru ditambahkan',
+      body: `${f.title.trim()} • ${selectedCourseName}${
+        f.deadline ? ` • Deadline ${f.deadline}` : ''
+      }`,
+      url: `/?page=tasks&assignment_id=${data?.id}`,
+      excludeUserId: profile?.id
+    });
 
     setLoading(false);
     onDone();

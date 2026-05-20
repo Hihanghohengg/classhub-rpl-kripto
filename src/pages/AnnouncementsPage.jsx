@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Pin, Send, Trash2 } from 'lucide-react';
 import { supabase } from '../lib/supabase.js';
 import { useAuth } from '../context/AuthContext.jsx';
+import { sendPushNotification } from '../lib/push.js';
 
 export default function AnnouncementsPage() {
   const { profile, isAdmin } = useAuth();
@@ -42,18 +43,35 @@ export default function AnnouncementsPage() {
 
     setLoading(true);
 
-    const { error } = await supabase.from('announcements').insert({
-      content: content.trim(),
-      created_by: profile.id
-    });
+    const trimmedContent = content.trim();
 
-    setLoading(false);
+    const { data, error } = await supabase
+      .from('announcements')
+      .insert({
+        content: trimmedContent,
+        created_by: profile.id
+      })
+      .select('id')
+      .single();
 
     if (error) {
+      setLoading(false);
       alert(error.message);
       return;
     }
 
+    await sendPushNotification({
+      type: 'announcement_created',
+      title: `Pengumuman baru dari ${profile?.nickname || 'Anggota'}`,
+      body:
+        trimmedContent.length > 120
+          ? `${trimmedContent.slice(0, 120)}...`
+          : trimmedContent,
+      url: `/?page=announcements&announcement_id=${data?.id}`,
+      excludeUserId: profile?.id
+    });
+
+    setLoading(false);
     setContent('');
     load();
   };

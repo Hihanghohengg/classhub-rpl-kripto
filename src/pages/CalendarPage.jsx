@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { ChevronLeft, ChevronRight, Plus, Trash2 } from 'lucide-react';
 import { supabase } from '../lib/supabase.js';
 import { useAuth } from '../context/AuthContext.jsx';
+import { sendPushNotification } from '../lib/push.js';
 import Modal from '../components/Modal.jsx';
 import WeeklyCalendar from '../components/WeeklyCalendar.jsx';
 import {
@@ -492,17 +493,43 @@ function ReplacementForm({ courses, slots, profile, onDone }) {
     notes: ''
   });
 
+  const [loading, setLoading] = useState(false);
+
   const submit = async (e) => {
     e.preventDefault();
 
-    const { error } = await supabase.from('calendar_events').insert({
-      ...f,
-      event_type: 'replacement_class',
-      created_by: profile.id
+    setLoading(true);
+
+    const { data, error } = await supabase
+      .from('calendar_events')
+      .insert({
+        ...f,
+        event_type: 'replacement_class',
+        created_by: profile.id
+      })
+      .select('id')
+      .single();
+
+    if (error) {
+      setLoading(false);
+      alert(error.message);
+      return;
+    }
+
+    const selectedCourseName =
+      courses.find((course) => String(course.id) === String(f.course_id))?.name ||
+      'Jadwal';
+
+    await sendPushNotification({
+      type: 'schedule_created',
+      title: 'Jadwal pengganti ditambahkan',
+      body: `${selectedCourseName} • ${f.event_date}`,
+      url: `/?page=calendar&event_id=${data?.id}`,
+      excludeUserId: profile?.id
     });
 
-    if (error) alert(error.message);
-    else onDone();
+    setLoading(false);
+    onDone();
   };
 
   return (
@@ -578,7 +605,9 @@ function ReplacementForm({ courses, slots, profile, onDone }) {
         />
       </label>
 
-      <button className="btn-primary w-full">Simpan</button>
+      <button disabled={loading} className="btn-primary w-full">
+        {loading ? 'Menyimpan...' : 'Simpan'}
+      </button>
     </form>
   );
 }
