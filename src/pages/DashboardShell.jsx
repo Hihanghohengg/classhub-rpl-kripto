@@ -8,6 +8,7 @@ import DashboardPage from './DashboardPage.jsx';
 import CalendarPage from './CalendarPage.jsx';
 import CoursesPage from './CoursesPage.jsx';
 import TasksPage from './TasksPage.jsx';
+import PracticePage from './PracticePage.jsx';
 import GroupsPage from './GroupsPage.jsx';
 import AnnouncementsPage from './AnnouncementsPage.jsx';
 import MembersPage from './MembersPage.jsx';
@@ -18,6 +19,7 @@ const pageMap = {
   calendar: CalendarPage,
   courses: CoursesPage,
   tasks: TasksPage,
+  practice: PracticePage,
   groups: GroupsPage,
   announcements: AnnouncementsPage,
   members: MembersPage,
