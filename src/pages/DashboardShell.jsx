@@ -28,14 +28,11 @@ const pageMap = {
 
 function applyAppearance(profile) {
   const root = document.documentElement;
-
   const theme = profile?.theme_preference || 'light';
   const fontSize = profile?.font_size_preference || 'normal';
-
   const prefersDark = window.matchMedia?.('(prefers-color-scheme: dark)').matches;
 
-  const shouldUseDark =
-    theme === 'dark' || (theme === 'system' && prefersDark);
+  const shouldUseDark = theme === 'dark' || (theme === 'system' && prefersDark);
 
   root.classList.toggle('dark', shouldUseDark);
   root.classList.toggle('light', !shouldUseDark);
@@ -45,7 +42,6 @@ function applyAppearance(profile) {
 export default function DashboardShell() {
   const [active, setActive] = useState('dashboard');
   const [mobileOpen, setMobileOpen] = useState(false);
-
   const { profile, showWelcome, setShowWelcome } = useAuth();
 
   const Page = pageMap[active] || DashboardPage;
@@ -82,10 +78,11 @@ export default function DashboardShell() {
           onClick={() => setMobileOpen(false)}
         >
           <div
-            className="h-full w-72 bg-white p-4 dark:bg-slate-900"
+            className="h-full w-72 bg-white dark:bg-slate-900"
             onClick={(event) => event.stopPropagation()}
           >
             <Sidebar
+              mobile
               active={active}
               setActive={(key) => {
                 setActive(key);
@@ -111,7 +108,7 @@ export default function DashboardShell() {
         maxWidth="max-w-md"
       >
         <div className="py-7 text-center">
-          <p className="text-xl font-black text-slate-900 dark:text-white">
+          <p className="text-xl font-bold text-slate-900 dark:text-white">
             Selamat datang, {profile?.nickname || 'Teman'}!
           </p>
 
