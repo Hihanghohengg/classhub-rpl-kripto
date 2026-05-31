@@ -15,6 +15,15 @@ const practices = [
       'Simulasi CBT dari materi Secure SDLC, STRIDE, CIA Triad, Secure Coding, SAST, dan DAST.',
     url: '/practice/secure-sdlc.html',
     type: 'CBT'
+  },
+  {
+    id: 'kapita-selekta-pernika',
+    title: 'Latihan Pernika & Sandi',
+    course: 'Kapita Selekta',
+    description:
+      'Simulator latihan UTS tentang Pernika, SDR, jammer, OTP, sandi Morse, dan komunikasi taktis.',
+    url: '/practice/kapita-selekta-pernika.html',
+    type: 'Simulator'
   }
 ];
 
@@ -88,6 +97,16 @@ export default function PracticePage() {
                 </button>
               );
             })}
+          </div>
+
+          <div className="mt-4 rounded-2xl border border-amber-200 bg-amber-50 p-3 text-xs leading-5 text-amber-800 dark:border-amber-900 dark:bg-amber-950 dark:text-amber-200">
+            <p className="font-bold">Cara tambah latihan baru</p>
+
+            <p className="mt-1">
+              Taruh file HTML dari Gemini ke folder{' '}
+              <b>public/practice</b>, lalu tambahkan item baru di array{' '}
+              <b>practices</b> pada file <b>PracticePage.jsx</b>.
+            </p>
           </div>
         </aside>
 
