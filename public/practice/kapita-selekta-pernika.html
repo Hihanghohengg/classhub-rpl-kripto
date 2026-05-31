@@ -97,32 +97,41 @@
         /* ================= DATABASE STUDI KASUS MEGA ================= */
         // Format: [Skenario Kasus, Jawaban Benar, Distractor 1, Distractor 2, Distractor 3, Penjelasan Pembahasan]
         const rawDatabase = [
-            // KASUS: HT & TOLERANSI BANDWIDTH (Berdasarkan Laporan Praktikum)
+            // KASUS: HT & SPEKTRUM
             ["Tim lapangan menyetel receiver HT pada 461,000 MHz untuk melacak musuh di 461,150 MHz, namun gagal. Ketika digeser ke 461,145 MHz, suara musuh samar-samar terdengar. Mengapa fenomena di 461,145 MHz ini terjadi?", "Sirkuit penerima HT tidak bekerja pada satu titik presisi, melainkan memiliki filter dengan batas toleransi bandwidth sekitar ±5 kHz.", "Sinyal musuh memantul dari ionosfer dan menurunkan frekuensinya sebesar 5 kHz.", "Sistem HT otomatis mengenkripsi sinyal jika meleset dari center frequency.", "Fitur Frequency Hopping musuh kebetulan mendarat di 461,145 MHz pada detik tersebut.", "Toleransi filter HT (±5 kHz) masih mampu merespons sinyal yang berdekatan dengan center frequency, meski demodulasi tidak sempurna (noisy)."],
             ["Berapakah selisih matematis jika Anda keliru memasukkan 461 MHz sebagai ganti 461,150 MHz, dan apa dampaknya?", "150 kHz; menyebabkan HT penerima benar-benar berada di luar kanal komunikasi aktual sehingga gagal menyadap.", "15 kHz; suara akan terdengar sangat pelan.", "150 MHz; merusak antena pemancar secara fisik.", "1,5 MHz; memicu sistem jammer otomatis bekerja.", "461 MHz berarti 461,000 MHz. Selisih 0,150 MHz = 150 kHz. Sangat fatal untuk komunikasi radio narrowband."],
+            ["Sumbu X dan Sumbu Y pada layar Spectrum Analyzer secara berurutan mengukur parameter apa?", "Sumbu X = Frekuensi (Hz), Sumbu Y = Kekuatan Sinyal (Amplitudo/dBm).", "Sumbu X = Waktu (Detik), Sumbu Y = Frekuensi (Hz).", "Sumbu X = Frekuensi (Hz), Sumbu Y = Waktu (Detik).", "Sumbu X = Tegangan (Volt), Sumbu Y = Panjang Gelombang (Meter).", "Spectrum Analyzer adalah domain frekuensi. Waktu tidak ditampilkan sebagai sumbu utama, melainkan direkam di fitur Waterfall."],
             
-            // KASUS: INSTALASI SDR & WATERFALL (Berdasarkan Laporan SDR)
+            // KASUS: SDR & ZADIG
             ["Anda mencolokkan RTL-SDR ke laptop untuk praktikum, namun aplikasi SDR++ menolak mendeteksi hardware. Langkah krusial apa dalam arsitektur SDR yang terlewatkan?", "Mengganti driver bawaan pabrik (DVB-T) menjadi driver generik WinUSB menggunakan utilitas Zadig.", "Memasang power amplifier tambahan di antara antena dan dongle SDR.", "Mendekripsi sinyal menggunakan Wireshark sebelum membuka SDR++.", "Menyalakan fitur Anti-Jamming di pengaturan Windows.", "Hardware SDR murah terdeteksi sebagai TV Tuner. Zadig mutlak diperlukan untuk membajak driver tersebut agar bisa ditarik data mentah RF-nya."],
             ["Aplikasi SDR++ dan Airspy digunakan untuk menangkap sinyal Military Satellite Band di 251.600 MHz. SDR++ lebih direkomendasikan karena?", "Memiliki arsitektur software yang lebih efisien dalam meminimalisir distorsi proses demodulasi digital ke audio analog.", "Aplikasi tersebut bersifat open source militer yang sudah terintegrasi fitur dekripsi AES-256.", "Mampu memancarkan (Transmit) sinyal jamming hingga 500 Watt.", "Ukurannya ringan sehingga tidak menggunakan RAM komputer sama sekali.", "Efisiensi arsitektur software SDR++ terbukti menghasilkan kualitas audio yang lebih jernih (less noise) dibanding kompetitor."],
             
-            // KASUS: INFORMATION WARFARE & 3 DOMAIN (Berdasarkan Modul Poisel)
+            // KASUS: 3 DOMAIN & OODA LOOP (POISEL)
             ["Komandan brigade gagal memberikan perintah mundur karena serangan Noise Jamming musuh yang membutakan layar radar dan radio. Dalam Teori 3 Domain Konflik (Poisel), urutan dampak serangan ini adalah:", "Physical (Antena tertabrak gelombang) -> Information (SNR dan data rusak) -> Cognitive (Komandan kehilangan Situational Awareness).", "Information (Sinyal rusak) -> Cognitive (Antena rusak) -> Physical (Komandan panik).", "Cognitive (Radar buta) -> Physical (Sandi bocor) -> Information (Data hilang).", "Physical (Sinyal disadap) -> Cognitive (Enkripsi dijebol) -> Information (HT meledak).", "Serangan EA menghantam alat fisik, merusak kualitas informasi (SNR), yang berujung kebutaan pengambilan keputusan di otak komandan (Kognitif)."],
             ["Musuh mengandalkan taktik Deception (Mimicry) dengan mengirimkan transmisi radio palsu yang meniru suara komandan kita. Ini berbeda dengan Jamming biasa karena?", "Deception menyusupkan informasi palsu seolah-olah valid untuk menipu komandan, bukan sekadar membanjiri frekuensi dengan derau (noise).", "Deception dilakukan untuk merusak komponen ADC di dalam perangkat SDR.", "Deception tidak membutuhkan daya listrik untuk memancarkan sinyal.", "Deception meretas sistem secara fisik dari jarak dekat.", "Deception (Korupsi Informasi) menargetkan otak komandan (Kognitif) untuk membuat keputusan salah, bukan sekadar Denial of Service."],
+            ["Dalam siklus OODA Loop (Boyd), tahap mana yang disebut sebagai 'schwerpunkt' atau titik fokus yang paling analitis tempat informasi baru diintegrasikan dengan pengetahuan lama?", "Orientation (Orientasi)", "Observation (Observasi)", "Decision (Keputusan)", "Action (Tindakan)", "Orientation adalah tahap paling kompleks (mencakup identifikasi, interpretasi, dan pembuatan opsi) di mana data mentah diubah menjadi pemahaman."],
+            ["Sebuah komando menerima laporan intelijen yang berlawanan dengan ekspektasi atau harapannya, lalu ia sengaja salah mengartikan laporan tersebut agar hatinya tenang. Dalam konteks OODA Loop, ini disebut:", "Self-Deception (Penipuan diri) untuk mengurangi Disonansi Kognitif.", "Passive Denial (Penolakan pasif) terhadap strategi lawan.", "Spoofing (Pemalsuan) oleh agen ganda.", "Active Mimicry (Peniruan aktif) dari radio lawan.", "Self-Deception terjadi di tahap Orientasi, di mana komandan menipu dirinya sendiri untuk mengurangi ketidaknyamanan psikologis (cognitive dissonance)."],
             
-            // KASUS: JAMMER & TAKTIK
+            // KASUS: JAMMER, DRONE & TAKTIK
             ["Tim Anda memasang Ground Jammer dengan antena setinggi 3 meter untuk melumpuhkan radio pemberontak di balik bukit (Northeast Asia Terrain). Serangan EA ini gagal. Mengapa?", "Gelombang VHF/UHF merambat Line-of-Sight, bukit menjadi penghalang fisik yang melemahkan energi jamming sebelum mencapai target.", "Jammer 3 meter menghasilkan Ground Wave yang terserap tanah.", "Pemberontak otomatis meretas jammer kita dengan SDR.", "Efek Doppler memantulkan sinyal jammer kembali ke pemancar kita.", "Bukit merintangi sinyal. Solusi terbaik adalah Airborne Jammer (menggunakan Drone/UAS) untuk mendapatkan jangkauan LOS yang bersih dari atas."],
             ["Apa dilema terbesar (kelemahan taktis) jika komandan memutuskan menggunakan Barrage Jamming berdaya tinggi di tengah operasi infanteri?", "Daya rusak jammer tidak pandang bulu, sangat berisiko memutus komunikasi radio pasukan kita sendiri (Friendly Fire / Fratricide).", "Barrage jamming akan menguras aki kendaraan tempur dalam 3 menit.", "Jammer tersebut akan langsung hancur jika terkena air hujan.", "Membuat posisi komandan terlihat di citra satelit termal.", "Barrage Jammer RF memancarkan noise ke rentang frekuensi luas. Jika tidak dikontrol, radio kawan akan ikut tenggelam dalam derau."],
             ["Prinsip dasar fisika dari serangan Jammer Spot untuk melakukan Denial of Service (DoS) pada receiver lawan adalah:", "Memancarkan derau kuat tepat di frekuensi lawan agar nilai Signal-to-Noise Ratio (SNR) lawan menurun drastis hingga informasi asli tak terbaca.", "Memancarkan virus logika (Subversion) ke dalam memori HT lawan.", "Mengkonsletkan baterai HT lawan menggunakan gelombang pendek.", "Mengubah frekuensi transmisi lawan ke jalur yang kosong.", "Jamming bekerja layaknya 'berteriak lebih keras' di ruang yang sama, menghancurkan rasio SNR penerima."],
             
-            // KASUS: OTP & KRIPTOGRAFI TAKTIS
+            // KASUS: SIGINT, ELINT, & LATENSI
+            ["Berdasarkan materi Kapita Selekta, pengumpulan data dari intersepsi gelombang radar milik lawan untuk mengidentifikasi kapabilitas sistem mereka disebut:", "ELINT (Electronic Intelligence)", "COMINT (Communication Intelligence)", "HUMINT (Human Intelligence)", "OSINT (Open Source Intelligence)", "ELINT fokus pada sinyal elektronik non-komunikasi (seperti pancaran radar), sedangkan COMINT fokus pada intersepsi suara/teks."],
+            ["Menurut slide PPT Dosen Anda, 'Dalam kriptografi, latensi adalah musuh utama. Dalam Pernika, latensi adalah ...'", "Kekalahan", "Kemenangan", "Kecepatan", "Spektrum", "Dalam pernika militer, keterlambatan sepersekian detik (latensi) dalam memproses sinyal atau OODA loop berarti kekalahan taktis."],
+            ["Untuk melindungi sinyal dari penyadapan musuh, HT tempur menggunakan metode yang melompat-lompat frekuensi ribuan kali per detik secara acak. Teknik ini disebut:", "FHSS (Frequency Hopping Spread Spectrum)", "DSSS (Direct Sequence Spread Spectrum)", "QAM (Quadrature Amplitude Modulation)", "FDMA (Frequency Division Multiple Access)", "FHSS adalah bentuk Electronic Protection (EP) utama untuk menghindari jammer (Spot) dan penyadapan."],
+            
+            // KASUS: OTP & KRIPTOGRAFI
             ["Operator sandi menggunakan kunci OTP (One-Time Pad) yang sama dengan hari kemarin karena terburu-buru. Dari sudut pandang Kriptografi Pernika, apa akibat taktisnya?", "Status 'Perfect Secrecy' musnah. Kunci yang dipakai ulang (Key Reuse) memungkinkan musuh membongkar pola acakan via analisis statistik.", "Tidak ada masalah selama transmisi dilakukan menggunakan kode Morse Continuous Wave.", "Pesan akan terkirim dua kali lipat lebih lambat di jaringan RF.", "Sistem HT otomatis menolak pesan karena mendeteksi redundansi.", "Key Reuse (memakai kunci >1x) adalah dosa fatal OTP yang memungkinkan ciphertext dipecahkan."],
-            ["Setelah pesan 'MUNDUR' diubah via kunci acak OTP menjadi 'XQZM', pesan 'XQZM' ini ditelegrafkan menggunakan Sandi Morse via HT. Mengapa harus melalui 2 tahap ini?", "Transmisi HT sangat mudah disadap oleh ES musuh. Jika tanpa OTP, musuh langsung paham maknanya. Jika hanya OTP tanpa Morse, sangat rentan cacat transmisi di cuaca buruk.", "Karena aplikasi SDR tidak bisa membaca teks selain alfabet XQZM.", "Agar memori prosesor di HT tidak cepat penuh.", "Syarat mutlak sandi pramuka internasional.", "OTP melindungi kerahasiaan isi pesan (Confidentiality). Morse (CW) menjaga keandalan transmisi menembus sinyal buruk (Reliability)."],
+            ["Setelah pesan 'MUNDUR' diubah via kunci acak OTP menjadi 'XQZM', pesan 'XQZM' ini ditelegrafkan menggunakan Sandi Morse via HT. Mengapa harus melalui 2 tahap ini?", "OTP melindungi kerahasiaan isi pesan. Morse (CW) menjaga keandalan transmisi menembus sinyal buruk/noise di udara.", "Karena aplikasi SDR tidak bisa membaca teks selain alfabet XQZM.", "Agar memori prosesor di HT tidak cepat penuh.", "Syarat mutlak sandi pramuka internasional.", "OTP untuk Confidentiality. Morse (Continuous Wave) sangat tangguh untuk transmisi dengan SNR rendah (Reliability)."],
 
-            // KASUS: METODE MORSE DOSEN (SUBSTITUSI O = GARIS, A/I/U/E = TITIK)
-            ["Sebuah stasiun pemantau mendeteksi ketukan telegraf dengan pola: Titik - Garis - Titik - Garis (. - . -). Jika menggunakan metode padanan suku kata dosen, huruf apakah itu?", "Huruf C (Co - ba - co - ba)", "Huruf K (Ko - man - do)", "Huruf P (Per - to - lon - gan)", "Huruf V (Ver - si - ka - ro)", "C = Co(O/-) ba(A/.) co(O/-) ba(A/.). Tunggu, . - . - bukan C! Maaf, sistem mengecoh Anda. C itu -.-. Pola .-.- tidak ada di abjad dasar. (Pertanyaan dijebak untuk fokus). Coba cari huruf P: Per(.)to(-)lon(-)gan(.) = .--."],
-            ["Apa kata substitusi untuk huruf 'D' dan bagaimana terjemahannya ke dalam sandi Morse menurut aturan Vokal O = Garis?", "Do-mi-nan -> Garis - Titik - Titik (-..)", "Do-ro-to -> Garis - Garis - Garis (---)", "Di-na-mo -> Titik - Titik - Garis (..-)", "Da-mi-na -> Titik - Titik - Titik (...)", "Do(O = Garis) - mi(I = Titik) - nan(A = Titik) menghasilkan pola Garis Titik Titik (-..)."],
+            // KASUS: MORSE & SUBSTITUSI DOSEN (VOCAL O = -, LAINNYA = .)
+            ["Apa kata substitusi untuk huruf 'D' dan bagaimana terjemahannya ke dalam sandi Morse menurut aturan Vokal O = Garis?", "Do-mi-nan -> Garis - Titik - Titik (-..)", "Do-ro-to -> Garis - Garis - Garis (---)", "Di-na-mo -> Titik - Titik - Garis (..-)", "Da-mi-na -> Titik - Titik - Titik (...)", "Do(O=Garis) - mi(I=Titik) - nan(A=Titik) menghasilkan pola Garis Titik Titik (-..)."],
             ["Ubah singkatan 'HT' ke dalam sandi Morse menggunakan metode substitusi kata bantu Halmahera dan Ton!", "Titik Titik Titik Titik (....) / Garis (-)", "Garis Garis Garis Garis (----) / Titik (.)", "Titik Titik Garis Garis (..--) / Garis (-)", "Garis Titik Garis Titik (-.-.) / Titik (.)", "H = Hal-ma-he-ra (A,A,E,A = ....). T = Ton (O = -)."],
-            ["Tim Anda mengirimkan kode morse: Garis Titik Garis (-.-). Menurut pemenggalan suku kata, kata ganti dan huruf apakah itu?", "Ko-man-do (K)", "Ra-so-ve (R)", "Co-ba-co-ba (C)", "O-mo-to (O)", "Ko(O/-) - man(A/.) - do(O/-) = -.- (Huruf K)."]
+            ["Tim Anda mengirimkan kode morse: Garis Titik Garis (-.-). Menurut pemenggalan suku kata, kata ganti dan huruf apakah itu?", "Ko-man-do (K)", "Ra-so-ve (R)", "Co-ba-co-ba (C)", "O-mo-to (O)", "Ko(O/-) - man(A/.) - do(O/-) = -.- (Huruf K)."],
+            ["Jika seorang telegrafis mengirimkan pola: Titik - Titik - Garis ( . . - ). Berdasarkan pemecahan suku kata, huruf apakah yang dikirimkan? (Clue: U-nes-co)", "U", "V", "W", "S", "U(u) - nes(e) - co(o) = Titik Titik Garis = U."],
+            ["Kata ganti untuk huruf C adalah 'Co-ba-co-ba'. Apa sandi morse untuk huruf tersebut?", "Garis - Titik - Garis - Titik ( - . - . )", "Titik - Garis - Titik - Garis ( . - . - )", "Garis - Garis - Titik - Titik ( - - . . )", "Titik - Titik - Garis - Garis ( . . - - )", "Co(o/-) - ba(a/.) - co(o/-) - ba(a/.) = Garis Titik Garis Titik (-.-.)."]
         ];
 
         const anagramWords = [
@@ -131,13 +140,35 @@
             { word: "ONETIMEPAD", hint: "Algoritma enkripsi berstatus Perfect Secrecy yang kuncinya diharamkan dipakai ulang (Key Reuse)." },
             { word: "JAMMER", hint: "Senjata Electronic Attack (EA) untuk menurunkan Signal-to-Noise Ratio lawan di suatu frekuensi." },
             { word: "KOGNITIF", hint: "Domain konflik tempat otak komandan memproses pemahaman taktis dan mengambil keputusan." },
-            { word: "SPEKTRUM", hint: "Lingkungan fisik tak kasat mata tempat di mana gelombang elektromagnetik dan frekuensi saling bertarung." },
-            { word: "DECEPTION", hint: "Strategi Korupsi Informasi dengan menyusupkan sinyal radio palsu seolah-olah berasal dari komando asli." },
-            { word: "WATERFALL", hint: "Grafik pada aplikasi SDR yang menampilkan jejak rekaman spektrum yang berjalan menurun seiring waktu." },
-            { word: "BANDWIDTH", hint: "Filter toleransi penerimaan pada HT (misal ±5 kHz) yang membuat 461.145 MHz masih bisa mendengar 461.150 MHz." }
+            { word: "SPEKTRUM", hint: "Lingkungan fisik tak kasat mata tempat gelombang elektromagnetik dan frekuensi dianalisis." },
+            { word: "DECEPTION", hint: "Strategi Korupsi Informasi: menyusupkan sinyal radio palsu seolah berasal dari komando asli." },
+            { word: "WATERFALL", hint: "Grafik pada aplikasi SDR (Sumbu Y = waktu) yang menampilkan jejak rekaman spektrum yang berjalan menurun." },
+            { word: "BANDWIDTH", hint: "Lebar pita. Filter toleransi pada penerima HT (misal ±5 kHz) yang menangkap 461.145 MHz ke kanal 461.150 MHz." },
+            { word: "OODALOOP", hint: "Siklus pengambilan keputusan kognitif: Observe, Orient, Decide, Act." },
+            { word: "SIGINT", hint: "Signal Intelligence: Pengumpulan data intelijen dari intersepsi gelombang radio musuh." },
+            { word: "ELINT", hint: "Electronic Intelligence: Cabang Sigint untuk menganalisis emisi non-komunikasi seperti pancaran Radar musuh." },
+            { word: "FHSS", hint: "Frequency Hopping Spread Spectrum: Teknik pertahanan (EP) dengan melompat frekuensi secara acak sangat cepat." },
+            { word: "WINUSB", hint: "Driver generik sistem operasi yang harus dipasang agar Dongle RTL-SDR dapat diretas fungsinya." },
+            { word: "BARRAGE", hint: "Jenis teknik jamming yang menyapu seluruh rentang frekuensi luas sekaligus, sangat rawan Friendly Fire." },
+            { word: "DOPPLER", hint: "Efek fisika pergeseran frekuensi akibat pergerakan, digunakan dalam teknik FDOA untuk melacak lokasi HT." },
+            { word: "TRIANGULASI", hint: "Metode mencari lokasi titik pemancar musuh menggunakan perpotongan garis LOP (Line of Position) dari beberapa arah." },
+            { word: "CIPHERTEXT", hint: "Bentuk teks pesan HT yang sudah diacak dan disandikan menggunakan kunci rahasia (OTP)." },
+            { word: "AMPLITUDO", hint: "Kekuatan sinyal gelombang radio. Pada Spectrum Analyzer direpresentasikan oleh Sumbu Y (dBm)." },
+            { word: "FRATRICIDE", hint: "Dampak fatal 'Friendly Fire' di mana Jammer kita tanpa sengaja ikut memutus komunikasi radio pasukan sendiri." },
+            { word: "LATENSI", hint: "Keterlambatan/Delay. Menurut PPT Dosen, ini adalah 'musuh utama' dalam sistem kriptografi Pernika." },
+            { word: "MODULASI", hint: "Proses teknis menumpangkan data informasi ke dalam gelombang pembawa radio (misal: FM, AM, PSK)." },
+            { word: "INTERFERENSI", hint: "Tabrakan fisik antara dua gelombang radio atau lebih di udara yang merusak SNR." },
+            { word: "SUBVERSION", hint: "Strategi serangan tingkat tinggi yang memicu proses penghancuran diri (self-destructive) pada sistem lawan." },
+            { word: "COMINT", hint: "Communication Intelligence: Intelijen hasil penyadapan suara percakapan radio HT atau data komunikasi manusia." }
         ];
 
-        const morseWords = ["ZADIG", "JAMMER", "SDR", "OTP", "PERNIKA", "SANDI", "NOISE", "DONGLE", "SPEKTRUM"];
+        const morseWords = [
+            "ZADIG", "JAMMER", "SDR", "OTP", "PERNIKA", "SANDI", "NOISE", "DONGLE", "SPEKTRUM",
+            "OODA", "SIGINT", "ELINT", "FHSS", "DSSS", "WINUSB", "RADAR", "DRONE", "UAV", "UAS",
+            "C4ISR", "SIGNAL", "BARRAGE", "SPOT", "DECEPTION", "SUBVERSION", "PHYSICAL",
+            "COGNITIVE", "LATENSI", "MODULASI", "SNR", "VHF", "UHF", "SHF", "RADIO", "HT",
+            "CIPHER", "ATTACK", "DEFENSE", "INTEL"
+        ];
 
         const morseDictionary = {
             'A': { word: "A-bon", morse: ".-" }, 'B': { word: "Bo-na-par-te", morse: "-..." },
@@ -274,8 +305,7 @@
             document.addEventListener('keydown', handleGlobalKeydown);
 
             if(mode === 'quiz') {
-                // Duplicate & Shuffle to create a large feeling pool for a 10 question session
-                let pool = [...rawDatabase, ...rawDatabase].map(x=>({q:x[0], correct:x[1], w1:x[2], w2:x[3], w3:x[4], exp:x[5]}));
+                let pool = [...rawDatabase].map(x=>({q:x[0], correct:x[1], w1:x[2], w2:x[3], w3:x[4], exp:x[5]}));
                 state.questions = pool.sort(() => 0.5 - Math.random()).slice(0, 10);
                 renderQuiz();
             } else if(mode === 'keyword') {
