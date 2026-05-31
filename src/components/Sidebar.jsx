@@ -1,5 +1,6 @@
 import React from 'react';
 import {
+  BookOpenCheck,
   CalendarDays,
   CheckSquare,
   GraduationCap,
@@ -15,28 +16,33 @@ const menus = [
   { key: 'calendar', label: 'Kalender', icon: CalendarDays },
   { key: 'courses', label: 'Mata Kuliah', icon: GraduationCap },
   { key: 'tasks', label: 'Tugas', icon: CheckSquare },
+  { key: 'practice', label: 'Latihan Soal', icon: BookOpenCheck },
   { key: 'groups', label: 'Kelompok', icon: Users },
   { key: 'announcements', label: 'Pengumuman', icon: Megaphone },
   { key: 'members', label: 'Anggota', icon: UserRoundCheck }
 ];
 
-export default function Sidebar({ active, setActive }) {
+export default function Sidebar({ active, setActive, mobile = false }) {
   return (
-    <aside className="hidden h-screen w-[220px] shrink-0 border-r border-slate-200 bg-white px-3 py-4 dark:border-slate-800 dark:bg-slate-900 lg:flex lg:flex-col">
+    <aside
+      className={`h-full w-[220px] shrink-0 border-r border-slate-200 bg-white px-3 py-4 dark:border-slate-800 dark:bg-slate-900 ${
+        mobile ? 'flex flex-col' : 'hidden lg:flex lg:h-screen lg:flex-col'
+      }`}
+    >
       <div className="mb-5 rounded-3xl bg-blue-900 px-4 py-4 text-white shadow-sm dark:bg-blue-700">
         <div className="flex items-center gap-3">
           <img
             src="/assets/logo.png"
             alt="Logo ClassHub"
-            className="h-7 w-7 shrink-0 object-contain"
+            className="h-9 w-9 shrink-0 object-contain"
           />
 
           <div className="min-w-0">
-            <div className="truncate text-lg font-black leading-none">
+            <div className="truncate text-lg font-bold leading-none">
               ClassHub
             </div>
 
-            <div className="mt-1 text-xs font-bold text-blue-100">
+            <div className="mt-1 text-xs font-semibold text-blue-100">
               RPL Kripto
             </div>
           </div>
@@ -76,7 +82,7 @@ export default function Sidebar({ active, setActive }) {
         }`}
       >
         <Settings size={18} />
-        <span className="truncate">Pengaturan</span>
+        <span>Pengaturan</span>
       </button>
     </aside>
   );
