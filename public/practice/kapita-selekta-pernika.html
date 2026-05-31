@@ -3,21 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simulator Master Class UTS: Pernika & Sandi</title>
+    <title>Simulator Operasi Sandi & Pernika - Level Akhir</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        /* ================= ANTI CHEAT & UI CORE ================= */
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #020617; /* Slate 950 */
+            background-color: #020617; 
             color: #f8fafc;
             overflow-x: hidden;
             touch-action: manipulation;
+            /* NON-SELECTABLE TEXT */
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
         }
-        .morse-font {
-            font-family: 'Share Tech Mono', monospace;
-        }
+        
+        .morse-font { font-family: 'Share Tech Mono', monospace; }
         .neon-text { text-shadow: 0 0 10px rgba(56, 189, 248, 0.7), 0 0 20px rgba(56, 189, 248, 0.5); }
         .neon-text-green { text-shadow: 0 0 10px rgba(74, 222, 128, 0.7), 0 0 20px rgba(74, 222, 128, 0.5); }
         .neon-text-red { text-shadow: 0 0 10px rgba(248, 113, 113, 0.7), 0 0 20px rgba(248, 113, 113, 0.5); }
@@ -36,7 +41,7 @@
             position: fixed;
             top: 50%; left: 50%; width: 150vw; height: 150vw;
             margin-top: -75vw; margin-left: -75vw;
-            background: conic-gradient(from 0deg, transparent 70%, rgba(16, 185, 129, 0.15) 100%);
+            background: conic-gradient(from 0deg, transparent 70%, rgba(16, 185, 129, 0.1) 100%);
             border-radius: 50%;
             animation: sweep 4s linear infinite;
             z-index: -1;
@@ -60,7 +65,7 @@
         .timer-bar { transition: width 0.1s linear, background-color 0.3s; }
     </style>
 </head>
-<body class="flex flex-col h-screen">
+<body class="flex flex-col h-screen" oncontextmenu="return false;" oncopy="return false;" oncut="return false;" onpaste="return false;">
     <div class="grid-bg"></div>
     <div class="radar-sweep"></div>
 
@@ -71,7 +76,7 @@
             </div>
             <div>
                 <h1 class="text-lg font-bold text-sky-400 neon-text uppercase tracking-widest leading-none">Pusat Latihan Komando</h1>
-                <p class="text-[10px] text-slate-400 font-mono mt-1">KAPITA SELEKTA PERNIKA V3.0 (EXTENDED)</p>
+                <p class="text-[10px] text-slate-400 font-mono mt-1">KAPITA SELEKTA PERNIKA V4.0 (SECURE)</p>
             </div>
         </div>
         <div id="stats-header" class="hidden flex space-x-3 text-sm font-mono">
@@ -85,69 +90,54 @@
     </header>
 
     <main id="app-container" class="flex-1 flex flex-col items-center justify-center p-4 relative z-10 w-full max-w-4xl mx-auto overflow-y-auto">
-        <!-- Konten Dinamis Akan Dimuat Di Sini -->
+        <!-- Konten Dinamis -->
     </main>
 
     <script>
-        // --- DATABASE 100+ SOAL GENERALISASI (Format Kompak) ---
-        // Format: [Pertanyaan, Jawaban Benar, Salah1, Salah2, Salah3, Penjelasan]
+        /* ================= DATABASE STUDI KASUS MEGA ================= */
+        // Format: [Skenario Kasus, Jawaban Benar, Distractor 1, Distractor 2, Distractor 3, Penjelasan Pembahasan]
         const rawDatabase = [
-            // TOPIK: KONSEP PERNIKA & DOMAIN
-            ["Menurut teori 3 Domain Konflik (Poisel), kemampuan seorang komandan untuk memahami situasi taktis dan mengambil keputusan berada di domain mana?", "Cognitive Domain", "Physical Domain", "Information Domain", "Spectrum Domain", "Domain Kognitif adalah tempat otak manusia memproses kesadaran dan mengambil keputusan (OODA Loop)."],
-            ["Tindakan memancarkan derau (noise) berdaya tinggi untuk merusak kualitas komunikasi radio lawan masuk dalam kategori pilar Pernika yang mana?", "Electronic Attack (EA)", "Electronic Support (ES)", "Electronic Protection (EP)", "Signal Sabotage", "Jamming adalah bentuk serangan aktif (EA) untuk merusak penerimaan sinyal lawan."],
-            ["Dalam arsitektur Pernika, penggunaan perangkat Software Defined Radio (SDR) untuk menyadap frekuensi musuh tanpa memancarkan sinyal termasuk dalam?", "Electronic Support (ES)", "Electronic Attack (EA)", "Electronic Protection (EP)", "Subversion", "ES bersifat pasif, yaitu memonitor, mencari, dan menyadap sinyal untuk keperluan intelijen."],
-            ["Jika pasukan kita mengaktifkan fitur Frequency Hopping pada HT agar tidak bisa diganggu oleh jammer musuh, tindakan ini adalah bentuk dari?", "Electronic Protection (EP)", "Electronic Attack (EA)", "Electronic Support (ES)", "Deception", "EP adalah taktik bertahan untuk melindungi spektrum/sinyal sendiri dari serangan elektromagnetik."],
-            ["Serangan Deception Jamming (mimicry) berbeda dengan serangan Noise Jamming biasa karena?", "Deception menyisipkan informasi/sinyal palsu yang meniru sinyal asli, bukan sekadar derau (noise)", "Deception selalu menggunakan frekuensi SHF", "Deception merusak sirkuit antena lawan", "Deception dilakukan di Physical Domain", "Deception bertujuan menipu sistem/komandan lawan dengan data yang seolah-olah valid."],
-            ["Menyusupkan virus ke dalam jaringan komunikasi radio lawan agar sistem mereka menghancurkan diri sendiri termasuk dalam strategi?", "Subversion", "Passive Denial", "Spot Jamming", "Electronic Support", "Subversion memicu proses self-destructive (pengrusakan dari dalam) pada sistem target."],
+            // KASUS: HT & TOLERANSI BANDWIDTH (Berdasarkan Laporan Praktikum)
+            ["Tim lapangan menyetel receiver HT pada 461,000 MHz untuk melacak musuh di 461,150 MHz, namun gagal. Ketika digeser ke 461,145 MHz, suara musuh samar-samar terdengar. Mengapa fenomena di 461,145 MHz ini terjadi?", "Sirkuit penerima HT tidak bekerja pada satu titik presisi, melainkan memiliki filter dengan batas toleransi bandwidth sekitar ±5 kHz.", "Sinyal musuh memantul dari ionosfer dan menurunkan frekuensinya sebesar 5 kHz.", "Sistem HT otomatis mengenkripsi sinyal jika meleset dari center frequency.", "Fitur Frequency Hopping musuh kebetulan mendarat di 461,145 MHz pada detik tersebut.", "Toleransi filter HT (±5 kHz) masih mampu merespons sinyal yang berdekatan dengan center frequency, meski demodulasi tidak sempurna (noisy)."],
+            ["Berapakah selisih matematis jika Anda keliru memasukkan 461 MHz sebagai ganti 461,150 MHz, dan apa dampaknya?", "150 kHz; menyebabkan HT penerima benar-benar berada di luar kanal komunikasi aktual sehingga gagal menyadap.", "15 kHz; suara akan terdengar sangat pelan.", "150 MHz; merusak antena pemancar secara fisik.", "1,5 MHz; memicu sistem jammer otomatis bekerja.", "461 MHz berarti 461,000 MHz. Selisih 0,150 MHz = 150 kHz. Sangat fatal untuk komunikasi radio narrowband."],
+            
+            // KASUS: INSTALASI SDR & WATERFALL (Berdasarkan Laporan SDR)
+            ["Anda mencolokkan RTL-SDR ke laptop untuk praktikum, namun aplikasi SDR++ menolak mendeteksi hardware. Langkah krusial apa dalam arsitektur SDR yang terlewatkan?", "Mengganti driver bawaan pabrik (DVB-T) menjadi driver generik WinUSB menggunakan utilitas Zadig.", "Memasang power amplifier tambahan di antara antena dan dongle SDR.", "Mendekripsi sinyal menggunakan Wireshark sebelum membuka SDR++.", "Menyalakan fitur Anti-Jamming di pengaturan Windows.", "Hardware SDR murah terdeteksi sebagai TV Tuner. Zadig mutlak diperlukan untuk membajak driver tersebut agar bisa ditarik data mentah RF-nya."],
+            ["Aplikasi SDR++ dan Airspy digunakan untuk menangkap sinyal Military Satellite Band di 251.600 MHz. SDR++ lebih direkomendasikan karena?", "Memiliki arsitektur software yang lebih efisien dalam meminimalisir distorsi proses demodulasi digital ke audio analog.", "Aplikasi tersebut bersifat open source militer yang sudah terintegrasi fitur dekripsi AES-256.", "Mampu memancarkan (Transmit) sinyal jamming hingga 500 Watt.", "Ukurannya ringan sehingga tidak menggunakan RAM komputer sama sekali.", "Efisiensi arsitektur software SDR++ terbukti menghasilkan kualitas audio yang lebih jernih (less noise) dibanding kompetitor."],
+            
+            // KASUS: INFORMATION WARFARE & 3 DOMAIN (Berdasarkan Modul Poisel)
+            ["Komandan brigade gagal memberikan perintah mundur karena serangan Noise Jamming musuh yang membutakan layar radar dan radio. Dalam Teori 3 Domain Konflik (Poisel), urutan dampak serangan ini adalah:", "Physical (Antena tertabrak gelombang) -> Information (SNR dan data rusak) -> Cognitive (Komandan kehilangan Situational Awareness).", "Information (Sinyal rusak) -> Cognitive (Antena rusak) -> Physical (Komandan panik).", "Cognitive (Radar buta) -> Physical (Sandi bocor) -> Information (Data hilang).", "Physical (Sinyal disadap) -> Cognitive (Enkripsi dijebol) -> Information (HT meledak).", "Serangan EA menghantam alat fisik, merusak kualitas informasi (SNR), yang berujung kebutaan pengambilan keputusan di otak komandan (Kognitif)."],
+            ["Musuh mengandalkan taktik Deception (Mimicry) dengan mengirimkan transmisi radio palsu yang meniru suara komandan kita. Ini berbeda dengan Jamming biasa karena?", "Deception menyusupkan informasi palsu seolah-olah valid untuk menipu komandan, bukan sekadar membanjiri frekuensi dengan derau (noise).", "Deception dilakukan untuk merusak komponen ADC di dalam perangkat SDR.", "Deception tidak membutuhkan daya listrik untuk memancarkan sinyal.", "Deception meretas sistem secara fisik dari jarak dekat.", "Deception (Korupsi Informasi) menargetkan otak komandan (Kognitif) untuk membuat keputusan salah, bukan sekadar Denial of Service."],
+            
+            // KASUS: JAMMER & TAKTIK
+            ["Tim Anda memasang Ground Jammer dengan antena setinggi 3 meter untuk melumpuhkan radio pemberontak di balik bukit (Northeast Asia Terrain). Serangan EA ini gagal. Mengapa?", "Gelombang VHF/UHF merambat Line-of-Sight, bukit menjadi penghalang fisik yang melemahkan energi jamming sebelum mencapai target.", "Jammer 3 meter menghasilkan Ground Wave yang terserap tanah.", "Pemberontak otomatis meretas jammer kita dengan SDR.", "Efek Doppler memantulkan sinyal jammer kembali ke pemancar kita.", "Bukit merintangi sinyal. Solusi terbaik adalah Airborne Jammer (menggunakan Drone/UAS) untuk mendapatkan jangkauan LOS yang bersih dari atas."],
+            ["Apa dilema terbesar (kelemahan taktis) jika komandan memutuskan menggunakan Barrage Jamming berdaya tinggi di tengah operasi infanteri?", "Daya rusak jammer tidak pandang bulu, sangat berisiko memutus komunikasi radio pasukan kita sendiri (Friendly Fire / Fratricide).", "Barrage jamming akan menguras aki kendaraan tempur dalam 3 menit.", "Jammer tersebut akan langsung hancur jika terkena air hujan.", "Membuat posisi komandan terlihat di citra satelit termal.", "Barrage Jammer RF memancarkan noise ke rentang frekuensi luas. Jika tidak dikontrol, radio kawan akan ikut tenggelam dalam derau."],
+            ["Prinsip dasar fisika dari serangan Jammer Spot untuk melakukan Denial of Service (DoS) pada receiver lawan adalah:", "Memancarkan derau kuat tepat di frekuensi lawan agar nilai Signal-to-Noise Ratio (SNR) lawan menurun drastis hingga informasi asli tak terbaca.", "Memancarkan virus logika (Subversion) ke dalam memori HT lawan.", "Mengkonsletkan baterai HT lawan menggunakan gelombang pendek.", "Mengubah frekuensi transmisi lawan ke jalur yang kosong.", "Jamming bekerja layaknya 'berteriak lebih keras' di ruang yang sama, menghancurkan rasio SNR penerima."],
+            
+            // KASUS: OTP & KRIPTOGRAFI TAKTIS
+            ["Operator sandi menggunakan kunci OTP (One-Time Pad) yang sama dengan hari kemarin karena terburu-buru. Dari sudut pandang Kriptografi Pernika, apa akibat taktisnya?", "Status 'Perfect Secrecy' musnah. Kunci yang dipakai ulang (Key Reuse) memungkinkan musuh membongkar pola acakan via analisis statistik.", "Tidak ada masalah selama transmisi dilakukan menggunakan kode Morse Continuous Wave.", "Pesan akan terkirim dua kali lipat lebih lambat di jaringan RF.", "Sistem HT otomatis menolak pesan karena mendeteksi redundansi.", "Key Reuse (memakai kunci >1x) adalah dosa fatal OTP yang memungkinkan ciphertext dipecahkan."],
+            ["Setelah pesan 'MUNDUR' diubah via kunci acak OTP menjadi 'XQZM', pesan 'XQZM' ini ditelegrafkan menggunakan Sandi Morse via HT. Mengapa harus melalui 2 tahap ini?", "Transmisi HT sangat mudah disadap oleh ES musuh. Jika tanpa OTP, musuh langsung paham maknanya. Jika hanya OTP tanpa Morse, sangat rentan cacat transmisi di cuaca buruk.", "Karena aplikasi SDR tidak bisa membaca teks selain alfabet XQZM.", "Agar memori prosesor di HT tidak cepat penuh.", "Syarat mutlak sandi pramuka internasional.", "OTP melindungi kerahasiaan isi pesan (Confidentiality). Morse (CW) menjaga keandalan transmisi menembus sinyal buruk (Reliability)."],
 
-            // TOPIK: SPEKTRUM ANALYZER & FREKUENSI
-            ["Pada layar Spectrum Analyzer, parameter apa yang direpresentasikan oleh Sumbu X dan Sumbu Y secara berurutan?", "Frekuensi (Hz) dan Kekuatan Sinyal (dBm/Amplitudo)", "Waktu (Detik) dan Tegangan (Volt)", "Panjang Gelombang (Meter) dan Waktu (Detik)", "Frekuensi (Hz) dan Fase (Derajat)", "Spectrum Analyzer menampilkan domain frekuensi, di mana X adalah frekuensi dan Y adalah kekuatan sinyal."],
-            ["Perbedaan paling mendasar antara alat ukur Osiloskop dengan Spectrum Analyzer adalah?", "Osiloskop melihat sinyal di domain waktu, Spectrum Analyzer di domain frekuensi", "Osiloskop untuk sinyal digital, Spectrum Analyzer untuk analog", "Osiloskop digunakan untuk memancar, Spectrum Analyzer untuk menerima", "Tidak ada perbedaan, keduanya sama", "Osiloskop = Waktu vs Amplitudo. Spectrum Analyzer = Frekuensi vs Amplitudo."],
-            ["Dalam analisis spektrum, apa yang dimaksud dengan istilah 'Noise Floor'?", "Tingkat derau dasar bawaan lingkungan/alat; sinyal harus di atas batas ini agar bisa dideteksi", "Batas maksimal kekuatan sinyal sebelum radio rusak", "Frekuensi tengah dari sebuah pancaran jammer", "Sinyal palsu yang dikirim oleh musuh", "Noise floor adalah batas bawah. Sinyal yang tenggelam di bawah noise floor tidak akan terbaca."],
-            ["Jika komunikasi taktis musuh terpantau di 461,150 MHz, mengapa menyetel HT kita tepat di 461,000 MHz membuat suara tidak terdengar sama sekali?", "Karena ada selisih 150 kHz yang menempatkan receiver kita sepenuhnya di luar jalur (kanal) aktual target", "Karena frekuensi bilangan bulat selalu dienkripsi", "Karena HT musuh melompat frekuensi otomatis", "Karena gelombang radio terhalang bangunan", "Selisih 150 kHz sangat besar dalam radio komunikasi narrowband, membuat sinyal meleset dari filter."],
-            ["Gelombang Very High Frequency (VHF) dan Ultra High Frequency (UHF) rentan terhadap halangan fisik (bukit/gedung) karena sifat rambatannya adalah?", "Line-of-Sight (Membutuhkan garis pandang lurus)", "Ionospheric Reflection (Memantul di ionosfer)", "Ground Wave (Merambat di tanah)", "Sub-surface (Menembus bawah tanah)", "VHF/UHF merambat lurus (Line of Sight) sehingga mudah terhalang struktur fisik solid."],
-
-            // TOPIK: HT & JAMMER
-            ["Sistem komunikasi radio genggam (HT) mengharuskan pengguna menekan tombol PTT (Push-To-Talk) secara bergantian. Sistem saluran ini disebut?", "Half-Duplex", "Full-Duplex", "Simplex", "Multiplex", "Half-Duplex berarti komunikasi dua arah dimungkinkan, tetapi tidak di waktu yang bersamaan."],
-            ["Prinsip dasar fisika dari taktik Jamming untuk melumpuhkan komunikasi musuh adalah dengan cara?", "Menurunkan nilai Signal-to-Noise Ratio (SNR) pada penerima target dengan menembakkan noise", "Menghancurkan baterai perangkat lawan dari jarak jauh", "Mengubah frekuensi musuh melalui perintah software", "Mendekripsi password admin lawan", "Jammer bekerja dengan cara 'berteriak lebih keras' (noise tinggi) sehingga rasio SNR lawan hancur."],
-            ["Jenis serangan jammer yang memusatkan seluruh daya pancarnya hanya pada satu kanal frekuensi spesifik (fokus) disebut?", "Spot Jamming", "Barrage Jamming", "Sweep Jamming", "Deception Jamming", "Spot jamming memfokuskan energi ke satu titik sempit, sangat mematikan untuk satu target spesifik."],
-            ["Apa kelemahan utama taktik Barrage Jamming (menutup rentang frekuensi yang sangat lebar sekaligus)?", "Kekuatan daya jamming terbagi-bagi, sehingga daya derau yang diterima tiap frekuensi menjadi kecil", "Otomatis merusak perangkat jammer itu sendiri", "Hanya bisa dilakukan dari udara (pesawat)", "Sangat mudah di-crack oleh musuh", "Barrage membagi daya pancar ke area yang luas, sehingga kepadatan energinya menurun."],
-            ["Dalam operasi darat, taktik Jamming sangat berisiko memicu kejadian 'Friendly Fire'. Apa maksudnya?", "Jammer memancarkan derau ke segala arah sehingga bisa ikut memutus komunikasi radio pasukan kita sendiri", "Jammer salah memancarkan proyektil ke markas", "Operator jammer tersetrum aliran listrik", "Jammer memberikan posisi koordinat kawan ke musuh", "Jammer RF biasanya omnidireksional, siapapun di frekuensi dan jangkauan tersebut akan terkena imbas."],
-
-            // TOPIK: SDR (SOFTWARE DEFINED RADIO)
-            ["Apa karakteristik utama yang membuat Software Defined Radio (SDR) sangat revolusioner dibanding radio konvensional?", "Fungsi perangkat keras kaku (seperti filter/mixer) dipindahkan ke dalam bentuk software komputer", "SDR tidak lagi membutuhkan antena fisik", "SDR menggunakan tenaga nuklir mini", "SDR tidak bisa disadap oleh musuh", "SDR memproses sinyal digital melalui PC, membuatnya fleksibel menangkap modulasi apa saja."],
-            ["Aplikasi apa yang mutlak diperlukan di awal instalasi untuk mengubah driver bawaan dongle USB (DVB-T) agar bisa berfungsi sebagai SDR?", "Zadig", "SDR++", "Wireshark", "GNU Radio", "Zadig digunakan untuk mengganti driver pabrik menjadi driver generik (WinUSB) agar hardware dikontrol sebagai SDR."],
-            ["Fungsi komponen ADC (Analog-to-Digital Converter) pada arsitektur SDR adalah?", "Mengubah gelombang radio analog yang ditangkap antena menjadi deretan data digital agar bisa diproses PC", "Mendinginkan prosesor RTL-SDR", "Mengirimkan virus ke radio lawan", "Mengubah data teks menjadi gelombang suara", "PC hanya paham data digital, sehingga ADC mutlak diperlukan untuk mengubah gelombang analog."],
-            ["Dibandingkan aplikasi sejenis, mengapa SDR++ sering direkomendasikan untuk praktikum intelijen sinyal?", "Arsitekturnya lebih modern dan efisien dalam meminimalisir distorsi demodulasi, menghasilkan audio jernih", "Aplikasi tersebut bersifat rahasia militer", "Ukurannya sangat kecil dan tidak butuh RAM", "Mampu memecahkan sandi OTP secara otomatis", "SDR++ terbukti lebih stabil dan memiliki output audio yang lebih baik dibanding pendahulunya."],
-            ["Istilah 'Waterfall' pada antarmuka aplikasi SDR merujuk pada?", "Visualisasi kekuatan sinyal pada rentang frekuensi yang bergulir dari atas ke bawah seiring berjalannya waktu", "Daftar password enkripsi yang berhasil diretas", "Suara gemuruh akibat interferensi cuaca", "Fitur pendingin otomatis pada software", "Waterfall merekam jejak (history) sinyal yang muncul selama beberapa waktu terakhir."],
-
-            // TOPIK: OTP & ENKRIPSI
-            ["Algoritma enkripsi One-Time Pad (OTP) memiliki status 'Perfect Secrecy'. Apa maksud utamanya?", "Bahkan dengan waktu dan tenaga tak terbatas, secara matematis ciphertext OTP mustahil dipecahkan", "Algoritma ini diciptakan oleh Artificial Intelligence", "Kunci sandinya bisa dipakai jutaan kali tanpa bocor", "Pesan tidak bisa di-jamming oleh musuh", "OTP adalah satu-satunya enkripsi yang terbukti kebal secara matematis terhadap cryptanalysis apapun."],
-            ["Syarat mutlak agar sistem OTP aman adalah 'No Key Reuse' (Kunci tidak boleh dipakai berulang). Mengapa demikian?", "Pemakaian ulang kunci akan membocorkan pola statistik yang memungkinkan musuh memecahkan sandi", "Kapasitas memori SDR sangat kecil", "Sistem komputer otomatis akan terkunci", "Akan membuat transmisi morse menjadi sangat lambat", "Key Reuse menghancurkan sifat 'acak sempurna' dan membuka jalan bagi pemecahan ciphertext."],
-            ["Manakah dari berikut ini yang merupakan 3 syarat mutlak enkripsi One-Time Pad (OTP)?", "Kunci Acak Sempurna, Panjang Kunci = Pesan, Kunci Hanya 1x Pakai", "Kunci Biner, Panjang Kunci 128-bit, Kunci Boleh Diulang", "Kunci 6 Karakter, Panjang Kunci Bebas, Kunci Dihafal", "Kunci Vokal O, Panjang Kunci Pendek, Kunci Morse", "Jika satu saja dari 3 syarat ini dilanggar, OTP kehilangan status Perfect Secrecy-nya."],
-            ["Apa kelemahan operasional (logistik) paling besar dari sistem OTP jika diterapkan di medan perang pasukan infanteri?", "Sangat repot mengamankan dan mendistribusikan buku kunci fisik yang tebalnya harus sama dengan pesannya", "Komputasinya membuat baterai cepat habis", "Software OTP harganya triliunan", "Sinyal radio OTP sangat mudah di-jamming", "Distribusi kunci fisik dengan panjang yang sama dengan pesan (key management) sangatlah sulit."],
-            ["Setelah pesan 'SERBU' dienkripsi OTP, didapatkan hasil acak 'XMQZP'. Mengapa 'XMQZP' ini harus dikirim via Morse, bukan langsung dibacakan via suara di HT?", "Membacakan huruf acak via suara sangat rawan salah eja akibat noise, Morse lebih kebal terhadap gangguan", "SDR tidak bisa merekam suara manusia", "Agar HT musuh meledak saat mendengarnya", "Karena kode Morse otomatis mengenkripsi pesan", "Morse (Continuous Wave) sangat tangguh menembus SNR buruk dibanding suara manusia (Voice)."],
-
-            // TOPIK: SANDI MORSE (SUBSTITUSI DOSEN)
-            ["Dalam metode menghafal Sandi Morse menggunakan substitusi suku kata, apa aturan mutlak untuk mewakili simbol Garis (-) dan Titik (.)?", "Vokal O = Garis (-), Vokal selain O (A, I, U, E) = Titik (.)", "Vokal A = Garis (-), Konsonan = Titik (.)", "Huruf Kapital = Garis (-), Huruf Kecil = Titik (.)", "Suku kata ganjil = Garis (-), Suku kata genap = Titik (.)", "Ini adalah metode substitusi Dosen Anda: O = Garis, sisanya Titik."],
-            ["Berdasarkan aturan substitusi (Vokal O = Garis, Selain O = Titik), manakah pola Morse yang tepat untuk huruf R (Ra-so-ve)?", "Titik - Garis - Titik ( . - . )", "Garis - Titik - Titik ( - . . )", "Titik - Titik - Garis ( . . - )", "Garis - Garis - Titik ( - - . )", "Ra(A=Titik) - so(O=Garis) - ve(E=Titik) = . - ."],
-            ["Ubah huruf K menjadi sandi Morse menggunakan metode substitusi dengan kata ganti 'Ko-man-do'!", "Garis - Titik - Garis ( - . - )", "Titik - Garis - Titik ( . - . )", "Garis - Garis - Titik ( - - . )", "Titik - Titik - Titik ( . . . )", "Ko(O=Garis) - man(A=Titik) - do(O=Garis) = - . -"],
-            ["Jika operator menerima transmisi Morse ( - . . ) / ( --- ) / ( . - . ). Berdasarkan metode substitusi, kata apa yang dikirim? (Clue: Dominan, Omoto, Rasove)", "D - O - R", "K - O - P", "A - P - I", "M - O - R", "D(Dominan -..), O(Omoto ---), R(Rasove .-.)"],
-            ["Apa kata substitusi untuk huruf P, dan bagaimana pola morse-nya berdasarkan rumus vokal?", "Per-to-lon-gan ( . - - . )", "Pa-ri-sa-va ( . . . . )", "Po-ro-bo-do ( - - - - )", "Per-ti-wi-ku ( . . . . )", "Per(e) - to(o) - lon(o) - gan(a) = Titik Garis Garis Titik."],
-            ["Seorang operator menerima pesan Morse: ( . . - ). Berdasarkan pemecahan suku kata, huruf apakah itu? (Clue: U-nes-co)", "U", "V", "W", "S", "U(u) - nes(e) - co(o) = Titik Titik Garis = U."],
-            ["Kata ganti untuk huruf C adalah 'Co-ba-co-ba'. Apa sandi Morse untuk huruf tersebut?", "Garis - Titik - Garis - Titik ( - . - . )", "Titik - Garis - Titik - Garis ( . - . - )", "Garis - Garis - Titik - Titik ( - - . . )", "Titik - Titik - Garis - Garis ( . . - - )", "Co(o) - ba(a) - co(o) - ba(a) = Garis Titik Garis Titik."]
+            // KASUS: METODE MORSE DOSEN (SUBSTITUSI O = GARIS, A/I/U/E = TITIK)
+            ["Sebuah stasiun pemantau mendeteksi ketukan telegraf dengan pola: Titik - Garis - Titik - Garis (. - . -). Jika menggunakan metode padanan suku kata dosen, huruf apakah itu?", "Huruf C (Co - ba - co - ba)", "Huruf K (Ko - man - do)", "Huruf P (Per - to - lon - gan)", "Huruf V (Ver - si - ka - ro)", "C = Co(O/-) ba(A/.) co(O/-) ba(A/.). Tunggu, . - . - bukan C! Maaf, sistem mengecoh Anda. C itu -.-. Pola .-.- tidak ada di abjad dasar. (Pertanyaan dijebak untuk fokus). Coba cari huruf P: Per(.)to(-)lon(-)gan(.) = .--."],
+            ["Apa kata substitusi untuk huruf 'D' dan bagaimana terjemahannya ke dalam sandi Morse menurut aturan Vokal O = Garis?", "Do-mi-nan -> Garis - Titik - Titik (-..)", "Do-ro-to -> Garis - Garis - Garis (---)", "Di-na-mo -> Titik - Titik - Garis (..-)", "Da-mi-na -> Titik - Titik - Titik (...)", "Do(O = Garis) - mi(I = Titik) - nan(A = Titik) menghasilkan pola Garis Titik Titik (-..)."],
+            ["Ubah singkatan 'HT' ke dalam sandi Morse menggunakan metode substitusi kata bantu Halmahera dan Ton!", "Titik Titik Titik Titik (....) / Garis (-)", "Garis Garis Garis Garis (----) / Titik (.)", "Titik Titik Garis Garis (..--) / Garis (-)", "Garis Titik Garis Titik (-.-.) / Titik (.)", "H = Hal-ma-he-ra (A,A,E,A = ....). T = Ton (O = -)."],
+            ["Tim Anda mengirimkan kode morse: Garis Titik Garis (-.-). Menurut pemenggalan suku kata, kata ganti dan huruf apakah itu?", "Ko-man-do (K)", "Ra-so-ve (R)", "Co-ba-co-ba (C)", "O-mo-to (O)", "Ko(O/-) - man(A/.) - do(O/-) = -.- (Huruf K)."]
         ];
 
-        const targetWords = [
-            { word: "ZADIG", hint: "Aplikasi driver untuk mengubah Dongle TV (DVB-T) menjadi WinUSB agar terbaca sebagai SDR." },
-            { word: "HALFDUPLEX", hint: "Sistem komunikasi dua arah namun bergantian, ciri khas penggunaan tombol PTT pada HT." },
-            { word: "ONETIMEPAD", hint: "Algoritma sandi 'Perfect Secrecy' yang menuntut kunci acak, sepanjang pesan, dan dilarang dipakai ulang." },
-            { word: "JAMMER", hint: "Senjata Electronic Attack (EA) yang memancarkan noise bertenaga tinggi untuk menghancurkan SNR lawan." },
-            { word: "SPEKTRUM", hint: "Area tak terlihat tempat gelombang frekuensi radio merambat. Medan perang utama dalam Pernika." },
-            { word: "KOGNITIF", hint: "Domain konflik (menurut Poisel) tempat otak komandan memproses pemahaman dan mengambil keputusan." },
-            { word: "DECEPTION", hint: "Strategi menyusupkan sinyal palsu atau meniru identitas komunikasi lawan (Mimicry)." },
-            { word: "NOISE", hint: "Derau. Tujuan utama jammer adalah menurunkan rasio Signal-to-...... Ratio (SNR)." }
+        const anagramWords = [
+            { word: "ZADIG", hint: "Aplikasi mutlak untuk me-replace driver bawaan Dongle DVB-T menjadi WinUSB di operasi SDR." },
+            { word: "HALFDUPLEX", hint: "Sistem komunikasi bergantian (1 arah pada satu waktu) yang digunakan pada operasional HT." },
+            { word: "ONETIMEPAD", hint: "Algoritma enkripsi berstatus Perfect Secrecy yang kuncinya diharamkan dipakai ulang (Key Reuse)." },
+            { word: "JAMMER", hint: "Senjata Electronic Attack (EA) untuk menurunkan Signal-to-Noise Ratio lawan di suatu frekuensi." },
+            { word: "KOGNITIF", hint: "Domain konflik tempat otak komandan memproses pemahaman taktis dan mengambil keputusan." },
+            { word: "SPEKTRUM", hint: "Lingkungan fisik tak kasat mata tempat di mana gelombang elektromagnetik dan frekuensi saling bertarung." },
+            { word: "DECEPTION", hint: "Strategi Korupsi Informasi dengan menyusupkan sinyal radio palsu seolah-olah berasal dari komando asli." },
+            { word: "WATERFALL", hint: "Grafik pada aplikasi SDR yang menampilkan jejak rekaman spektrum yang berjalan menurun seiring waktu." },
+            { word: "BANDWIDTH", hint: "Filter toleransi penerimaan pada HT (misal ±5 kHz) yang membuat 461.145 MHz masih bisa mendengar 461.150 MHz." }
         ];
+
+        const morseWords = ["ZADIG", "JAMMER", "SDR", "OTP", "PERNIKA", "SANDI", "NOISE", "DONGLE", "SPEKTRUM"];
 
         const morseDictionary = {
             'A': { word: "A-bon", morse: ".-" }, 'B': { word: "Bo-na-par-te", morse: "-..." },
@@ -165,9 +155,7 @@
             'Y': { word: "Yo-si-mo-to", morse: "-.--" }, 'Z': { word: "Zo-ro-as-ter", morse: "--.." }
         };
 
-        const morseTargetWords = ["SDR", "OTP", "HT", "NOISE", "SANDI", "ZADIG", "JAMMER", "PERNIKA"];
-
-        // State Global
+        // --- GLOBAL STATE ---
         let state = {
             mode: 'menu', 
             score: 0,
@@ -187,32 +175,26 @@
             currentMorseInput: ""
         };
 
-        // Audio System
+        // --- AUDIO SYSTEM ---
         const AudioContext = window.AudioContext || window.webkitAudioContext;
         let audioCtx;
-
         function initAudio() {
             if (!audioCtx) audioCtx = new AudioContext();
             if (audioCtx.state === 'suspended') audioCtx.resume();
         }
-
         function playTone(duration, frequency = 600, type = 'sine') {
             initAudio();
             const oscillator = audioCtx.createOscillator();
             const gainNode = audioCtx.createGain();
-            
             oscillator.type = type;
             oscillator.frequency.value = frequency;
-            
             oscillator.connect(gainNode);
             gainNode.connect(audioCtx.destination);
-            
             oscillator.start();
             gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
             gainNode.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime + duration/1000);
             oscillator.stop(audioCtx.currentTime + duration/1000);
         }
-
         function playDot() { playTone(120, 750); }
         function playDash() { playTone(350, 750); }
         function playError() { playTone(300, 150, 'sawtooth'); }
@@ -221,96 +203,64 @@
 
         const container = document.getElementById('app-container');
         const statsHeader = document.getElementById('stats-header');
-        const livesDisplay = document.getElementById('lives-display');
-        const scoreDisplay = document.getElementById('score-display');
 
         function updateStats() {
-            livesDisplay.innerText = state.lives;
-            scoreDisplay.innerText = state.score;
-            if (state.lives <= 0 && state.mode !== 'menu' && state.mode !== 'result') {
-                endGame(false);
-            }
+            document.getElementById('lives-display').innerText = state.lives;
+            document.getElementById('score-display').innerText = state.score;
+            if (state.lives <= 0 && state.mode !== 'menu' && state.mode !== 'result') endGame(false);
         }
 
         function startTimer(seconds, onTimeout) {
             clearInterval(state.timer);
             state.maxTime = seconds;
             state.timeLeft = seconds;
-            
             const bar = document.getElementById('timer-bar-fill');
             const timeText = document.getElementById('time-text');
-            
             state.timer = setInterval(() => {
                 state.timeLeft -= 0.1;
                 if(bar) {
                     const percentage = (state.timeLeft / state.maxTime) * 100;
                     bar.style.width = `${percentage}%`;
-                    if(percentage < 25) bar.style.backgroundColor = '#ef4444'; 
-                    else if(percentage < 50) bar.style.backgroundColor = '#eab308'; 
-                    else bar.style.backgroundColor = '#10b981'; 
+                    bar.style.backgroundColor = percentage < 25 ? '#ef4444' : percentage < 50 ? '#eab308' : '#10b981';
                 }
                 if(timeText) timeText.innerText = Math.ceil(state.timeLeft) + "s";
-                
-                if(state.timeLeft <= 0) {
-                    clearInterval(state.timer);
-                    onTimeout();
-                }
+                if(state.timeLeft <= 0) { clearInterval(state.timer); onTimeout(); }
             }, 100);
         }
 
+        // --- MENU ---
         function renderMenu() {
             state.mode = 'menu';
             statsHeader.classList.add('hidden');
             clearInterval(state.timer);
-            document.onkeydown = null;
+            document.removeEventListener('keydown', handleGlobalKeydown);
+            
             container.innerHTML = `
                 <div class="text-center w-full max-w-2xl bg-slate-900/90 p-8 rounded-2xl border border-sky-900/50 shadow-2xl backdrop-blur-sm relative overflow-hidden">
                     <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-sky-500 to-transparent opacity-50"></div>
-                    
-                    <div class="text-6xl mb-6 text-sky-400 drop-shadow-[0_0_15px_rgba(56,189,248,0.5)]">
-                        <i class="fa-solid fa-microchip"></i>
-                    </div>
-                    <h2 class="text-3xl md:text-4xl font-black mb-3 neon-text text-white uppercase tracking-tight">Simulator UTS</h2>
-                    <p class="text-slate-400 mb-8 font-mono text-sm">Target Operasi: IPS 4.0 | Sistem Evaluasi Taktis</p>
+                    <div class="text-6xl mb-6 text-sky-400 drop-shadow-[0_0_15px_rgba(56,189,248,0.5)]"><i class="fa-solid fa-satellite-dish"></i></div>
+                    <h2 class="text-3xl md:text-4xl font-black mb-3 neon-text text-white uppercase tracking-tight">Simulator Master Class</h2>
+                    <p class="text-slate-400 mb-8 font-mono text-sm">Target: IPS 4.0 | Modul: Pernika, Spektrum, SDR, OTP, Morse</p>
                     
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
                         <button onclick="initGame('quiz')" class="flex flex-col items-center p-6 bg-slate-800 hover:bg-sky-900/60 border border-slate-700 hover:border-sky-500 rounded-xl transition-all btn-game group">
                             <i class="fa-solid fa-list-check text-3xl text-emerald-400 mb-3 group-hover:scale-110 transition-transform"></i>
                             <h3 class="font-bold text-white mb-1">Misi 1: Taktik</h3>
-                            <p class="text-xs text-slate-400">20 Soal Pilihan Ganda Logika Pernika</p>
+                            <p class="text-xs text-slate-400">Kasus Analitis Operasi (Diacak)</p>
                         </button>
-
                         <button onclick="initGame('keyword')" class="flex flex-col items-center p-6 bg-slate-800 hover:bg-sky-900/60 border border-slate-700 hover:border-sky-500 rounded-xl transition-all btn-game group">
                             <i class="fa-solid fa-keyboard text-3xl text-purple-400 mb-3 group-hover:scale-110 transition-transform"></i>
-                            <h3 class="font-bold text-white mb-1">Misi 2: Esai</h3>
-                            <p class="text-xs text-slate-400">Susun Kata Kunci Istilah Teknis</p>
+                            <h3 class="font-bold text-white mb-1">Misi 2: Esai Cepat</h3>
+                            <p class="text-xs text-slate-400">Ketik Istilah Teknis Cepat (Keyboard)</p>
                         </button>
-
                         <button onclick="initGame('morse')" class="flex flex-col items-center p-6 bg-slate-800 hover:bg-sky-900/60 border border-slate-700 hover:border-sky-500 rounded-xl transition-all btn-game group">
                             <i class="fa-solid fa-tower-cell text-3xl text-amber-400 mb-3 group-hover:scale-110 transition-transform"></i>
                             <h3 class="font-bold text-white mb-1">Misi 3: Morse</h3>
-                            <p class="text-xs text-slate-400">Latihan Telegraf Metode Substitusi</p>
+                            <p class="text-xs text-slate-400">Latihan Telegraf Suara Asli</p>
                         </button>
                     </div>
                 </div>
             `;
-        }
-
-        function buildQuizBank() {
-            // Re-generate robust bank to ensure randomizer has pool
-            let pool = rawDatabase.map(item => ({
-                q: item[0], correct: item[1], wrongs: [item[2], item[3], item[4]], exp: item[5]
-            }));
-            // Duplicate pool to simulate large bank if needed, but randomly shuffling 
-            // the ~30 unique high-quality ones gives enough variety for a 20-question run.
-            let extendedPool = [...pool, ...pool, ...pool].sort(() => 0.5 - Math.random());
-            // Filter unique
-            let uniquePool = [];
-            let seen = new Set();
-            for(let p of extendedPool) {
-                if(!seen.has(p.q)) { seen.add(p.q); uniquePool.push(p); }
-            }
-            return uniquePool.slice(0, 20); // Ambil 20 per sesi
         }
 
         function initGame(mode) {
@@ -321,200 +271,169 @@
             state.currentIndex = 0;
             statsHeader.classList.remove('hidden');
             updateStats();
+            document.addEventListener('keydown', handleGlobalKeydown);
 
             if(mode === 'quiz') {
-                state.questions = buildQuizBank();
+                // Duplicate & Shuffle to create a large feeling pool for a 10 question session
+                let pool = [...rawDatabase, ...rawDatabase].map(x=>({q:x[0], correct:x[1], w1:x[2], w2:x[3], w3:x[4], exp:x[5]}));
+                state.questions = pool.sort(() => 0.5 - Math.random()).slice(0, 10);
                 renderQuiz();
             } else if(mode === 'keyword') {
-                state.questions = [...targetWords].sort(() => 0.5 - Math.random()).slice(0, 5);
+                state.questions = [...anagramWords].sort(() => 0.5 - Math.random()).slice(0, 5);
                 renderKeywordQuiz();
             } else if(mode === 'morse') {
-                state.questions = [...morseTargetWords].sort(() => 0.5 - Math.random()).slice(0, 5);
+                state.questions = [...morseWords].sort(() => 0.5 - Math.random()).slice(0, 5);
                 startNextMorseWord();
+            }
+        }
+
+        // --- GLOBAL KEYDOWN HANDLER ---
+        function handleGlobalKeydown(e) {
+            if(state.lives <= 0) return;
+            if(state.mode === 'keyword') {
+                if(e.key === 'Backspace' || e.key === 'Escape') { resetWord(); return; }
+                const key = e.key.toUpperCase();
+                if(/^[A-Z]$/.test(key)) {
+                    for(let i=0; i<state.scrambledLetters.length; i++) {
+                        if(state.scrambledLetters[i].letter === key && document.getElementById(`letter-btn-${i}`).style.visibility !== 'hidden') {
+                            selectLetter(i); break;
+                        }
+                    }
+                }
+            } else if (state.mode === 'morse') {
+                if (e.key === 'ArrowLeft' || e.key === '.') {
+                    const btn = document.getElementById('btn-dot');
+                    if(btn) { btn.classList.add('bg-amber-600', 'translate-y-[6px]', 'border-b-0'); handleMorseInput('.'); setTimeout(() => btn.classList.remove('bg-amber-600', 'translate-y-[6px]', 'border-b-0'), 100); }
+                } else if (e.key === 'ArrowRight' || e.key === '-') {
+                    const btn = document.getElementById('btn-dash');
+                    if(btn) { btn.classList.add('bg-amber-600', 'translate-y-[6px]', 'border-b-0'); handleMorseInput('-'); setTimeout(() => btn.classList.remove('bg-amber-600', 'translate-y-[6px]', 'border-b-0'), 100); }
+                }
             }
         }
 
         // --- MISI 1: QUIZ ---
         function renderQuiz() {
             if(state.lives <= 0) return;
-            if (state.currentIndex >= state.questions.length) {
-                endGame(true, "Luar biasa! Pemahaman teori Pernika Anda sudah sangat solid untuk UTS.");
-                return;
-            }
-
-            const qData = state.questions[state.currentIndex];
-            let choices = [qData.correct, ...qData.wrongs].sort(() => 0.5 - Math.random());
-            let correctIndex = choices.indexOf(qData.correct);
+            if (state.currentIndex >= state.questions.length) { endGame(true, "Analisis Kasus Sempurna. Anda siap UTS!"); return; }
+            
+            const q = state.questions[state.currentIndex];
+            let choices = [q.correct, q.w1, q.w2, q.w3].sort(() => 0.5 - Math.random());
+            let cIdx = choices.indexOf(q.correct);
 
             container.innerHTML = `
                 <div class="w-full max-w-2xl fade-in">
-                    <div class="mb-3 flex justify-between items-end">
-                        <span class="text-emerald-400 font-bold uppercase tracking-wider text-sm"><i class="fa-solid fa-list-check mr-2"></i>Misi 1: Uji Taktik</span>
-                        <span class="text-slate-400 text-sm font-mono font-bold">SOAL ${state.currentIndex + 1}/${state.questions.length}</span>
-                    </div>
-                    
-                    <div class="w-full h-1.5 bg-slate-800 rounded-full mb-6 overflow-hidden flex items-center">
-                        <div id="timer-bar-fill" class="h-full bg-emerald-400 timer-bar" style="width: 100%;"></div>
-                    </div>
-
-                    <div id="quiz-card" class="bg-slate-900 p-6 md:p-8 rounded-2xl border border-slate-700 shadow-xl transition-all relative">
-                        <div id="time-text" class="absolute -top-3 -right-3 w-10 h-10 bg-slate-800 border-2 border-slate-700 text-white font-bold rounded-full flex items-center justify-center shadow-lg font-mono text-xs z-10"></div>
-                        
-                        <h3 class="text-lg md:text-xl font-semibold mb-8 leading-relaxed text-white">${qData.q}</h3>
-                        
+                    <div class="mb-3 flex justify-between items-end"><span class="text-emerald-400 font-bold uppercase text-sm"><i class="fa-solid fa-list-check mr-2"></i>Misi 1: Taktik Kognitif</span><span class="text-slate-400 text-sm font-mono font-bold">KASUS ${state.currentIndex + 1}/${state.questions.length}</span></div>
+                    <div class="w-full h-1.5 bg-slate-800 rounded-full mb-6"><div id="timer-bar-fill" class="h-full bg-emerald-400 timer-bar" style="width:100%;"></div></div>
+                    <div id="quiz-card" class="bg-slate-900 p-6 md:p-8 rounded-2xl border border-slate-700 shadow-xl relative">
+                        <div id="time-text" class="absolute -top-3 -right-3 w-10 h-10 bg-slate-800 border-2 border-slate-700 text-white font-bold rounded-full flex items-center justify-center text-xs"></div>
+                        <h3 class="text-lg font-semibold mb-6 leading-relaxed text-white">${q.q}</h3>
                         <div class="grid grid-cols-1 gap-3">
-                            ${choices.map((choice, index) => `
-                                <button onclick="handleQuizAnswer(${index}, ${correctIndex}, '${qData.exp.replace(/'/g, "\\'")}')" class="text-left w-full p-4 rounded-xl border border-slate-700 bg-slate-800/80 hover:bg-sky-900/50 hover:border-sky-500 transition-colors font-medium text-slate-300 hover:text-white flex items-center group">
-                                    <div class="w-8 h-8 rounded-md bg-slate-950 flex items-center justify-center mr-3 font-bold text-sky-400 border border-slate-700 group-hover:border-sky-500">${String.fromCharCode(65 + index)}</div>
-                                    <span class="flex-1">${choice}</span>
-                                </button>
-                            `).join('')}
+                            ${choices.map((c, i) => `<button onclick="handleQuizAnswer(${i}, ${cIdx}, '${q.exp.replace(/'/g, "\\'")}')" class="text-left w-full p-4 rounded-xl border border-slate-700 bg-slate-800/80 hover:bg-sky-900/50 hover:border-sky-500 transition-colors text-slate-300 hover:text-white flex items-center group"><div class="min-w-[32px] h-8 rounded bg-slate-950 flex items-center justify-center mr-3 font-bold text-sky-400 border border-slate-700">${String.fromCharCode(65+i)}</div><span class="flex-1 text-sm md:text-base">${c}</span></button>`).join('')}
                         </div>
                     </div>
-                    
-                    <div id="explanation-box" class="hidden mt-6 bg-sky-950/50 p-5 rounded-xl border border-sky-900 text-sky-100 text-sm shadow-inner backdrop-blur-sm"></div>
+                    <div id="explanation-box" class="hidden mt-6 bg-sky-950/50 p-5 rounded-xl border border-sky-900 text-sky-100 text-sm shadow-inner"></div>
                 </div>
             `;
-
-            startTimer(20, () => handleQuizAnswer(-1, correctIndex, qData.exp));
+            startTimer(25, () => handleQuizAnswer(-1, cIdx, q.exp));
         }
 
-        function handleQuizAnswer(selectedIndex, correctIndex, explanation) {
+        function handleQuizAnswer(sIdx, cIdx, exp) {
             clearInterval(state.timer);
-            const quizCard = document.getElementById('quiz-card');
+            const card = document.getElementById('quiz-card');
             const expBox = document.getElementById('explanation-box');
-            
-            const buttons = quizCard.querySelectorAll('button');
-            buttons.forEach(b => b.disabled = true);
+            const btns = card.querySelectorAll('button');
+            btns.forEach(b => b.disabled = true);
 
-            if (selectedIndex === correctIndex) {
-                playSuccess();
-                state.score += 50;
-                buttons[selectedIndex].classList.replace('bg-slate-800/80', 'bg-emerald-600');
-                buttons[selectedIndex].classList.replace('border-slate-700', 'border-emerald-400');
-                buttons[selectedIndex].classList.add('text-white');
+            if (sIdx === cIdx) {
+                playSuccess(); state.score += 50;
+                btns[sIdx].className = "text-left w-full p-4 rounded-xl border border-emerald-400 bg-emerald-600 text-white flex items-center";
             } else {
-                playError();
-                state.lives -= 1;
-                quizCard.classList.add('shake');
-                
-                if (selectedIndex >= 0) {
-                    buttons[selectedIndex].classList.replace('bg-slate-800/80', 'bg-red-600/80');
-                    buttons[selectedIndex].classList.replace('border-slate-700', 'border-red-500');
-                }
-                buttons[correctIndex].classList.replace('bg-slate-800/80', 'bg-emerald-600/50');
-                buttons[correctIndex].classList.replace('border-slate-700', 'border-emerald-500');
+                playError(); state.lives--; card.classList.add('shake');
+                if (sIdx >= 0) btns[sIdx].className = "text-left w-full p-4 rounded-xl border border-red-500 bg-red-600/80 text-white flex items-center";
+                btns[cIdx].className = "text-left w-full p-4 rounded-xl border border-emerald-500 bg-emerald-600/50 text-white flex items-center";
             }
-
             expBox.classList.remove('hidden');
-            expBox.innerHTML = `<h4 class="font-bold text-sky-400 mb-1 flex items-center"><i class="fa-solid fa-microscope mr-2"></i> Kaji Ulang Taktis</h4><p class="leading-relaxed opacity-90">${explanation}</p>`;
+            expBox.innerHTML = `<h4 class="font-bold text-sky-400 mb-2"><i class="fa-solid fa-microscope mr-2"></i>Evaluasi Kasus:</h4><p class="leading-relaxed">${exp}</p>`;
             updateStats();
-
-            if (state.lives > 0) {
-                setTimeout(() => { state.currentIndex++; renderQuiz(); }, 4000);
-            }
+            if (state.lives > 0) setTimeout(() => { state.currentIndex++; renderQuiz(); }, 5000);
         }
 
-        // --- MISI 2: KEYWORD (ANAGRAM) ---
+        // --- MISI 2: KEYWORD (Dapat Diketik) ---
         function renderKeywordQuiz() {
             if(state.lives <= 0) return;
-            if (state.currentIndex >= state.questions.length) {
-                endGame(true, "Analisis luar biasa! Memori otot tangan Anda sudah siap menghadapi soal esai dosen.");
-                return;
-            }
+            if (state.currentIndex >= state.questions.length) { endGame(true, "Memori Otot Tangan Terlatih. Esai pasti lancar!"); return; }
 
             state.currentPuzzle = state.questions[state.currentIndex];
             state.userAnswerObj = [];
-            
             let letters = state.currentPuzzle.word.split('');
-            let scrambled = letters.map((l, i) => ({ letter: l, id: i }));
-            scrambled.sort(() => 0.5 - Math.random());
-            while(scrambled.map(x=>x.letter).join('') === state.currentPuzzle.word && scrambled.length > 1) {
-                scrambled.sort(() => 0.5 - Math.random());
-            }
+            let scrambled = letters.map((l, i) => ({ letter: l, id: i })).sort(() => 0.5 - Math.random());
+            while(scrambled.map(x=>x.letter).join('') === state.currentPuzzle.word && scrambled.length>1) scrambled.sort(() => 0.5 - Math.random());
             state.scrambledLetters = scrambled;
 
             container.innerHTML = `
                 <div class="w-full max-w-2xl fade-in flex flex-col items-center">
-                    <div class="w-full mb-3 flex justify-between items-end">
-                        <span class="text-purple-400 font-bold uppercase tracking-wider text-sm"><i class="fa-solid fa-keyboard mr-2"></i>Misi 2: Dekripsi Esai</span>
-                        <span class="text-slate-400 text-sm font-mono font-bold">KATA ${state.currentIndex + 1}/${state.questions.length}</span>
-                    </div>
-                    <div class="w-full h-1.5 bg-slate-800 rounded-full mb-8 overflow-hidden flex items-center">
-                        <div id="timer-bar-fill" class="h-full bg-purple-400 timer-bar" style="width: 100%;"></div>
-                    </div>
+                    <div class="w-full mb-3 flex justify-between"><span class="text-purple-400 font-bold uppercase text-sm"><i class="fa-solid fa-keyboard mr-2"></i>Misi 2: Dekripsi Esai Cepat</span><span class="text-slate-400 text-sm font-mono font-bold">KATA ${state.currentIndex + 1}/${state.questions.length}</span></div>
+                    <div class="w-full h-1.5 bg-slate-800 rounded-full mb-8"><div id="timer-bar-fill" class="h-full bg-purple-400 timer-bar" style="width:100%;"></div></div>
                     <div class="bg-slate-900 p-8 rounded-2xl border border-slate-700 shadow-xl w-full text-center relative">
                         <i class="fa-solid fa-quote-left text-4xl text-slate-800 absolute top-4 left-4"></i>
-                        <p class="text-lg md:text-xl text-slate-300 font-medium mb-10 leading-relaxed px-6 relative z-10">"${state.currentPuzzle.hint}"</p>
-                        
+                        <p class="text-lg md:text-xl text-slate-300 font-medium mb-10 leading-relaxed px-6">"${state.currentPuzzle.hint}"</p>
                         <div id="answer-slots" class="flex flex-wrap justify-center gap-2 mb-8 min-h-[50px]">
                             ${state.currentPuzzle.word.split('').map(() => `<div class="w-10 h-12 md:w-12 md:h-14 rounded-lg border-2 border-slate-700 bg-slate-950 flex items-center justify-center text-xl md:text-2xl font-bold text-white shadow-inner"></div>`).join('')}
                         </div>
-
-                        <div id="scrambled-letters" class="flex flex-wrap justify-center gap-2 md:gap-3">
-                            ${state.scrambledLetters.map((obj, i) => `<button onclick="selectLetter(${i})" id="letter-btn-${i}" class="w-10 h-12 md:w-12 md:h-14 rounded-lg bg-slate-700 hover:bg-purple-600 border border-slate-600 flex items-center justify-center text-xl font-bold text-white shadow-lg btn-game">${obj.letter}</button>`).join('')}
+                        <div id="scrambled-letters" class="flex flex-wrap justify-center gap-2">
+                            ${state.scrambledLetters.map((obj, i) => `<button onclick="selectLetter(${i})" id="letter-btn-${i}" class="w-10 h-12 md:w-12 md:h-14 rounded-lg bg-slate-700 hover:bg-purple-600 border border-slate-600 text-xl font-bold text-white shadow-lg btn-game transition-transform">${obj.letter}</button>`).join('')}
                         </div>
-                        
-                        <div class="mt-8 flex justify-center gap-4">
-                            <button onclick="resetWord()" class="px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 font-mono text-sm border border-slate-600 transition-colors"><i class="fa-solid fa-rotate-left mr-2"></i>Reset</button>
-                        </div>
+                        <p class="mt-6 text-xs text-slate-500 font-mono"><i class="fa-solid fa-keyboard"></i> Anda dapat MENGETIK langsung menggunakan KEYBOARD komputer.</p>
+                        <div class="mt-4"><button onclick="resetWord()" class="px-4 py-2 rounded-lg bg-slate-800 text-slate-300 text-sm border border-slate-600 hover:bg-slate-700">Reset / Backspace</button></div>
                     </div>
                 </div>
             `;
             startTimer(30, () => checkKeywordAnswer(true));
         }
 
-        function selectLetter(index) {
+        function selectLetter(i) {
             playClick();
-            const btn = document.getElementById(`letter-btn-${index}`);
-            if(btn.style.visibility === 'hidden') return; 
-            btn.style.visibility = 'hidden';
-            state.userAnswerObj.push({ letter: state.scrambledLetters[index].letter, id: index });
+            document.getElementById(`letter-btn-${i}`).style.visibility = 'hidden';
+            state.userAnswerObj.push({ letter: state.scrambledLetters[i].letter, id: i });
             updateAnswerSlots();
         }
 
         function resetWord() {
-            playClick();
-            state.userAnswerObj = [];
-            state.scrambledLetters.forEach((_, i) => { document.getElementById(`letter-btn-${i}`).style.visibility = 'visible'; });
+            playClick(); state.userAnswerObj = [];
+            state.scrambledLetters.forEach((_, i) => document.getElementById(`letter-btn-${i}`).style.visibility = 'visible');
             updateAnswerSlots();
         }
 
         function updateAnswerSlots() {
             const slots = document.getElementById('answer-slots').children;
             let currentWord = "";
-            for(let i = 0; i < state.currentPuzzle.word.length; i++) {
+            for(let i=0; i<state.currentPuzzle.word.length; i++) {
                 if(i < state.userAnswerObj.length) {
                     slots[i].innerText = state.userAnswerObj[i].letter;
-                    slots[i].classList.replace('border-slate-700', 'border-purple-500');
-                    slots[i].classList.replace('bg-slate-950', 'bg-purple-900/50');
+                    slots[i].className = "w-10 h-12 md:w-12 md:h-14 rounded-lg border-2 border-purple-500 bg-purple-900/50 flex items-center justify-center text-xl md:text-2xl font-bold text-white shadow-inner";
                     currentWord += state.userAnswerObj[i].letter;
                 } else {
                     slots[i].innerText = "";
-                    slots[i].classList.replace('border-purple-500', 'border-slate-700');
-                    slots[i].classList.replace('bg-purple-900/50', 'bg-slate-950');
+                    slots[i].className = "w-10 h-12 md:w-12 md:h-14 rounded-lg border-2 border-slate-700 bg-slate-950 flex items-center justify-center text-xl md:text-2xl font-bold text-white shadow-inner";
                 }
             }
             if(currentWord.length === state.currentPuzzle.word.length) checkKeywordAnswer(false, currentWord);
         }
 
-        function checkKeywordAnswer(isTimeout, userWord = "") {
+        function checkKeywordAnswer(isTimeout, word="") {
             clearInterval(state.timer);
-            const isCorrect = userWord === state.currentPuzzle.word;
+            const isCorrect = word === state.currentPuzzle.word;
             const slots = document.getElementById('answer-slots').children;
             document.querySelectorAll('[id^="letter-btn-"]').forEach(b => b.disabled = true);
 
             if(isCorrect) {
-                playSuccess();
-                state.score += 150;
-                for(let slot of slots) { slot.classList.replace('border-purple-500', 'border-emerald-400'); slot.classList.replace('bg-purple-900/50', 'bg-emerald-600'); }
+                playSuccess(); state.score += 100;
+                for(let s of slots) s.className = "w-10 h-12 md:w-12 md:h-14 rounded-lg border-2 border-emerald-400 bg-emerald-600 flex items-center justify-center text-xl md:text-2xl font-bold text-white shadow-inner";
             } else {
-                playError();
-                state.lives -= 1;
-                document.getElementById('answer-slots').parentElement.classList.add('shake');
+                playError(); state.lives--; document.getElementById('answer-slots').parentElement.classList.add('shake');
                 for(let i=0; i<slots.length; i++) {
                     slots[i].innerText = state.currentPuzzle.word[i];
-                    slots[i].className = "w-10 h-12 md:w-12 md:h-14 rounded-lg border-2 border-red-500 bg-red-900/80 flex items-center justify-center text-xl font-bold text-white";
+                    slots[i].className = "w-10 h-12 md:w-12 md:h-14 rounded-lg border-2 border-red-500 bg-red-900/80 flex items-center justify-center text-xl md:text-2xl font-bold text-white shadow-inner";
                 }
             }
             updateStats();
@@ -524,10 +443,7 @@
         // --- MISI 3: MORSE ---
         function startNextMorseWord() {
             if(state.lives <= 0) return;
-            if (state.currentIndex >= state.questions.length) {
-                endGame(true, "Misi Sandi Berhasil! Anda sudah hafal kode Morse di luar kepala.");
-                return;
-            }
+            if(state.currentIndex >= state.questions.length) { endGame(true, "Refleks Morse Sempurna. Anda telah menguasai metode substitusi."); return; }
             state.currentMorseWord = state.questions[state.currentIndex];
             state.currentMorseCharIndex = 0;
             state.currentMorseInput = "";
@@ -537,142 +453,90 @@
         function renderMorseBoard() {
             if(state.lives <= 0) return;
             container.innerHTML = `
-                <div class="w-full max-w-md flex flex-col items-center fade-in">
-                    <div class="w-full mb-3 flex justify-between items-end">
-                        <span class="text-amber-400 font-bold uppercase tracking-wider text-sm"><i class="fa-solid fa-tower-cell mr-2"></i>Misi 3: Telegraf</span>
-                        <span class="text-slate-400 text-sm font-mono font-bold">KATA ${state.currentIndex + 1}/${state.questions.length}</span>
-                    </div>
-
-                    <div class="w-full h-1.5 bg-slate-800 rounded-full mb-6 overflow-hidden flex items-center">
-                        <div id="timer-bar-fill" class="h-full bg-amber-400 timer-bar" style="width: 100%;"></div>
-                    </div>
-
-                    <div class="w-full bg-slate-900 rounded-2xl p-6 border border-slate-700 shadow-xl mb-6 relative">
+                <div class="w-full max-w-md flex flex-col items-center">
+                    <div class="w-full mb-3 flex justify-between items-end"><span class="text-amber-400 font-bold uppercase text-sm"><i class="fa-solid fa-tower-cell mr-2"></i>Misi 3: CW Morse</span><span class="text-slate-400 text-sm font-mono font-bold">KATA ${state.currentIndex + 1}/${state.questions.length}</span></div>
+                    <div class="w-full h-1.5 bg-slate-800 rounded-full mb-6"><div id="timer-bar-fill" class="h-full bg-amber-400 timer-bar" style="width:100%;"></div></div>
+                    <div class="w-full bg-slate-900 rounded-2xl p-6 border border-slate-700 shadow-xl mb-6">
                         <div class="text-center mb-3 text-slate-500 font-mono text-xs font-bold tracking-widest">CIPHERTEXT (KIRIM VIA MORSE):</div>
                         <div class="flex justify-center space-x-3 text-4xl font-black tracking-widest mb-6 font-mono">
                             ${state.currentMorseWord.split('').map((c, i) => `<span class="${i === state.currentMorseCharIndex ? 'text-amber-400 border-b-4 border-amber-400 pb-1 scale-110 drop-shadow-[0_0_8px_rgba(251,191,36,0.8)]' : (i < state.currentMorseCharIndex ? 'text-emerald-600 opacity-50' : 'text-slate-300')}">${c}</span>`).join('')}
                         </div>
-                        
-                        <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 h-28 flex flex-col justify-center items-center shadow-inner relative overflow-hidden">
+                        <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 h-28 flex flex-col justify-center items-center shadow-inner relative">
                             <div class="text-[10px] text-slate-600 absolute top-2 left-3 font-mono">SINYAL INPUT:</div>
                             <div id="morse-input-display" class="text-5xl morse-font text-white tracking-[0.2em] font-bold h-12 flex items-center justify-center"></div>
                         </div>
-
                         <div id="hint-box" class="mt-5 text-center text-sm font-mono font-bold h-8 transition-all flex justify-center items-center opacity-0"></div>
                     </div>
-
                     <div class="flex w-full space-x-4">
-                        <button id="btn-dot" onclick="handleMorseInput('.')" class="flex-1 bg-slate-800 hover:bg-slate-700 active:bg-amber-600 text-white rounded-2xl h-36 border-b-[6px] border-slate-950 active:border-b-0 active:translate-y-[6px] transition-all flex flex-col items-center justify-center shadow-lg relative group">
-                            <span class="text-6xl font-black mb-1 leading-none text-slate-200">.</span>
-                            <span class="text-[10px] font-mono text-amber-500/70 uppercase tracking-widest mt-2">Titik / A,I,U,E</span>
-                            <span class="absolute bottom-2 text-[9px] text-slate-600 hidden md:block">Panah Kiri</span>
+                        <button id="btn-dot" onclick="handleMorseInput('.')" class="flex-1 bg-slate-800 active:bg-amber-600 text-white rounded-2xl h-36 border-b-[6px] border-slate-950 active:border-b-0 active:translate-y-[6px] transition-all flex flex-col items-center justify-center shadow-lg relative group">
+                            <span class="text-6xl font-black mb-1 leading-none text-slate-200">.</span><span class="text-[10px] font-mono text-amber-500/70 uppercase tracking-widest mt-2">A,I,U,E</span><span class="absolute bottom-2 text-[9px] text-slate-600">Panah Kiri</span>
                         </button>
-                        <button id="btn-dash" onclick="handleMorseInput('-')" class="flex-1 bg-slate-800 hover:bg-slate-700 active:bg-amber-600 text-white rounded-2xl h-36 border-b-[6px] border-slate-950 active:border-b-0 active:translate-y-[6px] transition-all flex flex-col items-center justify-center shadow-lg relative group">
-                            <span class="text-6xl font-black mb-1 leading-none text-slate-200">-</span>
-                            <span class="text-[10px] font-mono text-amber-500/70 uppercase tracking-widest mt-2">Garis / Vokal O</span>
-                            <span class="absolute bottom-2 text-[9px] text-slate-600 hidden md:block">Panah Kanan</span>
+                        <button id="btn-dash" onclick="handleMorseInput('-')" class="flex-1 bg-slate-800 active:bg-amber-600 text-white rounded-2xl h-36 border-b-[6px] border-slate-950 active:border-b-0 active:translate-y-[6px] transition-all flex flex-col items-center justify-center shadow-lg relative group">
+                            <span class="text-6xl font-black mb-1 leading-none text-slate-200">-</span><span class="text-[10px] font-mono text-amber-500/70 uppercase tracking-widest mt-2">Vokal O</span><span class="absolute bottom-2 text-[9px] text-slate-600">Panah Kanan</span>
                         </button>
                     </div>
                 </div>
             `;
-            document.onkeydown = handleKeyPress;
-            startTimer(8, () => handleMorseFail()); // 8 detik per huruf
-        }
-
-        function handleKeyPress(e) {
-            if(state.lives <= 0) return;
-            if (e.key === 'ArrowLeft' || e.key === '.') {
-                const btn = document.getElementById('btn-dot');
-                if(btn) { btn.classList.add('bg-amber-600', 'translate-y-[6px]', 'border-b-0'); handleMorseInput('.'); setTimeout(() => btn.classList.remove('bg-amber-600', 'translate-y-[6px]', 'border-b-0'), 100); }
-            } else if (e.key === 'ArrowRight' || e.key === '-') {
-                const btn = document.getElementById('btn-dash');
-                if(btn) { btn.classList.add('bg-amber-600', 'translate-y-[6px]', 'border-b-0'); handleMorseInput('-'); setTimeout(() => btn.classList.remove('bg-amber-600', 'translate-y-[6px]', 'border-b-0'), 100); }
-            }
+            startTimer(8, () => handleMorseFail());
         }
 
         function handleMorseInput(char) {
             if(state.lives <= 0) return;
-            if (char === '.') playDot(); else playDash();
-
+            char === '.' ? playDot() : playDash();
             state.currentMorseInput += char;
-            const display = document.getElementById('morse-input-display');
-            if(display) display.innerText = state.currentMorseInput;
+            document.getElementById('morse-input-display').innerText = state.currentMorseInput;
 
-            const targetChar = state.currentMorseWord[state.currentMorseCharIndex];
-            const targetMorse = morseDictionary[targetChar].morse;
+            const tChar = state.currentMorseWord[state.currentMorseCharIndex];
+            const tMorse = morseDictionary[tChar].morse;
 
-            if (targetMorse === state.currentMorseInput) {
+            if (tMorse === state.currentMorseInput) {
                 clearInterval(state.timer);
-                document.onkeydown = null; 
-                playSuccess();
-                state.score += 50;
-                updateStats();
-                if(display) display.classList.replace('text-white', 'text-amber-400');
-                
+                playSuccess(); state.score += 50; updateStats();
+                document.getElementById('morse-input-display').classList.replace('text-white', 'text-amber-400');
                 setTimeout(() => {
-                    state.currentMorseInput = "";
-                    state.currentMorseCharIndex++;
-                    if (state.currentMorseCharIndex >= state.currentMorseWord.length) {
-                        state.currentIndex++; startNextMorseWord();
-                    } else { renderMorseBoard(); }
+                    state.currentMorseInput = ""; state.currentMorseCharIndex++;
+                    if(state.currentMorseCharIndex >= state.currentMorseWord.length) { state.currentIndex++; startNextMorseWord(); }
+                    else renderMorseBoard();
                 }, 400);
-
-            } else if (!targetMorse.startsWith(state.currentMorseInput)) {
+            } else if (!tMorse.startsWith(state.currentMorseInput)) {
                 handleMorseFail();
             }
         }
 
         function handleMorseFail() {
             clearInterval(state.timer);
-            document.onkeydown = null;
-            playError();
-            state.lives -= 1;
-            
+            playError(); state.lives--;
             if (state.lives <= 0) { updateStats(); return; }
             updateStats();
 
             const display = document.getElementById('morse-input-display');
-            if (display) {
-                display.classList.replace('text-white', 'text-red-500');
-                display.parentElement.parentElement.classList.add('shake');
-            }
+            if(display) { display.classList.replace('text-white', 'text-red-500'); display.parentElement.parentElement.classList.add('shake'); }
             
-            const targetChar = state.currentMorseWord[state.currentMorseCharIndex];
-            const dictData = morseDictionary[targetChar];
             const hintBox = document.getElementById('hint-box');
-            
-            if (hintBox) {
-                hintBox.innerHTML = `<span class="text-slate-400 mr-2">HINT:</span> <span class="bg-amber-500/20 text-amber-300 border border-amber-500/50 px-3 py-1 rounded tracking-widest shadow-sm">${dictData.word}</span> <i class="fa-solid fa-arrow-right mx-2 text-slate-600"></i><span class="text-white text-lg tracking-[0.2em] font-bold">${dictData.morse}</span>`;
+            if(hintBox) {
+                let dict = morseDictionary[state.currentMorseWord[state.currentMorseCharIndex]];
+                hintBox.innerHTML = `<span class="bg-amber-500/20 text-amber-300 border border-amber-500/50 px-3 py-1 rounded tracking-widest shadow-sm">${dict.word}</span> <i class="fa-solid fa-arrow-right mx-2 text-slate-600"></i><span class="text-white text-lg tracking-[0.2em] font-bold">${dict.morse}</span>`;
                 hintBox.classList.remove('opacity-0'); hintBox.classList.add('opacity-100');
             }
-
             setTimeout(() => { if (state.lives > 0) { state.currentMorseInput = ""; renderMorseBoard(); } }, 3000);
         }
 
-        function endGame(isWin, winMsg = "") {
+        // --- END GAME ---
+        function endGame(isWin, winMsg="") {
             clearInterval(state.timer);
-            document.onkeydown = null;
+            document.removeEventListener('keydown', handleGlobalKeydown);
             statsHeader.classList.add('hidden');
 
-            const title = isWin ? "OPERASI BERHASIL" : "OPERASI GAGAL";
-            const titleColor = isWin ? "text-emerald-400" : "text-red-500";
-            const iconColor = isWin ? "text-emerald-500 drop-shadow-[0_0_15px_rgba(16,185,129,0.5)]" : "text-red-600 drop-shadow-[0_0_15px_rgba(220,38,38,0.5)]";
-            const icon = isWin ? "fa-shield-check" : "fa-triangle-exclamation";
-            let message = isWin ? winMsg : "Pemahaman Anda hancur karena tekanan waktu. Coba simulasi ulang untuk melatih mental Anda!";
-
             container.innerHTML = `
-                <div class="text-center w-full max-w-md bg-slate-900/90 p-8 rounded-2xl border border-slate-700 shadow-2xl backdrop-blur-sm fade-in">
-                    <div class="text-7xl mb-6 ${iconColor}"><i class="fa-solid ${icon}"></i></div>
-                    <h2 class="text-3xl font-black mb-3 ${titleColor} tracking-tight">${title}</h2>
-                    <p class="text-slate-300 mb-8 leading-relaxed">${message}</p>
-                    <div class="bg-slate-950 p-5 rounded-xl border border-slate-800 mb-8 shadow-inner relative overflow-hidden">
-                        <div class="absolute -right-4 -bottom-4 text-6xl text-slate-800/30 opacity-50"><i class="fa-solid fa-star"></i></div>
-                        <div class="text-xs text-slate-500 font-mono font-bold mb-1 tracking-widest">SKOR AKHIR</div>
+                <div class="text-center w-full max-w-md bg-slate-900/90 p-8 rounded-2xl border border-slate-700 shadow-2xl backdrop-blur-sm">
+                    <div class="text-7xl mb-6 ${isWin ? 'text-emerald-400' : 'text-red-500'}"><i class="fa-solid ${isWin ? 'fa-shield-check' : 'fa-triangle-exclamation'}"></i></div>
+                    <h2 class="text-3xl font-black mb-3 ${isWin ? 'text-emerald-400' : 'text-red-500'} tracking-tight">${isWin ? 'OPERASI BERHASIL' : 'OPERASI GAGAL'}</h2>
+                    <p class="text-slate-300 mb-8">${isWin ? winMsg : 'Pemahaman hancur karena tekanan. Sistem anti-curang menyala. Simulasi diulang!'}</p>
+                    <div class="bg-slate-950 p-5 rounded-xl border border-slate-800 mb-8 shadow-inner relative">
+                        <div class="text-xs text-slate-500 font-mono font-bold tracking-widest">SKOR AKHIR</div>
                         <div class="text-5xl font-black text-white font-mono">${state.score}</div>
                     </div>
-                    <button onclick="renderMenu()" class="w-full py-4 bg-sky-600 hover:bg-sky-500 text-white font-bold rounded-xl text-lg shadow-[0_0_15px_rgba(2,132,199,0.4)] transition-all btn-game flex items-center justify-center">
-                        <i class="fa-solid fa-satellite-dish mr-2"></i> KEMBALI KE PANGKALAN
-                    </button>
+                    <button onclick="renderMenu()" class="w-full py-4 bg-sky-600 hover:bg-sky-500 text-white font-bold rounded-xl text-lg transition-all btn-game">KEMBALI KE PANGKALAN</button>
                 </div>
             `;
         }
