@@ -96,79 +96,567 @@
     <script>
         /* ================= DATABASE STUDI KASUS MEGA ================= */
         // Format: [Skenario Kasus, Jawaban Benar, Distractor 1, Distractor 2, Distractor 3, Penjelasan Pembahasan]
-        const rawDatabase = [
-            // KASUS: HT & SPEKTRUM
-            ["Tim lapangan menyetel receiver HT pada 461,000 MHz untuk melacak musuh di 461,150 MHz, namun gagal. Ketika digeser ke 461,145 MHz, suara musuh samar-samar terdengar. Mengapa fenomena di 461,145 MHz ini terjadi?", "Sirkuit penerima HT tidak bekerja pada satu titik presisi, melainkan memiliki filter dengan batas toleransi bandwidth sekitar ±5 kHz.", "Sinyal musuh memantul dari ionosfer dan menurunkan frekuensinya sebesar 5 kHz.", "Sistem HT otomatis mengenkripsi sinyal jika meleset dari center frequency.", "Fitur Frequency Hopping musuh kebetulan mendarat di 461,145 MHz pada detik tersebut.", "Toleransi filter HT (±5 kHz) masih mampu merespons sinyal yang berdekatan dengan center frequency, meski demodulasi tidak sempurna (noisy)."],
-            ["Berapakah selisih matematis jika Anda keliru memasukkan 461 MHz sebagai ganti 461,150 MHz, dan apa dampaknya?", "150 kHz; menyebabkan HT penerima benar-benar berada di luar kanal komunikasi aktual sehingga gagal menyadap.", "15 kHz; suara akan terdengar sangat pelan.", "150 MHz; merusak antena pemancar secara fisik.", "1,5 MHz; memicu sistem jammer otomatis bekerja.", "461 MHz berarti 461,000 MHz. Selisih 0,150 MHz = 150 kHz. Sangat fatal untuk komunikasi radio narrowband."],
-            ["Sumbu X dan Sumbu Y pada layar Spectrum Analyzer secara berurutan mengukur parameter apa?", "Sumbu X = Frekuensi (Hz), Sumbu Y = Kekuatan Sinyal (Amplitudo/dBm).", "Sumbu X = Waktu (Detik), Sumbu Y = Frekuensi (Hz).", "Sumbu X = Frekuensi (Hz), Sumbu Y = Waktu (Detik).", "Sumbu X = Tegangan (Volt), Sumbu Y = Panjang Gelombang (Meter).", "Spectrum Analyzer adalah domain frekuensi. Waktu tidak ditampilkan sebagai sumbu utama, melainkan direkam di fitur Waterfall."],
-            
-            // KASUS: SDR & ZADIG
-            ["Anda mencolokkan RTL-SDR ke laptop untuk praktikum, namun aplikasi SDR++ menolak mendeteksi hardware. Langkah krusial apa dalam arsitektur SDR yang terlewatkan?", "Mengganti driver bawaan pabrik (DVB-T) menjadi driver generik WinUSB menggunakan utilitas Zadig.", "Memasang power amplifier tambahan di antara antena dan dongle SDR.", "Mendekripsi sinyal menggunakan Wireshark sebelum membuka SDR++.", "Menyalakan fitur Anti-Jamming di pengaturan Windows.", "Hardware SDR murah terdeteksi sebagai TV Tuner. Zadig mutlak diperlukan untuk membajak driver tersebut agar bisa ditarik data mentah RF-nya."],
-            ["Aplikasi SDR++ dan Airspy digunakan untuk menangkap sinyal Military Satellite Band di 251.600 MHz. SDR++ lebih direkomendasikan karena?", "Memiliki arsitektur software yang lebih efisien dalam meminimalisir distorsi proses demodulasi digital ke audio analog.", "Aplikasi tersebut bersifat open source militer yang sudah terintegrasi fitur dekripsi AES-256.", "Mampu memancarkan (Transmit) sinyal jamming hingga 500 Watt.", "Ukurannya ringan sehingga tidak menggunakan RAM komputer sama sekali.", "Efisiensi arsitektur software SDR++ terbukti menghasilkan kualitas audio yang lebih jernih (less noise) dibanding kompetitor."],
-            
-            // KASUS: 3 DOMAIN & OODA LOOP (POISEL)
-            ["Komandan brigade gagal memberikan perintah mundur karena serangan Noise Jamming musuh yang membutakan layar radar dan radio. Dalam Teori 3 Domain Konflik (Poisel), urutan dampak serangan ini adalah:", "Physical (Antena tertabrak gelombang) -> Information (SNR dan data rusak) -> Cognitive (Komandan kehilangan Situational Awareness).", "Information (Sinyal rusak) -> Cognitive (Antena rusak) -> Physical (Komandan panik).", "Cognitive (Radar buta) -> Physical (Sandi bocor) -> Information (Data hilang).", "Physical (Sinyal disadap) -> Cognitive (Enkripsi dijebol) -> Information (HT meledak).", "Serangan EA menghantam alat fisik, merusak kualitas informasi (SNR), yang berujung kebutaan pengambilan keputusan di otak komandan (Kognitif)."],
-            ["Musuh mengandalkan taktik Deception (Mimicry) dengan mengirimkan transmisi radio palsu yang meniru suara komandan kita. Ini berbeda dengan Jamming biasa karena?", "Deception menyusupkan informasi palsu seolah-olah valid untuk menipu komandan, bukan sekadar membanjiri frekuensi dengan derau (noise).", "Deception dilakukan untuk merusak komponen ADC di dalam perangkat SDR.", "Deception tidak membutuhkan daya listrik untuk memancarkan sinyal.", "Deception meretas sistem secara fisik dari jarak dekat.", "Deception (Korupsi Informasi) menargetkan otak komandan (Kognitif) untuk membuat keputusan salah, bukan sekadar Denial of Service."],
-            ["Dalam siklus OODA Loop (Boyd), tahap mana yang disebut sebagai 'schwerpunkt' atau titik fokus yang paling analitis tempat informasi baru diintegrasikan dengan pengetahuan lama?", "Orientation (Orientasi)", "Observation (Observasi)", "Decision (Keputusan)", "Action (Tindakan)", "Orientation adalah tahap paling kompleks (mencakup identifikasi, interpretasi, dan pembuatan opsi) di mana data mentah diubah menjadi pemahaman."],
-            ["Sebuah komando menerima laporan intelijen yang berlawanan dengan ekspektasi atau harapannya, lalu ia sengaja salah mengartikan laporan tersebut agar hatinya tenang. Dalam konteks OODA Loop, ini disebut:", "Self-Deception (Penipuan diri) untuk mengurangi Disonansi Kognitif.", "Passive Denial (Penolakan pasif) terhadap strategi lawan.", "Spoofing (Pemalsuan) oleh agen ganda.", "Active Mimicry (Peniruan aktif) dari radio lawan.", "Self-Deception terjadi di tahap Orientasi, di mana komandan menipu dirinya sendiri untuk mengurangi ketidaknyamanan psikologis (cognitive dissonance)."],
-            
-            // KASUS: JAMMER, DRONE & TAKTIK
-            ["Tim Anda memasang Ground Jammer dengan antena setinggi 3 meter untuk melumpuhkan radio pemberontak di balik bukit (Northeast Asia Terrain). Serangan EA ini gagal. Mengapa?", "Gelombang VHF/UHF merambat Line-of-Sight, bukit menjadi penghalang fisik yang melemahkan energi jamming sebelum mencapai target.", "Jammer 3 meter menghasilkan Ground Wave yang terserap tanah.", "Pemberontak otomatis meretas jammer kita dengan SDR.", "Efek Doppler memantulkan sinyal jammer kembali ke pemancar kita.", "Bukit merintangi sinyal. Solusi terbaik adalah Airborne Jammer (menggunakan Drone/UAS) untuk mendapatkan jangkauan LOS yang bersih dari atas."],
-            ["Apa dilema terbesar (kelemahan taktis) jika komandan memutuskan menggunakan Barrage Jamming berdaya tinggi di tengah operasi infanteri?", "Daya rusak jammer tidak pandang bulu, sangat berisiko memutus komunikasi radio pasukan kita sendiri (Friendly Fire / Fratricide).", "Barrage jamming akan menguras aki kendaraan tempur dalam 3 menit.", "Jammer tersebut akan langsung hancur jika terkena air hujan.", "Membuat posisi komandan terlihat di citra satelit termal.", "Barrage Jammer RF memancarkan noise ke rentang frekuensi luas. Jika tidak dikontrol, radio kawan akan ikut tenggelam dalam derau."],
-            ["Prinsip dasar fisika dari serangan Jammer Spot untuk melakukan Denial of Service (DoS) pada receiver lawan adalah:", "Memancarkan derau kuat tepat di frekuensi lawan agar nilai Signal-to-Noise Ratio (SNR) lawan menurun drastis hingga informasi asli tak terbaca.", "Memancarkan virus logika (Subversion) ke dalam memori HT lawan.", "Mengkonsletkan baterai HT lawan menggunakan gelombang pendek.", "Mengubah frekuensi transmisi lawan ke jalur yang kosong.", "Jamming bekerja layaknya 'berteriak lebih keras' di ruang yang sama, menghancurkan rasio SNR penerima."],
-            
-            // KASUS: SIGINT, ELINT, & LATENSI
-            ["Berdasarkan materi Kapita Selekta, pengumpulan data dari intersepsi gelombang radar milik lawan untuk mengidentifikasi kapabilitas sistem mereka disebut:", "ELINT (Electronic Intelligence)", "COMINT (Communication Intelligence)", "HUMINT (Human Intelligence)", "OSINT (Open Source Intelligence)", "ELINT fokus pada sinyal elektronik non-komunikasi (seperti pancaran radar), sedangkan COMINT fokus pada intersepsi suara/teks."],
-            ["Menurut slide PPT Dosen Anda, 'Dalam kriptografi, latensi adalah musuh utama. Dalam Pernika, latensi adalah ...'", "Kekalahan", "Kemenangan", "Kecepatan", "Spektrum", "Dalam pernika militer, keterlambatan sepersekian detik (latensi) dalam memproses sinyal atau OODA loop berarti kekalahan taktis."],
-            ["Untuk melindungi sinyal dari penyadapan musuh, HT tempur menggunakan metode yang melompat-lompat frekuensi ribuan kali per detik secara acak. Teknik ini disebut:", "FHSS (Frequency Hopping Spread Spectrum)", "DSSS (Direct Sequence Spread Spectrum)", "QAM (Quadrature Amplitude Modulation)", "FDMA (Frequency Division Multiple Access)", "FHSS adalah bentuk Electronic Protection (EP) utama untuk menghindari jammer (Spot) dan penyadapan."],
-            
-            // KASUS: OTP & KRIPTOGRAFI
-            ["Operator sandi menggunakan kunci OTP (One-Time Pad) yang sama dengan hari kemarin karena terburu-buru. Dari sudut pandang Kriptografi Pernika, apa akibat taktisnya?", "Status 'Perfect Secrecy' musnah. Kunci yang dipakai ulang (Key Reuse) memungkinkan musuh membongkar pola acakan via analisis statistik.", "Tidak ada masalah selama transmisi dilakukan menggunakan kode Morse Continuous Wave.", "Pesan akan terkirim dua kali lipat lebih lambat di jaringan RF.", "Sistem HT otomatis menolak pesan karena mendeteksi redundansi.", "Key Reuse (memakai kunci >1x) adalah dosa fatal OTP yang memungkinkan ciphertext dipecahkan."],
-            ["Setelah pesan 'MUNDUR' diubah via kunci acak OTP menjadi 'XQZM', pesan 'XQZM' ini ditelegrafkan menggunakan Sandi Morse via HT. Mengapa harus melalui 2 tahap ini?", "OTP melindungi kerahasiaan isi pesan. Morse (CW) menjaga keandalan transmisi menembus sinyal buruk/noise di udara.", "Karena aplikasi SDR tidak bisa membaca teks selain alfabet XQZM.", "Agar memori prosesor di HT tidak cepat penuh.", "Syarat mutlak sandi pramuka internasional.", "OTP untuk Confidentiality. Morse (Continuous Wave) sangat tangguh untuk transmisi dengan SNR rendah (Reliability)."],
+        const lessonDatabase = [
+            {
+                        "lesson": "1. Konsep & Arsitektur Pernika",
+                        "items": [
+                                    [
+                                                "Dalam esai UTS, definisi Pernika yang paling tepat adalah?",
+                                                "Operasi yang memanfaatkan teknologi elektronika dan spektrum elektromagnetik untuk memperoleh keunggulan informasi melalui deteksi, gangguan, dan perlindungan sinyal.",
+                                                "Operasi yang hanya membahas pemrograman web untuk komunikasi militer.",
+                                                "Teknik menyembunyikan pesan teks tanpa melibatkan spektrum elektromagnetik.",
+                                                "Metode menghitung panjang antena tanpa kaitan dengan operasi informasi.",
+                                                "Pernika/EW berpusat pada spektrum elektromagnetik: sinyal dapat dicari, dianalisis, diganggu, ditipu, dan dilindungi."
+                                    ],
+                                    [
+                                                "Tiga pilar utama Pernika yang harus selalu muncul dalam jawaban esai adalah?",
+                                                "Electronic Support untuk mencari/menganalisis sinyal, Electronic Attack untuk mengganggu/menipu sinyal, dan Electronic Protection untuk melindungi sinyal sendiri.",
+                                                "Encoding, Decoding, dan Routing karena semua Pernika adalah jaringan komputer.",
+                                                "Radar, Satelit, dan Drone karena hanya tiga perangkat itu yang masuk Pernika.",
+                                                "Morse, OTP, dan HT karena Pernika hanya membahas komunikasi darurat.",
+                                                "Hafalan inti: ES = cari sinyal, EA = ganggu/tipu sinyal, EP = lindungi sinyal."
+                                    ],
+                                    [
+                                                "Sebuah tim menggunakan SDR untuk mencari frekuensi aktif, kemudian memakai hasilnya untuk memahami pola komunikasi. Aktivitas ini masuk pilar apa?",
+                                                "Electronic Support (ES), karena fokusnya deteksi, scanning, intersepsi terbatas, dan analisis sinyal.",
+                                                "Electronic Attack (EA), karena semua penggunaan SDR otomatis menyerang lawan.",
+                                                "Electronic Protection (EP), karena SDR selalu mengenkripsi sinyal.",
+                                                "Kriptografi murni, karena tidak berkaitan dengan spektrum.",
+                                                "ES adalah tahap dukungan informasi: mencari, mendeteksi, mengidentifikasi, dan menganalisis sinyal."
+                                    ],
+                                    [
+                                                "Jika jammer dipakai dalam skenario laboratorium untuk menurunkan kualitas komunikasi target, pilar Pernika yang dominan adalah?",
+                                                "Electronic Attack (EA), karena jammer bertujuan mengganggu penggunaan spektrum oleh target.",
+                                                "Electronic Support (ES), karena jammer hanya membaca frekuensi.",
+                                                "Electronic Protection (EP), karena jammer melindungi isi pesan dengan sandi.",
+                                                "Open Source Intelligence, karena semua data diambil dari internet.",
+                                                "Jamming adalah contoh EA karena menyerang kanal/sinyal komunikasi."
+                                    ],
+                                    [
+                                                "Mengapa Pernika berkaitan erat dengan keunggulan informasi?",
+                                                "Karena komunikasi, radar, GPS, drone, satelit, dan sistem komando bergantung pada sinyal yang dapat dipantau, diganggu, atau dilindungi.",
+                                                "Karena Pernika hanya membahas penyimpanan data di database.",
+                                                "Karena semua perangkat elektronik tidak membutuhkan frekuensi.",
+                                                "Karena enkripsi selalu membuat sinyal tidak bisa dideteksi.",
+                                                "Spektrum adalah media aliran informasi nirkabel; menguasainya berarti memengaruhi akses informasi."
+                                    ]
+                        ]
+            },
+            {
+                        "lesson": "2. Spektrum, Gelombang, Frekuensi, dan Sinyal",
+                        "items": [
+                                    [
+                                                "Hubungan frekuensi dan panjang gelombang yang paling benar adalah?",
+                                                "Panjang gelombang berbanding terbalik dengan frekuensi, sesuai rumus λ = c/f.",
+                                                "Panjang gelombang selalu bertambah jika frekuensi bertambah.",
+                                                "Frekuensi tidak berhubungan dengan panjang gelombang.",
+                                                "Panjang gelombang hanya berlaku untuk suara, bukan gelombang elektromagnetik.",
+                                                "Jika frekuensi naik, panjang gelombang turun; jika frekuensi turun, panjang gelombang naik."
+                                    ],
+                                    [
+                                                "Dalam materi spektrum RF, rentang frekuensi radio secara umum adalah?",
+                                                "Sekitar 3 kHz sampai 300 GHz.",
+                                                "Sekitar 3 Hz sampai 300 Hz.",
+                                                "Hanya 88 MHz sampai 108 MHz.",
+                                                "Hanya 2,4 GHz sampai 5 GHz.",
+                                                "RF mencakup banyak pita, dari kHz sampai GHz, bukan hanya Wi-Fi atau FM."
+                                    ],
+                                    [
+                                                "Prinsip umum frekuensi rendah dan frekuensi tinggi dalam komunikasi adalah?",
+                                                "Frekuensi rendah cenderung lebih jauh jangkauannya, sedangkan frekuensi tinggi cenderung membawa data lebih besar tetapi jangkauannya lebih pendek.",
+                                                "Frekuensi tinggi selalu lebih jauh dan tidak terhalang apa pun.",
+                                                "Frekuensi rendah selalu membawa data lebih besar daripada frekuensi tinggi.",
+                                                "Semua frekuensi memiliki jangkauan dan kapasitas data yang sama.",
+                                                "Ini menjelaskan mengapa 2,4 GHz biasanya lebih jauh dari 5/6 GHz, tetapi 5/6 GHz bisa lebih cepat."
+                                    ],
+                                    [
+                                                "Pasangan contoh frekuensi yang paling relevan untuk catatan UTS adalah?",
+                                                "FM 88–108 MHz, HT UHF sekitar 400–520 MHz, Bluetooth/Wi-Fi 2,4 GHz, GPS sekitar 1,575 GHz.",
+                                                "FM 2,4 GHz, GPS 88 MHz, Bluetooth 461 MHz, HT 10 THz.",
+                                                "Semua perangkat radio selalu bekerja pada 1 MHz.",
+                                                "Infrared berada pada 88–108 MHz seperti radio FM.",
+                                                "Contoh frekuensi membantu menunjukkan bahwa setiap perangkat punya pita kerja yang bisa dianalisis dalam Pernika."
+                                    ],
+                                    [
+                                                "Sinyal dalam komunikasi radio dapat dipahami sebagai?",
+                                                "Informasi yang diubah menjadi bentuk fisik seperti arus listrik atau gelombang elektromagnetik agar bisa dikirim melalui frekuensi radio.",
+                                                "Benda fisik yang hanya bisa dilihat mata tanpa alat.",
+                                                "Kunci rahasia yang selalu sama dengan OTP.",
+                                                "Aplikasi software untuk mengganti driver SDR.",
+                                                "Sinyal adalah pembawa informasi; frekuensi menjadi jalur tempat sinyal itu dikirim."
+                                    ],
+                                    [
+                                                "Urutan spektrum elektromagnetik dari rendah ke tinggi yang paling tepat adalah?",
+                                                "Radio, microwave, infrared, cahaya tampak, ultraviolet, X-Ray, gamma.",
+                                                "Gamma, X-Ray, ultraviolet, radio, microwave, infrared, cahaya tampak.",
+                                                "Wi-Fi, HT, OTP, Morse, jammer, radar.",
+                                                "AM, FM, Morse, OTP, SDR, HT.",
+                                                "Urutan ini membantu membedakan RF dengan infrared dan cahaya tampak."
+                                    ]
+                        ]
+            },
+            {
+                        "lesson": "3. Scanning, Intersepsi HT, Spectrum Analyzer, dan SDR",
+                        "items": [
+                                    [
+                                                "Dalam praktikum HT, mengapa pengaturan 461 MHz tidak berhasil menerima komunikasi yang sebenarnya berada di 461,150 MHz?",
+                                                "Karena 461 MHz berarti 461,000 MHz, sehingga berbeda 150 kHz dari frekuensi aktual dan berada di luar kanal yang benar.",
+                                                "Karena semua HT otomatis berubah menjadi mode enkripsi saat disetel ke 461 MHz.",
+                                                "Karena 461 MHz adalah frekuensi infrared, bukan radio.",
+                                                "Karena spectrum analyzer hanya bisa membaca Wi-Fi.",
+                                                "461,150 MHz harus dibaca teliti; selisih 150 kHz sangat besar untuk komunikasi narrowband HT."
+                                    ],
+                                    [
+                                                "Mengapa komunikasi masih dapat terdengar pada 461,145–461,155 MHz?",
+                                                "Karena penerima HT memiliki bandwidth dan filter penerimaan sekitar ±5 kHz dari frekuensi pusat 461,150 MHz.",
+                                                "Karena sinyal otomatis dipindahkan oleh satelit ke frekuensi terdekat.",
+                                                "Karena semua frekuensi 461 MHz sampai 462 MHz adalah satu kanal yang sama.",
+                                                "Karena OTP memperlebar frekuensi penerima.",
+                                                "Receiver tidak hanya menerima satu titik matematis; ada toleransi filter/bandwidth."
+                                    ],
+                                    [
+                                                "Fungsi spectrum analyzer dalam praktikum HT adalah?",
+                                                "Melihat kekuatan sinyal terhadap frekuensi untuk menemukan puncak aktivitas dan menentukan frekuensi kerja komunikasi.",
+                                                "Mengubah plaintext menjadi ciphertext menggunakan kunci OTP.",
+                                                "Mengirim sinyal jammer secara otomatis ke semua kanal.",
+                                                "Mengganti driver RTL-SDR dari DVB-T ke WinUSB.",
+                                                "Spectrum analyzer bekerja di domain frekuensi: X = frekuensi, Y = amplitude/level sinyal."
+                                    ],
+                                    [
+                                                "Perbedaan utama spectrum analyzer dan SDR dalam konteks praktikum adalah?",
+                                                "Spectrum analyzer fokus sebagai alat ukur spektrum, sedangkan SDR adalah receiver radio berbasis software yang dapat menampilkan spektrum, waterfall, dan demodulasi.",
+                                                "Spectrum analyzer adalah enkripsi, SDR adalah sandi Morse.",
+                                                "Spectrum analyzer hanya untuk menulis laporan, SDR hanya untuk menghitung OTP.",
+                                                "Keduanya sama-sama tidak berhubungan dengan sinyal RF.",
+                                                "Keduanya mendukung ES, tetapi peran praktisnya berbeda."
+                                    ],
+                                    [
+                                                "Mengapa Zadig/WinUSB penting dalam praktikum RTL-SDR?",
+                                                "Karena driver bawaan perlu diganti ke WinUSB agar dongle terbaca sebagai perangkat SDR oleh software seperti SDR++.",
+                                                "Karena Zadig berfungsi sebagai antena UHF tambahan.",
+                                                "Karena WinUSB adalah algoritma OTP untuk pesan Morse.",
+                                                "Karena Zadig mengubah frekuensi HT menjadi Wi-Fi.",
+                                                "Tanpa driver yang sesuai, software SDR dapat gagal mendeteksi dongle."
+                                    ],
+                                    [
+                                                "Pada SDR, waterfall paling tepat dipahami sebagai?",
+                                                "Tampilan riwayat aktivitas sinyal terhadap waktu, sehingga sinyal aktif terlihat sebagai jejak yang bergerak.",
+                                                "Rumus menghitung panjang gelombang dari frekuensi.",
+                                                "Tabel kunci OTP untuk mengubah plaintext.",
+                                                "Jenis jamming yang menyapu semua frekuensi.",
+                                                "Spectrum menunjukkan sinyal terhadap frekuensi; waterfall menambahkan dimensi waktu."
+                                    ],
+                                    [
+                                                "Dalam scanning dan intersepsi praktikum, batas etis yang paling tepat adalah?",
+                                                "Hanya memantau komunikasi sendiri atau skenario laboratorium berizin, bukan komunikasi pihak lain tanpa izin.",
+                                                "Bebas memantau semua komunikasi radio selama bisa ditangkap SDR.",
+                                                "Intersepsi selalu legal jika dilakukan untuk latihan pribadi.",
+                                                "Semua komunikasi radio boleh direkam dan disebarkan.",
+                                                "Praktikum harus legal, terbatas, dan berizin agar tidak melanggar privasi atau aturan spektrum."
+                                    ]
+                        ]
+            },
+            {
+                        "lesson": "4. Proteksi Sinyal, Jamming, Spoofing, dan EP",
+                        "items": [
+                                    [
+                                                "Prinsip dasar jamming pada komunikasi radio adalah?",
+                                                "Memancarkan gangguan/interferensi sehingga SNR turun dan penerima sulit membedakan sinyal asli dari noise.",
+                                                "Mengubah huruf plaintext menjadi titik dan garis.",
+                                                "Memperbaiki driver SDR agar terbaca di laptop.",
+                                                "Membuat semua pesan otomatis terenkripsi.",
+                                                "Jamming menyerang media transmisi/sinyal, bukan langsung membaca isi pesan."
+                                    ],
+                                    [
+                                                "Perbedaan inti jamming dan spoofing adalah?",
+                                                "Jamming melemahkan atau memutus komunikasi, sedangkan spoofing menipu penerima dengan sinyal palsu yang tampak valid.",
+                                                "Jamming adalah enkripsi, spoofing adalah dekripsi.",
+                                                "Jamming hanya dipakai untuk Morse, spoofing hanya dipakai untuk OTP.",
+                                                "Keduanya sama persis dan tidak ada perbedaan konsep.",
+                                                "Jamming bersifat deny; spoofing bersifat deceive."
+                                    ],
+                                    [
+                                                "Contoh paling tepat dari GPS spoofing adalah?",
+                                                "Mengirim sinyal navigasi palsu agar penerima salah membaca posisi, waktu, atau arah.",
+                                                "Menambah noise acak sehingga seluruh spektrum menjadi putih.",
+                                                "Mengganti driver USB pada dongle SDR.",
+                                                "Mengubah sandi Morse menjadi alfabet.",
+                                                "Spoofing tidak sekadar mengganggu; ia membuat penerima percaya data palsu."
+                                    ],
+                                    [
+                                                "Teknik EP yang paling tepat untuk mengurangi efek spot jamming adalah?",
+                                                "Frequency hopping atau spread spectrum agar komunikasi tidak menetap pada satu frekuensi yang mudah dijam.",
+                                                "Menggunakan kunci OTP yang sama berkali-kali.",
+                                                "Mematikan semua filter receiver agar semua noise diterima.",
+                                                "Mengubah Morse menjadi plaintext tanpa enkripsi.",
+                                                "EP bertugas mempertahankan komunikasi: hopping, spread spectrum, antena directional, dan disiplin komunikasi."
+                                    ],
+                                    [
+                                                "Apa beda jamming dan enkripsi dalam satu kalimat?",
+                                                "Jamming membuat pesan sulit sampai, sedangkan enkripsi membuat isi pesan sulit dipahami pihak yang tidak berhak.",
+                                                "Jamming dan enkripsi sama-sama mengubah huruf menjadi Morse.",
+                                                "Enkripsi selalu mencegah jammer menurunkan SNR.",
+                                                "Jamming adalah cara resmi mendekripsi OTP.",
+                                                "Pesan terenkripsi tetap bisa gagal diterima jika kanalnya terkena jamming."
+                                    ],
+                                    [
+                                                "Indikasi teknis yang bisa mengarah pada jamming adalah?",
+                                                "Noise floor naik, SNR turun, komunikasi tiba-tiba hilang, receiver kehilangan lock, atau AGC naik tidak wajar.",
+                                                "Kunci OTP menjadi lebih panjang dari plaintext.",
+                                                "Tabel Morse berubah urutan alfabetnya.",
+                                                "Frekuensi berubah menjadi satuan meter.",
+                                                "Jamming biasanya tampak sebagai peningkatan gangguan atau energi asing pada kanal."
+                                    ],
+                                    [
+                                                "Apa risiko taktis barrage jamming jika tidak dikendalikan?",
+                                                "Dapat mengganggu komunikasi kawan sendiri karena gangguan disebar ke rentang frekuensi yang lebar.",
+                                                "Selalu membuat komunikasi kawan lebih jernih.",
+                                                "Otomatis mendekripsi pesan lawan.",
+                                                "Mengubah Wi-Fi menjadi infrared.",
+                                                "Barrage jamming luas dan boros; tanpa manajemen frekuensi bisa menyebabkan fratricide komunikasi."
+                                    ]
+                        ]
+            },
+            {
+                        "lesson": "5. Morse Berbasis HT dan Komunikasi Darurat",
+                        "items": [
+                                    [
+                                                "Dalam praktikum, peran Morse yang paling tepat adalah?",
+                                                "Sebagai kode pengiriman titik-garis untuk menyampaikan ciphertext, bukan sebagai pengaman utama isi pesan.",
+                                                "Sebagai algoritma enkripsi sempurna yang menggantikan OTP.",
+                                                "Sebagai driver agar RTL-SDR terbaca di SDR++.",
+                                                "Sebagai jammer untuk menurunkan SNR lawan.",
+                                                "Morse mengubah karakter menjadi titik/garis; kerahasiaan dijaga oleh OTP."
+                                    ],
+                                    [
+                                                "Titik dan garis dalam Morse secara konsep berarti?",
+                                                "Titik/dot/dit adalah sinyal pendek, sedangkan garis/dash/dah adalah sinyal panjang.",
+                                                "Titik adalah frekuensi UHF, garis adalah frekuensi VHF.",
+                                                "Titik adalah ciphertext, garis adalah plaintext.",
+                                                "Titik adalah receiver, garis adalah transmitter.",
+                                                "Timing titik dan garis penting agar pesan dapat dibaca benar."
+                                    ],
+                                    [
+                                                "Aturan hafalan metode vokal untuk Morse adalah?",
+                                                "O = garis, sedangkan A/I/U/E = titik.",
+                                                "O = titik, sedangkan A/I/U/E = garis.",
+                                                "Semua vokal selalu garis.",
+                                                "Semua vokal selalu diabaikan.",
+                                                "Metode ini membantu mengingat pola seperti AnO = .- dan BOnApArtE = -...."
+                                    ],
+                                    [
+                                                "Jika kata bantu huruf D adalah Do-mi-nan, maka kode Morse D adalah?",
+                                                "-..",
+                                                ".--",
+                                                "---",
+                                                "...",
+                                                "Do-mi-nan memiliki vokal O-I-A; O = garis, I/A = titik, sehingga D = -..."
+                                    ],
+                                    [
+                                                "Pola angka Morse 1 sampai 5 yang benar adalah?",
+                                                "Jumlah titik bertambah dari kiri sampai 5 menjadi semua titik.",
+                                                "Jumlah garis bertambah dari kiri sampai 5 menjadi semua garis.",
+                                                "Semua angka selalu sama dengan huruf E.",
+                                                "Angka tidak memiliki kode Morse.",
+                                                "1 = .----, 2 = ..---, 3 = ...--, 4 = ....-, 5 = ....."
+                                    ],
+                                    [
+                                                "Pola angka Morse 6 sampai 0 yang benar adalah?",
+                                                "Jumlah garis bertambah dari kiri sampai 0 menjadi semua garis.",
+                                                "Jumlah titik bertambah dari kiri seperti angka 1 sampai 5.",
+                                                "Semua angka 6 sampai 0 memakai satu simbol saja.",
+                                                "Angka 0 tidak ada dalam Morse.",
+                                                "6 = -...., 7 = --..., 8 = ---.., 9 = ----., 0 = -----"
+                                    ],
+                                    [
+                                                "Dalam prosedur Morse, mengapa jeda antar simbol/huruf/kata penting?",
+                                                "Karena penerima harus membedakan mana titik/garis dalam satu huruf, mana batas huruf, dan mana batas kata.",
+                                                "Karena jeda selalu menjadi kunci OTP.",
+                                                "Karena jeda mengubah frekuensi HT menjadi 5 GHz.",
+                                                "Karena tanpa jeda sinyal berubah menjadi satelit.",
+                                                "Timing dasar: dit 1 unit, dah 3 unit, jeda antar huruf 3 unit, antar kata 7 unit."
+                                    ]
+                        ]
+            },
+            {
+                        "lesson": "6. Enkripsi Sinyal dan OTP Morse",
+                        "items": [
+                                    [
+                                                "Dalam praktikum OTP Morse, urutan proses yang benar adalah?",
+                                                "Plaintext -> enkripsi OTP -> ciphertext -> Morse -> dikirim via HT -> diterima -> ciphertext -> dekripsi -> plaintext.",
+                                                "Morse -> plaintext -> jammer -> Wi-Fi -> radar.",
+                                                "Ciphertext -> plaintext tanpa kunci -> Morse -> OTP.",
+                                                "HT -> Zadig -> WinUSB -> plaintext -> radar.",
+                                                "OTP menjaga isi pesan; Morse menjadi bentuk pengiriman; HT menjadi media radio."
+                                    ],
+                                    [
+                                                "Rumus enkripsi OTP sesuai praktikum adalah?",
+                                                "C = P + K; jika hasil lebih dari 26 maka dikurangi 26.",
+                                                "P = C + K; jika hasil lebih dari 26 maka dikalikan 2.",
+                                                "C = P - K tanpa aturan penyesuaian.",
+                                                "K = C x P dan hasil selalu menjadi Morse.",
+                                                "Praktikum memakai A=1 sampai Z=26, bukan ASCII."
+                                    ],
+                                    [
+                                                "Rumus dekripsi OTP sesuai praktikum adalah?",
+                                                "P = C - K; jika hasil 0 atau negatif maka ditambah 26.",
+                                                "C = P + K dan hasil selalu dibiarkan apa adanya.",
+                                                "P = K - C lalu dikalikan frekuensi.",
+                                                "P = Morse - jammer.",
+                                                "Dekripsi membalik proses enkripsi agar ciphertext kembali menjadi plaintext."
+                                    ],
+                                    [
+                                                "Fungsi padding X dalam praktikum OTP adalah?",
+                                                "Melengkapi panjang pesan agar sesuai dengan panjang kunci atau format praktikum, bukan bagian utama isi pesan.",
+                                                "Menandai bahwa pesan terkena jamming.",
+                                                "Mengubah frekuensi HT menjadi UHF.",
+                                                "Mengganti semua huruf vokal menjadi garis.",
+                                                "Padding X perlu diperiksa saat dekripsi agar tidak dibaca sebagai isi utama."
+                                    ],
+                                    [
+                                                "Apa syarat ideal OTP agar kuat secara teori?",
+                                                "Kunci harus acak, rahasia, sepanjang pesan, dan hanya digunakan sekali.",
+                                                "Kunci boleh pendek dan dipakai ulang setiap hari.",
+                                                "Kunci harus berupa frekuensi Wi-Fi 2,4 GHz.",
+                                                "Kunci harus sama dengan tabel Morse.",
+                                                "Pemakaian ulang kunci OTP merusak keamanan karena pola dapat dianalisis."
+                                    ],
+                                    [
+                                                "Jika pesan sudah dienkripsi OTP lalu dikirim sebagai Morse, apa yang dilindungi oleh OTP?",
+                                                "Kerahasiaan isi pesan, sehingga pihak tanpa kunci tidak mudah memahami plaintext.",
+                                                "Kekuatan sinyal dari jamming.",
+                                                "Driver SDR agar terbaca di laptop.",
+                                                "Bandwidth filter HT agar menjadi ±5 kHz.",
+                                                "OTP melindungi makna pesan, bukan menjamin sinyal pasti sampai."
+                                    ]
+                        ]
+            },
+            {
+                        "lesson": "7. Operasi Terpadu, Perangkat Swakriya, Regulasi, dan Studi Kasus",
+                        "items": [
+                                    [
+                                                "Operasi Pernika terpadu dalam skenario praktikum paling tepat digambarkan sebagai?",
+                                                "ES mendeteksi sinyal, EA mengganggu/menipu sinyal pada skenario terkendali, dan EP melindungi komunikasi sendiri.",
+                                                "Semua perangkat langsung dipakai untuk menyerang tanpa analisis dan tanpa etika.",
+                                                "Hanya menghafal tabel Morse tanpa hubungan dengan sinyal RF.",
+                                                "Hanya membuat aplikasi web tanpa perangkat radio.",
+                                                "Operasi terpadu menggabungkan deteksi, aksi, dan perlindungan secara terkoordinasi."
+                                    ],
+                                    [
+                                                "Perangkat swakriya yang paling relevan untuk simulasi Pernika sesuai RPS adalah?",
+                                                "SDR/TinySA untuk analisis sinyal, LoRa/HT untuk komunikasi RF, ESP32 untuk kontrol, dan komponen jammer/proteksi pada skenario berizin.",
+                                                "Printer, scanner dokumen, dan mouse gaming.",
+                                                "Kamera selfie dan aplikasi edit foto.",
+                                                "Database SQL tanpa perangkat RF.",
+                                                "RPS menekankan perangkat keras modern untuk simulasi spektrum: SDR, TinySA, LoRa, ESP32, dan HT."
+                                    ],
+                                    [
+                                                "Mengapa etika dan regulasi penting dalam praktikum Pernika?",
+                                                "Karena spektrum radio diatur negara, intersepsi tanpa izin melanggar privasi/hukum, dan jammer bisa menimbulkan harmful interference.",
+                                                "Karena semua frekuensi bebas dipakai tanpa batas.",
+                                                "Karena jammer aman digunakan di ruang publik kapan saja.",
+                                                "Karena komunikasi pihak lain boleh direkam jika sinyalnya kuat.",
+                                                "Praktikum harus legal, terbatas, dan berizin."
+                                    ],
+                                    [
+                                                "Apa pelajaran utama dari kasus Rusia-Ukraina terkait Pernika?",
+                                                "Jamming dan spoofing terhadap GPS, datalink, drone, dan satcom menunjukkan bahwa EA dan EP selalu saling beradaptasi.",
+                                                "Drone tidak pernah menggunakan frekuensi radio atau GPS.",
+                                                "Pernika tidak relevan dalam konflik modern.",
+                                                "Semua jamming selalu berhasil permanen tanpa bisa dilawan.",
+                                                "Kasus ini cocok sebagai ilustrasi perang drone dan adaptasi proteksi sinyal."
+                                    ],
+                                    [
+                                                "Apa pelajaran dari kasus RQ-170 AS-Iran yang sering dibahas dalam konteks EW?",
+                                                "Sistem navigasi/komunikasi drone berisiko jika terkena jamming atau spoofing, sehingga perlu validasi silang seperti INS/GPS fusion dan anti-spoofing.",
+                                                "Morse dapat membuat drone otomatis mendarat.",
+                                                "Zadig dapat mengambil alih drone jarak jauh.",
+                                                "OTP selalu mencegah semua serangan RF.",
+                                                "Gunakan sebagai contoh risiko spoofing, dengan catatan detail teknisnya masih diperdebatkan."
+                                    ],
+                                    [
+                                                "Jika diminta menulis kesimpulan hubungan HT, SDR, jammer, Morse, dan OTP, jawaban terbaik adalah?",
+                                                "HT adalah media RF, SDR/spectrum analyzer mewakili ES, jammer/spoofing mewakili EA, OTP/enkripsi mewakili EP, dan Morse adalah bentuk pengiriman pesan.",
+                                                "Semua alat tersebut hanya dipakai untuk mengganti driver USB.",
+                                                "HT adalah enkripsi, SDR adalah jammer, Morse adalah GPS.",
+                                                "Tidak ada hubungan antar topik.",
+                                                "Ini adalah peta besar yang perlu muncul dalam jawaban esai."
+                                    ]
+                        ]
+            }
+];
 
-            // KASUS: MORSE & SUBSTITUSI DOSEN (VOCAL O = -, LAINNYA = .)
-            ["Apa kata substitusi untuk huruf 'D' dan bagaimana terjemahannya ke dalam sandi Morse menurut aturan Vokal O = Garis?", "Do-mi-nan -> Garis - Titik - Titik (-..)", "Do-ro-to -> Garis - Garis - Garis (---)", "Di-na-mo -> Titik - Titik - Garis (..-)", "Da-mi-na -> Titik - Titik - Titik (...)", "Do(O=Garis) - mi(I=Titik) - nan(A=Titik) menghasilkan pola Garis Titik Titik (-..)."],
-            ["Ubah singkatan 'HT' ke dalam sandi Morse menggunakan metode substitusi kata bantu Halmahera dan Ton!", "Titik Titik Titik Titik (....) / Garis (-)", "Garis Garis Garis Garis (----) / Titik (.)", "Titik Titik Garis Garis (..--) / Garis (-)", "Garis Titik Garis Titik (-.-.) / Titik (.)", "H = Hal-ma-he-ra (A,A,E,A = ....). T = Ton (O = -)."],
-            ["Tim Anda mengirimkan kode morse: Garis Titik Garis (-.-). Menurut pemenggalan suku kata, kata ganti dan huruf apakah itu?", "Ko-man-do (K)", "Ra-so-ve (R)", "Co-ba-co-ba (C)", "O-mo-to (O)", "Ko(O/-) - man(A/.) - do(O/-) = -.- (Huruf K)."],
-            ["Jika seorang telegrafis mengirimkan pola: Titik - Titik - Garis ( . . - ). Berdasarkan pemecahan suku kata, huruf apakah yang dikirimkan? (Clue: U-nes-co)", "U", "V", "W", "S", "U(u) - nes(e) - co(o) = Titik Titik Garis = U."],
-            ["Kata ganti untuk huruf C adalah 'Co-ba-co-ba'. Apa sandi morse untuk huruf tersebut?", "Garis - Titik - Garis - Titik ( - . - . )", "Titik - Garis - Titik - Garis ( . - . - )", "Garis - Garis - Titik - Titik ( - - . . )", "Titik - Titik - Garis - Garis ( . . - - )", "Co(o/-) - ba(a/.) - co(o/-) - ba(a/.) = Garis Titik Garis Titik (-.-.)."]
-        ];
+        const rawDatabase = lessonDatabase.flatMap(group => group.items);
+
+        function shuffleArray(arr) {
+            const copy = [...arr];
+            for (let i = copy.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [copy[i], copy[j]] = [copy[j], copy[i]];
+            }
+            return copy;
+        }
+
+        function buildBalancedQuiz() {
+            // Target: 7 pertemuan sebelum UTS. Diambil minimal 2 soal dari tiap pertemuan agar tidak ada materi yang hilang.
+            const selected = [];
+            const selectedKeys = new Set();
+            lessonDatabase.forEach(group => {
+                shuffleArray(group.items).slice(0, 2).forEach(item => { selected.push(item); selectedKeys.add(item[0]); });
+            });
+            const rest = shuffleArray(rawDatabase).filter(item => !selectedKeys.has(item[0]));
+            // Tambahan 2 soal random agar latihan tetap variatif, total 16 soal tanpa pengulangan.
+            rest.slice(0, 2).forEach(item => selected.push(item));
+            return shuffleArray(selected);
+        }
 
         const anagramWords = [
-            { word: "ZADIG", hint: "Aplikasi mutlak untuk me-replace driver bawaan Dongle DVB-T menjadi WinUSB di operasi SDR." },
-            { word: "HALFDUPLEX", hint: "Sistem komunikasi bergantian (1 arah pada satu waktu) yang digunakan pada operasional HT." },
-            { word: "ONETIMEPAD", hint: "Algoritma enkripsi berstatus Perfect Secrecy yang kuncinya diharamkan dipakai ulang (Key Reuse)." },
-            { word: "JAMMER", hint: "Senjata Electronic Attack (EA) untuk menurunkan Signal-to-Noise Ratio lawan di suatu frekuensi." },
-            { word: "KOGNITIF", hint: "Domain konflik tempat otak komandan memproses pemahaman taktis dan mengambil keputusan." },
-            { word: "SPEKTRUM", hint: "Lingkungan fisik tak kasat mata tempat gelombang elektromagnetik dan frekuensi dianalisis." },
-            { word: "DECEPTION", hint: "Strategi Korupsi Informasi: menyusupkan sinyal radio palsu seolah berasal dari komando asli." },
-            { word: "WATERFALL", hint: "Grafik pada aplikasi SDR (Sumbu Y = waktu) yang menampilkan jejak rekaman spektrum yang berjalan menurun." },
-            { word: "BANDWIDTH", hint: "Lebar pita. Filter toleransi pada penerima HT (misal ±5 kHz) yang menangkap 461.145 MHz ke kanal 461.150 MHz." },
-            { word: "OODALOOP", hint: "Siklus pengambilan keputusan kognitif: Observe, Orient, Decide, Act." },
-            { word: "SIGINT", hint: "Signal Intelligence: Pengumpulan data intelijen dari intersepsi gelombang radio musuh." },
-            { word: "ELINT", hint: "Electronic Intelligence: Cabang Sigint untuk menganalisis emisi non-komunikasi seperti pancaran Radar musuh." },
-            { word: "FHSS", hint: "Frequency Hopping Spread Spectrum: Teknik pertahanan (EP) dengan melompat frekuensi secara acak sangat cepat." },
-            { word: "WINUSB", hint: "Driver generik sistem operasi yang harus dipasang agar Dongle RTL-SDR dapat diretas fungsinya." },
-            { word: "BARRAGE", hint: "Jenis teknik jamming yang menyapu seluruh rentang frekuensi luas sekaligus, sangat rawan Friendly Fire." },
-            { word: "DOPPLER", hint: "Efek fisika pergeseran frekuensi akibat pergerakan, digunakan dalam teknik FDOA untuk melacak lokasi HT." },
-            { word: "TRIANGULASI", hint: "Metode mencari lokasi titik pemancar musuh menggunakan perpotongan garis LOP (Line of Position) dari beberapa arah." },
-            { word: "CIPHERTEXT", hint: "Bentuk teks pesan HT yang sudah diacak dan disandikan menggunakan kunci rahasia (OTP)." },
-            { word: "AMPLITUDO", hint: "Kekuatan sinyal gelombang radio. Pada Spectrum Analyzer direpresentasikan oleh Sumbu Y (dBm)." },
-            { word: "FRATRICIDE", hint: "Dampak fatal 'Friendly Fire' di mana Jammer kita tanpa sengaja ikut memutus komunikasi radio pasukan sendiri." },
-            { word: "LATENSI", hint: "Keterlambatan/Delay. Menurut PPT Dosen, ini adalah 'musuh utama' dalam sistem kriptografi Pernika." },
-            { word: "MODULASI", hint: "Proses teknis menumpangkan data informasi ke dalam gelombang pembawa radio (misal: FM, AM, PSK)." },
-            { word: "INTERFERENSI", hint: "Tabrakan fisik antara dua gelombang radio atau lebih di udara yang merusak SNR." },
-            { word: "SUBVERSION", hint: "Strategi serangan tingkat tinggi yang memicu proses penghancuran diri (self-destructive) pada sistem lawan." },
-            { word: "COMINT", hint: "Communication Intelligence: Intelijen hasil penyadapan suara percakapan radio HT atau data komunikasi manusia." }
-        ];
+            {
+                        "word": "PERNIKA",
+                        "hint": "Operasi pada spektrum elektromagnetik untuk keunggulan informasi melalui deteksi, gangguan, dan perlindungan sinyal."
+            },
+            {
+                        "word": "SPEKTRUM",
+                        "hint": "Ruang/fenomena gelombang elektromagnetik tempat RF, microwave, infrared, cahaya tampak, X-Ray, dan gamma berada."
+            },
+            {
+                        "word": "FREKUENSI",
+                        "hint": "Jumlah gelombang per detik; satuannya Hertz dan berbanding terbalik dengan panjang gelombang."
+            },
+            {
+                        "word": "SUPPORT",
+                        "hint": "Pilar ES: mencari, mendeteksi, mengintersepsi terbatas, dan menganalisis sinyal."
+            },
+            {
+                        "word": "ATTACK",
+                        "hint": "Pilar EA: mengganggu atau menipu penggunaan spektrum target melalui jamming/spoofing."
+            },
+            {
+                        "word": "PROTECTION",
+                        "hint": "Pilar EP: melindungi komunikasi sendiri dari intersepsi dan gangguan."
+            },
+            {
+                        "word": "JAMMING",
+                        "hint": "EA yang menurunkan SNR dengan interferensi/noise agar komunikasi terganggu."
+            },
+            {
+                        "word": "SPOOFING",
+                        "hint": "Serangan yang mengirim sinyal palsu agar penerima percaya informasi yang salah."
+            },
+            {
+                        "word": "BANDWIDTH",
+                        "hint": "Lebar pita frekuensi; menjelaskan toleransi ±5 kHz di sekitar 461,150 MHz pada praktikum HT."
+            },
+            {
+                        "word": "FILTER",
+                        "hint": "Bagian penerima yang membuat sinyal dekat frekuensi pusat masih dapat diterima."
+            },
+            {
+                        "word": "ZADIG",
+                        "hint": "Utilitas untuk mengganti driver bawaan RTL-SDR menjadi WinUSB."
+            },
+            {
+                        "word": "WINUSB",
+                        "hint": "Driver generik agar dongle RTL-SDR terbaca oleh software SDR."
+            },
+            {
+                        "word": "WATERFALL",
+                        "hint": "Tampilan SDR yang menunjukkan riwayat aktivitas sinyal terhadap waktu."
+            },
+            {
+                        "word": "DEMODULASI",
+                        "hint": "Proses mengambil informasi asli dari gelombang pembawa."
+            },
+            {
+                        "word": "MORSE",
+                        "hint": "Kode titik dan garis; media pengiriman ciphertext dalam praktikum."
+            },
+            {
+                        "word": "ONETIMEPAD",
+                        "hint": "Metode enkripsi dengan kunci sepanjang pesan; memakai rumus C=P+K dan P=C-K."
+            },
+            {
+                        "word": "CIPHERTEXT",
+                        "hint": "Pesan hasil enkripsi yang kemudian dapat dikirim dalam bentuk Morse."
+            },
+            {
+                        "word": "PLAINTEXT",
+                        "hint": "Pesan asli sebelum dienkripsi."
+            },
+            {
+                        "word": "PADDING",
+                        "hint": "Karakter pelengkap, misalnya X, agar panjang pesan sesuai kebutuhan praktikum OTP."
+            },
+            {
+                        "word": "FREQUENCYHOPPING",
+                        "hint": "EP: teknik berpindah frekuensi cepat agar sulit dijam."
+            },
+            {
+                        "word": "SPREADSPECTRUM",
+                        "hint": "EP: menyebarkan sinyal ke pita lebih lebar agar gangguan pada satu titik tidak langsung memutus komunikasi."
+            },
+            {
+                        "word": "INTERFERENSI",
+                        "hint": "Gangguan/tabrakan sinyal yang dapat menurunkan kualitas komunikasi."
+            },
+            {
+                        "word": "NOISEFLOOR",
+                        "hint": "Lantai gangguan pada spektrum; naiknya nilai ini bisa mengindikasikan jamming."
+            },
+            {
+                        "word": "PUSHTOTALK",
+                        "hint": "Prinsip HT: tombol ditekan untuk memancar, dilepas untuk menerima."
+            },
+            {
+                        "word": "TINYSA",
+                        "hint": "Perangkat kecil yang dapat digunakan untuk melihat/menganalisis spektrum dalam simulasi."
+            },
+            {
+                        "word": "ESP32",
+                        "hint": "Mikrokontroler yang relevan untuk perangkat swakriya simulasi Pernika."
+            },
+            {
+                        "word": "LORA",
+                        "hint": "Komunikasi RF jarak jauh daya rendah; umum pada 433/868/915 MHz."
+            },
+            {
+                        "word": "ETHICS",
+                        "hint": "Batas penting praktikum: legal, berizin, tidak menyadap pihak lain, dan tidak membuat harmful interference."
+            }
+];
 
         const morseWords = [
-            "ZADIG", "JAMMER", "SDR", "OTP", "PERNIKA", "SANDI", "NOISE", "DONGLE", "SPEKTRUM",
-            "OODA", "SIGINT", "ELINT", "FHSS", "DSSS", "WINUSB", "RADAR", "DRONE", "UAV", "UAS",
-            "C4ISR", "SIGNAL", "BARRAGE", "SPOT", "DECEPTION", "SUBVERSION", "PHYSICAL",
-            "COGNITIVE", "LATENSI", "MODULASI", "SNR", "VHF", "UHF", "SHF", "RADIO", "HT",
-            "CIPHER", "ATTACK", "DEFENSE", "INTEL"
-        ];
+            "HT",
+            "SDR",
+            "OTP",
+            "SNR",
+            "RF",
+            "UHF",
+            "VHF",
+            "AM",
+            "FM",
+            "GPS",
+            "LORA",
+            "WIFI",
+            "RADAR",
+            "DRONE",
+            "UAV",
+            "NOISE",
+            "MORSE",
+            "SANDI",
+            "CIPHER",
+            "PERNIKA",
+            "SPEKTRUM",
+            "JAMMER",
+            "FILTER",
+            "ZADIG",
+            "DONGLE",
+            "WINUSB",
+            "ATTACK",
+            "DEFENSE",
+            "SIGNAL",
+            "BANDWIDTH"
+];
 
         const morseDictionary = {
             'A': { word: "A-bon", morse: ".-" }, 'B': { word: "Bo-na-par-te", morse: "-..." },
@@ -271,7 +759,7 @@
                     <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-sky-500 to-transparent opacity-50"></div>
                     <div class="text-6xl mb-6 text-sky-400 drop-shadow-[0_0_15px_rgba(56,189,248,0.5)]"><i class="fa-solid fa-satellite-dish"></i></div>
                     <h2 class="text-3xl md:text-4xl font-black mb-3 neon-text text-white uppercase tracking-tight">Simulator Master Class</h2>
-                    <p class="text-slate-400 mb-8 font-mono text-sm">Target: IPS 4.0 | Modul: Pernika, Spektrum, SDR, OTP, Morse</p>
+                    <p class="text-slate-400 mb-8 font-mono text-sm">Target: UTS 7 Pertemuan | Pernika, Spektrum, HT, SDR, Jammer, Morse, OTP</p>
                     
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
                         <button onclick="initGame('quiz')" class="flex flex-col items-center p-6 bg-slate-800 hover:bg-sky-900/60 border border-slate-700 hover:border-sky-500 rounded-xl transition-all btn-game group">
@@ -305,14 +793,15 @@
             document.addEventListener('keydown', handleGlobalKeydown);
 
             if(mode === 'quiz') {
-                let pool = [...rawDatabase].map(x=>({q:x[0], correct:x[1], w1:x[2], w2:x[3], w3:x[4], exp:x[5]}));
-                state.questions = pool.sort(() => 0.5 - Math.random()).slice(0, 10);
+                // Soal tidak looping dalam satu sesi dan selalu mewakili 7 pertemuan sebelum UTS.
+                let pool = buildBalancedQuiz().map(x=>({q:x[0], correct:x[1], w1:x[2], w2:x[3], w3:x[4], exp:x[5]}));
+                state.questions = pool;
                 renderQuiz();
             } else if(mode === 'keyword') {
-                state.questions = [...anagramWords].sort(() => 0.5 - Math.random()).slice(0, 5);
+                state.questions = shuffleArray([...anagramWords]).slice(0, 7);
                 renderKeywordQuiz();
             } else if(mode === 'morse') {
-                state.questions = [...morseWords].sort(() => 0.5 - Math.random()).slice(0, 5);
+                state.questions = shuffleArray([...morseWords]).slice(0, 6);
                 startNextMorseWord();
             }
         }
@@ -344,7 +833,7 @@
         // --- MISI 1: QUIZ ---
         function renderQuiz() {
             if(state.lives <= 0) return;
-            if (state.currentIndex >= state.questions.length) { endGame(true, "Analisis Kasus Sempurna. Anda siap UTS!"); return; }
+            if (state.currentIndex >= state.questions.length) { endGame(true, "Penguasaan 7 pertemuan sebelum UTS sudah kuat!"); return; }
             
             const q = state.questions[state.currentIndex];
             let choices = [q.correct, q.w1, q.w2, q.w3].sort(() => 0.5 - Math.random());
@@ -352,7 +841,7 @@
 
             container.innerHTML = `
                 <div class="w-full max-w-2xl fade-in">
-                    <div class="mb-3 flex justify-between items-end"><span class="text-emerald-400 font-bold uppercase text-sm"><i class="fa-solid fa-list-check mr-2"></i>Misi 1: Taktik Kognitif</span><span class="text-slate-400 text-sm font-mono font-bold">KASUS ${state.currentIndex + 1}/${state.questions.length}</span></div>
+                    <div class="mb-3 flex justify-between items-end"><span class="text-emerald-400 font-bold uppercase text-sm"><i class="fa-solid fa-list-check mr-2"></i>Misi 1: Uji 7 Pertemuan</span><span class="text-slate-400 text-sm font-mono font-bold">SOAL ${state.currentIndex + 1}/${state.questions.length}</span></div>
                     <div class="w-full h-1.5 bg-slate-800 rounded-full mb-6"><div id="timer-bar-fill" class="h-full bg-emerald-400 timer-bar" style="width:100%;"></div></div>
                     <div id="quiz-card" class="bg-slate-900 p-6 md:p-8 rounded-2xl border border-slate-700 shadow-xl relative">
                         <div id="time-text" class="absolute -top-3 -right-3 w-10 h-10 bg-slate-800 border-2 border-slate-700 text-white font-bold rounded-full flex items-center justify-center text-xs"></div>
@@ -364,7 +853,7 @@
                     <div id="explanation-box" class="hidden mt-6 bg-sky-950/50 p-5 rounded-xl border border-sky-900 text-sky-100 text-sm shadow-inner"></div>
                 </div>
             `;
-            startTimer(25, () => handleQuizAnswer(-1, cIdx, q.exp));
+            startTimer(35, () => handleQuizAnswer(-1, cIdx, q.exp));
         }
 
         function handleQuizAnswer(sIdx, cIdx, exp) {
