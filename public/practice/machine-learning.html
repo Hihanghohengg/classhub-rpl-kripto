@@ -31,12 +31,9 @@
       --rose: #fb7185;
     }
 
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
-    html,
-    body {
+    html, body {
       margin: 0;
       min-height: 100%;
       background:
@@ -48,21 +45,14 @@
       font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       overflow-x: hidden;
       touch-action: manipulation;
-      user-select: none;
     }
 
-    body {
-      min-height: 100vh;
-    }
+    body { min-height: 100vh; }
 
-    .mono {
-      font-family: "JetBrains Mono", monospace;
-    }
+    .mono { font-family: "JetBrains Mono", monospace; }
 
     .mesh-bg {
-      position: fixed;
-      inset: 0;
-      z-index: -3;
+      position: fixed; inset: 0; z-index: -3;
       background-image:
         linear-gradient(rgba(56, 189, 248, 0.05) 1px, transparent 1px),
         linear-gradient(90deg, rgba(168, 85, 247, 0.045) 1px, transparent 1px);
@@ -72,155 +62,57 @@
     }
 
     .neural-bg {
-      position: fixed;
-      inset: 0;
-      z-index: -2;
-      pointer-events: none;
-      opacity: 0.55;
+      position: fixed; inset: 0; z-index: -2; pointer-events: none; opacity: 0.55;
       background:
         radial-gradient(circle at 16% 18%, rgba(56, 189, 248, 0.34) 0 2px, transparent 3px),
         radial-gradient(circle at 30% 38%, rgba(168, 85, 247, 0.32) 0 2px, transparent 3px),
-        radial-gradient(circle at 62% 24%, rgba(52, 211, 153, 0.34) 0 2px, transparent 3px),
-        radial-gradient(circle at 78% 50%, rgba(56, 189, 248, 0.28) 0 2px, transparent 3px),
-        radial-gradient(circle at 50% 74%, rgba(168, 85, 247, 0.28) 0 2px, transparent 3px);
+        radial-gradient(circle at 62% 24%, rgba(52, 211, 153, 0.34) 0 2px, transparent 3px);
     }
 
     .floating-orb {
-      position: fixed;
-      width: 420px;
-      height: 420px;
-      border-radius: 999px;
-      filter: blur(70px);
-      opacity: 0.18;
-      z-index: -1;
-      animation: float 10s ease-in-out infinite alternate;
-      pointer-events: none;
+      position: fixed; width: 420px; height: 420px; border-radius: 999px;
+      filter: blur(70px); opacity: 0.18; z-index: -1;
+      animation: float 10s ease-in-out infinite alternate; pointer-events: none;
     }
-
-    .orb-a {
-      left: -160px;
-      top: 12%;
-      background: #38bdf8;
-    }
-
-    .orb-b {
-      right: -170px;
-      bottom: 8%;
-      background: #a855f7;
-      animation-delay: -3s;
-    }
+    .orb-a { left: -160px; top: 12%; background: #38bdf8; }
+    .orb-b { right: -170px; bottom: 8%; background: #a855f7; animation-delay: -3s; }
 
     @keyframes float {
-      from {
-        transform: translate3d(0, 0, 0) scale(1);
-      }
-      to {
-        transform: translate3d(34px, -28px, 0) scale(1.08);
-      }
+      from { transform: translate3d(0, 0, 0) scale(1); }
+      to { transform: translate3d(34px, -28px, 0) scale(1.08); }
     }
 
     .glass {
       background: var(--panel);
       border: 1px solid var(--line);
-      box-shadow:
-        0 22px 60px rgba(0, 0, 0, 0.35),
-        inset 0 1px 0 rgba(255,255,255,0.05);
+      box-shadow: 0 22px 60px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255,255,255,0.05);
       backdrop-filter: blur(18px);
     }
 
-    .btn-game {
-      transition: transform 0.16s ease, border-color 0.16s ease, background 0.16s ease, box-shadow 0.16s ease;
-    }
+    .btn-game { transition: all 0.16s ease; }
+    .btn-game:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 16px 40px rgba(15, 23, 42, 0.35); }
+    .btn-game:active:not(:disabled) { transform: scale(0.97); }
+    .btn-game:disabled { cursor: default; }
 
-    .btn-game:hover:not(:disabled) {
-      transform: translateY(-2px);
-      box-shadow: 0 16px 40px rgba(15, 23, 42, 0.35);
-    }
-
-    .btn-game:active:not(:disabled) {
-      transform: scale(0.97);
-    }
-
-    .btn-game:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-      transform: none;
-    }
-
-    .metric-pill {
-      background: rgba(15, 23, 42, 0.78);
-      border: 1px solid rgba(148, 163, 184, 0.18);
-    }
-
-    .timer-bar {
-      transition: width 0.1s linear, background-color 0.3s;
-    }
-
-    .shake {
-      animation: shake 0.36s cubic-bezier(.36,.07,.19,.97) both;
-    }
-
-    @keyframes shake {
-      10%, 90% { transform: translate3d(-1px, 0, 0); }
-      20%, 80% { transform: translate3d(2px, 0, 0); }
-      30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
-      40%, 60% { transform: translate3d(4px, 0, 0); }
-    }
-
-    .fade-in {
-      animation: fadeIn 0.25s ease both;
-    }
-
+    .fade-in { animation: fadeIn 0.3s ease both; }
     @keyframes fadeIn {
-      from {
-        opacity: 0;
-        transform: translateY(10px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     .gradient-text {
       background: linear-gradient(90deg, #38bdf8, #a855f7, #34d399);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
+      -webkit-background-clip: text; background-clip: text; color: transparent;
     }
 
-    .code-card {
-      background:
-        linear-gradient(180deg, rgba(15, 23, 42, 0.96), rgba(2, 6, 23, 0.98));
-      border: 1px solid rgba(148, 163, 184, 0.18);
-    }
-
-    ::-webkit-scrollbar {
-      width: 8px;
-    }
-
-    ::-webkit-scrollbar-track {
-      background: #020617;
-    }
-
-    ::-webkit-scrollbar-thumb {
-      background: #334155;
-      border-radius: 999px;
-    }
-
-    ::-webkit-scrollbar-thumb:hover {
-      background: #475569;
-    }
+    /* Opsi Jawaban Styles */
+    .opt-correct { border-color: #34d399 !important; background: rgba(52, 211, 153, 0.15) !important; color: white !important;}
+    .opt-wrong { border-color: #fb7185 !important; background: rgba(251, 113, 133, 0.15) !important; color: white !important;}
+    .opt-dim { opacity: 0.5; }
   </style>
 </head>
 
-<body
-  class="flex min-h-screen flex-col"
-  oncontextmenu="return false;"
-  oncopy="return false;"
-  oncut="return false;"
-  onpaste="return false;"
->
+<body class="flex min-h-screen flex-col">
   <div class="mesh-bg"></div>
   <div class="neural-bg"></div>
   <div class="floating-orb orb-a"></div>
@@ -230,1079 +122,309 @@
     <div class="mx-auto flex w-full max-w-6xl items-center justify-between gap-3">
       <div class="flex min-w-0 items-center gap-3">
         <div class="grid h-11 w-11 shrink-0 place-items-center rounded-2xl border border-cyan-400/25 bg-cyan-400/10 text-cyan-300 shadow-lg shadow-cyan-950/30">
-          <i class="fa-solid fa-brain text-xl"></i>
+          <i class="fa-solid fa-graduation-cap text-xl"></i>
         </div>
-
         <div class="min-w-0">
           <h1 class="truncate text-base font-black uppercase tracking-wide text-white md:text-lg">
             Machine Learning Lab
           </h1>
-
           <p class="mono mt-0.5 truncate text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-400">
-            Pipeline • Data Leakage • Hyperparameter • RNN/LSTM
+            Sesi 1: Persiapan Teori PG
           </p>
         </div>
       </div>
 
       <div id="stats-header" class="hidden items-center gap-2 text-sm">
-        <div class="metric-pill inline-flex items-center gap-2 rounded-2xl px-3 py-2">
-          <i class="fa-solid fa-heart-pulse text-rose-400"></i>
-          <span id="lives-display" class="mono font-bold text-white">3</span>
-        </div>
-
-        <div class="metric-pill inline-flex items-center gap-2 rounded-2xl px-3 py-2">
-          <i class="fa-solid fa-chart-line text-amber-300"></i>
-          <span id="score-display" class="mono font-bold text-white">0</span>
+        <div class="glass inline-flex items-center gap-2 rounded-2xl px-4 py-2">
+          <i class="fa-solid fa-chart-line text-cyan-400"></i>
+          <span class="mono font-bold text-slate-400">Skor:</span>
+          <span id="score-display" class="mono font-black text-white text-lg">0</span>
         </div>
       </div>
     </div>
   </header>
 
-  <main
-    id="app-container"
-    class="relative z-10 mx-auto flex w-full max-w-5xl flex-1 flex-col items-center justify-center overflow-y-auto p-4"
-  ></main>
+  <main id="app-container" class="relative z-10 mx-auto flex w-full max-w-4xl flex-1 flex-col items-center justify-center overflow-y-auto p-4"></main>
 
   <script>
-    const lessonDatabase = [
+    // --- DATABASE SOAL (Diambil dari Laporan/Rubrik Yohanes Obed) ---
+    const quizData = [
       {
-        lesson: "1. Data Leakage & Pipeline",
-        items: [
-          [
-            "Menurut rubrik penilaian, apa yang menjadi red flag paling fatal yang menyebabkan data leakage saat Hyperparameter Tuning?",
-            "Melakukan fit_transform seperti imputasi atau scaling pada seluruh X_train sebelum proses Cross-Validation.",
-            "Menggunakan GridSearchCV alih-alih RandomizedSearchCV.",
-            "Menentukan scoring='roc_auc' pada dataset klasifikasi.",
-            "Membagi data menggunakan StratifiedKFold pada kasus klasifikasi tidak seimbang.",
-            "Data leakage terjadi jika informasi distribusi data validasi bocor ke model saat preprocessing. Solusinya gunakan scikit-learn Pipeline."
-          ],
-          [
-            "Bagaimana scikit-learn Pipeline mencegah data leakage saat K-Fold Cross Validation?",
-            "Pipeline memastikan transformasi data hanya di-fit pada data latih spesifik di setiap fold CV secara terisolasi.",
-            "Pipeline otomatis mengubah hyperparameter model agar fit_transform tidak pernah digunakan.",
-            "Pipeline mengenkripsi data agar fold validasi tidak terbaca.",
-            "Pipeline menghapus missing values secara otomatis pada X_test.",
-            "Pipeline merangkai preprocessing dan modeling, sehingga setiap split CV hanya belajar dari data train pada fold tersebut."
-          ]
-        ]
+        question: "Berdasarkan hasil Exploratory Data Analysis (EDA) Anda pada dataset Titanic, fitur manakah yang terbukti menjadi prediktor keselamatan (survival) terkuat?",
+        options: [
+          "Tarif tiket (Fare), karena penumpang kaya diprioritaskan.",
+          "Gender (Sex), di mana perempuan memiliki peluang selamat jauh lebih tinggi dibanding laki-laki.",
+          "Pelabuhan asal (Embarked), karena posisi dek dipengaruhi pelabuhan.",
+          "Jumlah orang tua/anak (Parch), karena keluarga besar lebih mudah selamat."
+        ],
+        correctIndex: 1,
+        explanation: "<strong>JAWABAN B BENAR.</strong> Dalam kesimpulan laporan Lab Titanic Anda (Poin V.1), terbukti bahwa Gender adalah prediktor terkuat dimana perempuan jauh lebih diprioritaskan. <br><br><strong>Mengapa yang lain salah?</strong> Tarif tiket (Fare) dan Kelas memang berpengaruh (poin V.2 & V.5), tapi secara statistik Gender memegang peran korelasi paling dominan dalam protokol evakuasi (women and children first). Keluarga yang terlalu besar (Parch tinggi) justru terbukti lebih sulit selamat (Poin V.4)."
       },
       {
-        lesson: "2. Hyperparameter Tuning",
-        items: [
-          [
-            "Apa interpretasi paling tepat jika Validation Curve menunjukkan skor training terus meningkat hingga 99%, tetapi skor validation stagnan atau menurun?",
-            "Model mengalami overfitting karena terlalu menghafal noise pada data latih dan gagal menggeneralisasi pola.",
-            "Model mengalami underfitting karena algoritma terlalu sederhana.",
-            "Data leakage telah berhasil dihindari menggunakan Pipeline.",
-            "Hyperparameter tuning sudah pasti mencapai titik optimal.",
-            "Gap besar antara training score tinggi dan validation score rendah/menurun adalah indikator klasik overfitting."
-          ],
-          [
-            "Dalam konteks waktu komputasi terbatas, mengapa RandomizedSearchCV sering lebih efisien dibanding GridSearchCV?",
-            "RandomizedSearchCV menguji sampel acak kombinasi parameter, sehingga bisa mendekati optimal dalam waktu lebih singkat.",
-            "RandomizedSearchCV selalu menghasilkan akurasi lebih tinggi daripada GridSearchCV.",
-            "RandomizedSearchCV tidak memerlukan Pipeline.",
-            "GridSearchCV tidak bisa digunakan untuk Random Forest.",
-            "GridSearch bersifat exhaustive dan bisa sangat mahal saat ruang parameter besar."
-          ]
-        ]
+        question: "Menurut rubrik evaluasi dosen, apa 'Red Flag' (kesalahan fatal) yang menyebabkan terjadinya Data Leakage saat melakukan Hyperparameter Tuning?",
+        options: [
+          "Menentukan metrik scoring='roc_auc' pada dataset klasifikasi.",
+          "Menggunakan StandardScaler pada seluruh data latih (X_train) secara langsung sebelum Cross-Validation (CV) dipecah.",
+          "Membagi data menggunakan StratifiedKFold pada kasus klasifikasi yang tidak seimbang.",
+          "Memakai GridSearchCV karena menguji seluruh kombinasi."
+        ],
+        correctIndex: 1,
+        explanation: "<strong>JAWABAN B BENAR.</strong> Ini adalah jebakan klasik. Jika Anda melakukan <code>fit_transform</code> pada seluruh X_train, scaler akan menghitung mean/std dari seluruh data latih. Saat Cross-Validation berjalan, sebagian data latih itu dijadikan 'data validasi'. Artinya, informasi dari data validasi telah 'bocor' ke scaler sebelum diprediksi. <br><br><strong>Solusi:</strong> Proses scaling WAJIB dibungkus menggunakan <code>scikit-learn Pipeline</code> agar transformasi hanya dilakukan per-lipatan (fold) CV."
       },
       {
-        lesson: "3. Evaluasi & Pemisahan Data",
-        items: [
-          [
-            "Pada kasus klasifikasi seperti deteksi risiko kardiovaskular, mengapa wajib menggunakan stratify=y saat train_test_split?",
-            "Untuk memastikan proporsi kelas target di data latih dan uji tetap sama dengan proporsi populasi aslinya.",
-            "Agar missing values otomatis diimputasi dengan median.",
-            "Untuk mempercepat hyperparameter tuning pada GridSearchCV.",
-            "Agar menghindari data leakage saat membagi data tabular.",
-            "Stratifikasi penting agar data train dan test tetap merepresentasikan distribusi kelas asli, terutama pada dataset tidak seimbang."
-          ],
-          [
-            "Evaluasi model grid.best_estimator_ terhadap X_test idealnya dilakukan kapan?",
-            "Hanya satu kali di akhir seluruh proses sebagai estimasi performa final di dunia nyata.",
-            "Di setiap iterasi pencarian hyperparameter.",
-            "Sebelum proses preprocessing dimulai.",
-            "Berkali-kali selama fine-tuning parameter grid manual.",
-            "Mengevaluasi berulang pada test set bisa menyebabkan test set leakage."
-          ]
-        ]
+        question: "Pada praktikum Neural Network (Pertemuan 5), Anda menggunakan parameter <code>class_weight</code> (Class 0: 0.56, Class 1: 4.43). Apa tujuan matematis dari langkah tersebut?",
+        options: [
+          "Mencegah Vanishing Gradient pada layer awal Deep Learning.",
+          "Mengurangi kecepatan proses komputasi per epoch.",
+          "Memberikan penalti/bobot error yang lebih besar pada kelas minoritas agar model tidak bias sekadar menebak kelas mayoritas.",
+          "Mengecilkan nilai fitur numerik seperti StandardScaler."
+        ],
+        correctIndex: 2,
+        explanation: "<strong>JAWABAN C BENAR.</strong> Pada data medis yang Anda kerjakan, jumlah pasien sakit (Yes) sangat sedikit dibanding yang sehat (No). Jika dibiarkan, Neural Network akan mengambil jalan pintas: selalu memprediksi 'No' demi akurasi 90%. Parameter <code>class_weight</code> memaksa algoritma untuk 'membayar mahal' (loss tinggi) jika salah memprediksi kelas minoritas, sehingga model menjadi seimbang."
       },
       {
-        lesson: "4. Pengantar Deep Learning",
-        items: [
-          [
-            "Apa karakteristik utama data yang cocok diolah menggunakan Recurrent Neural Network atau RNN?",
-            "Data sekuensial atau time-series yang memiliki ketergantungan urutan antar observasi.",
-            "Data tabular murni tanpa urutan waktu.",
-            "Data gambar statis beresolusi tinggi.",
-            "Data kategorikal dengan missing values masif.",
-            "RNN dirancang untuk memproses data berurutan dengan hidden state yang membawa informasi dari langkah sebelumnya."
-          ],
-          [
-            "Long Short-Term Memory atau LSTM diciptakan terutama untuk mengatasi kelemahan apa pada Vanilla RNN?",
-            "Masalah vanishing gradient yang membuat RNN sulit mempelajari long-term dependencies.",
-            "Ketidakmampuan RNN memproses gambar matriks 2D.",
-            "Preprocessing tabular yang menyebabkan test set leakage.",
-            "Komputasi GridSearchCV yang memakan CPU.",
-            "LSTM menggunakan gates untuk mengatur aliran informasi sehingga lebih baik menangani sekuens panjang."
-          ]
-        ]
+        question: "Dalam Lab 03 (Breast Cancer), Anda menggunakan metrik F1-Score (<code>scoring='f1'</code>) pada <code>cross_val_score</code>. Mengapa F1-Score sering lebih direkomendasikan daripada Akurasi pada kasus medis?",
+        options: [
+          "Karena F1-Score menyeimbangkan Precision dan Recall, sehingga performa pada kelas minoritas (yang krusial di medis) dapat terukur dengan benar.",
+          "Karena F1-Score otomatis mencegah terjadinya data leakage saat preprocessing.",
+          "Karena Akurasi tidak bisa digunakan untuk klasifikasi biner.",
+          "Karena F1-Score menghitung luas area di bawah kurva (ROC)."
+        ],
+        correctIndex: 0,
+        explanation: "<strong>JAWABAN A BENAR.</strong> F1-Score adalah rata-rata harmonik dari Precision dan Recall. Dalam konteks medis (seperti kanker), kita tidak ingin model yang akurasinya tinggi tapi gagal mendeteksi pasien yang benar-benar sakit (False Negatives tinggi). <br><br><strong>Mengapa yang lain salah?</strong> Luas area di bawah kurva adalah definisi dari AUC-ROC (jawaban D). Akurasi (jawaban C) bisa digunakan untuk klasifikasi biner, namun sangat menyesatkan jika datasetnya tidak seimbang (imbalanced)."
+      },
+      {
+        question: "Berdasarkan materi TM-9, arsitektur Long Short-Term Memory (LSTM) diciptakan utamanya untuk menyelesaikan masalah apa pada Vanilla RNN?",
+        options: [
+          "Overfitting saat dataset terlalu kecil.",
+          "Data tabular yang memiliki banyak missing values.",
+          "Vanishing Gradient, yang membuat RNN biasa 'lupa' akan informasi awal pada sekuens data yang panjang.",
+          "Ketidakmampuan RNN memproses data dalam bentuk matriks gambar (pixels)."
+        ],
+        correctIndex: 2,
+        explanation: "<strong>JAWABAN C BENAR.</strong> Vanilla RNN kesulitan menangani dependensi jangka panjang karena gradien menyusut drastis (Vanishing Gradient) saat proses backpropagation melintasi banyak <i>time steps</i>. LSTM menyelesaikannya menggunakan struktur <i>Gates</i> (Forget, Input, Output) yang mengatur memori mana yang harus disimpan atau dibuang."
+      },
+      {
+        question: "Dalam kode Anda, fungsi <code>train_test_split</code> dipanggil menggunakan parameter <code>stratify=y</code>. Apa akibatnya jika parameter ini TIDAK digunakan pada kasus klasifikasi klasifikasi berisiko tinggi?",
+        options: [
+          "Data numerik akan berubah menjadi string.",
+          "Proporsi jumlah kelas target di data Train dan data Test bisa berbeda jauh dari populasi asli, merusak objektivitas evaluasi model.",
+          "Model akan gagal melakukan import library scikit-learn.",
+          "Hyperparameter tuning akan berjalan tanpa henti (infinite loop)."
+        ],
+        correctIndex: 1,
+        explanation: "<strong>JAWABAN B BENAR.</strong> <code>stratify=y</code> memastikan bahwa jika data asli memiliki rasio 80% Sehat dan 20% Sakit, maka himpunan X_train dan X_test juga akan memiliki rasio persis 80:20. Tanpa ini, pembagian acak bisa saja membuat data X_test isinya 100% data Sehat, membuat evaluasi menjadi tidak valid."
       }
     ];
 
-    const rawDatabase = lessonDatabase.flatMap((group) => group.items);
-
-    const anagramWords = [
-      {
-        word: "PIPELINE",
-        hint: "Rangkaian preprocessing dan modeling berurutan di scikit-learn untuk mencegah data leakage."
-      },
-      {
-        word: "LEAKAGE",
-        hint: "Masalah fatal ketika informasi dari validasi/test set bocor ke proses training."
-      },
-      {
-        word: "OVERFIT",
-        hint: "Kondisi saat model terlalu menghafal data latih tetapi gagal pada data baru."
-      },
-      {
-        word: "GRIDSEARCH",
-        hint: "Metode pencarian hyperparameter exhaustive yang menguji semua kombinasi pada grid."
-      },
-      {
-        word: "STRATIFIED",
-        hint: "Metode split atau K-Fold yang mempertahankan proporsi kelas asli."
-      },
-      {
-        word: "TENSOR",
-        hint: "Struktur data n-dimensi yang umum menjadi input/output model Deep Learning."
-      },
-      {
-        word: "EPOCH",
-        hint: "Satu siklus proses training melewati seluruh data latih."
-      },
-      {
-        word: "VANISHING",
-        hint: "Masalah hilangnya gradien pada RNN konvensional."
-      },
-      {
-        word: "IMPUTASI",
-        hint: "Proses mengisi nilai kosong pada dataset."
-      },
-      {
-        word: "METRIK",
-        hint: "Standar evaluasi seperti Accuracy, F1-Score, ROC-AUC, Precision, dan Recall."
-      }
-    ];
-
-    const binaryWords = ["DATA", "NODE", "FIT", "CV", "AUC", "RNN", "ML", "LOSS"];
-
-    const binaryDictionary = {
-      A: { binary: "01" },
-      B: { binary: "1000" },
-      C: { binary: "1010" },
-      D: { binary: "100" },
-      E: { binary: "0" },
-      F: { binary: "0010" },
-      G: { binary: "110" },
-      H: { binary: "0000" },
-      I: { binary: "00" },
-      J: { binary: "0111" },
-      K: { binary: "101" },
-      L: { binary: "0100" },
-      M: { binary: "11" },
-      N: { binary: "10" },
-      O: { binary: "111" },
-      P: { binary: "0110" },
-      Q: { binary: "1101" },
-      R: { binary: "010" },
-      S: { binary: "000" },
-      T: { binary: "1" },
-      U: { binary: "001" },
-      V: { binary: "0001" },
-      W: { binary: "011" },
-      X: { binary: "1001" },
-      Y: { binary: "1011" },
-      Z: { binary: "1100" }
-    };
-
-    const state = {
-      mode: "menu",
-      score: 0,
-      lives: 3,
-      questions: [],
-      currentIndex: 0,
-      timer: null,
-      timeLeft: 0,
-      maxTime: 0,
-      currentPuzzle: null,
-      scrambledLetters: [],
-      userAnswerObj: [],
-      currentBinaryWord: "",
-      currentBinaryCharIndex: 0,
-      currentBinaryInput: ""
-    };
-
-    const container = document.getElementById("app-container");
-    const statsHeader = document.getElementById("stats-header");
-
+    // --- AUDIO SYSTEM ---
     const AudioContext = window.AudioContext || window.webkitAudioContext;
     let audioCtx;
-
     function initAudio() {
       if (!audioCtx) audioCtx = new AudioContext();
       if (audioCtx.state === "suspended") audioCtx.resume();
     }
-
-    function playTone(duration, frequency = 600, type = "sine") {
+    function playTone(duration, frequency, type) {
       initAudio();
-
       const oscillator = audioCtx.createOscillator();
       const gainNode = audioCtx.createGain();
-
       oscillator.type = type;
       oscillator.frequency.value = frequency;
       oscillator.connect(gainNode);
       gainNode.connect(audioCtx.destination);
-
       oscillator.start();
       gainNode.gain.setValueAtTime(0.08, audioCtx.currentTime);
       gainNode.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime + duration / 1000);
       oscillator.stop(audioCtx.currentTime + duration / 1000);
     }
+    function playSuccess() { playTone(300, 850, "triangle"); }
+    function playError() { playTone(250, 150, "sawtooth"); }
 
-    function playZero() {
-      playTone(100, 860, "square");
-    }
+    // --- GAME STATE ---
+    let state = {
+      score: 0,
+      currentIndex: 0,
+      shuffledData: []
+    };
 
-    function playOne() {
-      playTone(260, 430, "square");
-    }
+    const container = document.getElementById("app-container");
+    const statsHeader = document.getElementById("stats-header");
+    const scoreDisplay = document.getElementById("score-display");
 
-    function playError() {
-      playTone(260, 160, "sawtooth");
-    }
-
-    function playSuccess() {
-      playTone(360, 920, "triangle");
-    }
-
-    function playClick() {
-      playTone(50, 1200, "sine");
-    }
-
+    // Acak Urutan Array
     function shuffleArray(arr) {
       const copy = [...arr];
-
-      for (let i = copy.length - 1; i > 0; i -= 1) {
+      for (let i = copy.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [copy[i], copy[j]] = [copy[j], copy[i]];
       }
-
       return copy;
     }
 
-    function escapeForAttribute(value) {
-      return String(value)
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#039;");
-    }
+    function initGame() {
+      // Siapkan data soal (acak urutan soal, dan acak urutan opsinya)
+      state.score = 0;
+      state.currentIndex = 0;
+      scoreDisplay.innerText = "0";
+      
+      let tempQuestions = shuffleArray(quizData);
+      state.shuffledData = tempQuestions.map(q => {
+        let opts = q.options.map((opt, idx) => ({ text: opt, isCorrect: idx === q.correctIndex }));
+        opts = shuffleArray(opts);
+        return {
+          question: q.question,
+          options: opts,
+          explanation: q.explanation
+        };
+      });
 
-    function updateStats() {
-      document.getElementById("lives-display").innerText = state.lives;
-      document.getElementById("score-display").innerText = state.score;
-
-      if (state.lives <= 0 && state.mode !== "menu" && state.mode !== "result") {
-        endGame(false);
-      }
-    }
-
-    function startTimer(seconds, onTimeout) {
-      clearInterval(state.timer);
-
-      state.maxTime = seconds;
-      state.timeLeft = seconds;
-
-      const bar = document.getElementById("timer-bar-fill");
-      const timeText = document.getElementById("time-text");
-
-      state.timer = setInterval(() => {
-        state.timeLeft -= 0.1;
-
-        const percentage = Math.max((state.timeLeft / state.maxTime) * 100, 0);
-
-        if (bar) {
-          bar.style.width = percentage + "%";
-
-          if (percentage < 25) {
-            bar.style.backgroundColor = "#fb7185";
-          } else if (percentage < 50) {
-            bar.style.backgroundColor = "#fbbf24";
-          } else if (state.mode === "keyword") {
-            bar.style.backgroundColor = "#a855f7";
-          } else if (state.mode === "binary") {
-            bar.style.backgroundColor = "#38bdf8";
-          } else {
-            bar.style.backgroundColor = "#34d399";
-          }
-        }
-
-        if (timeText) {
-          timeText.innerText = Math.ceil(state.timeLeft) + "s";
-        }
-
-        if (state.timeLeft <= 0) {
-          clearInterval(state.timer);
-          onTimeout();
-        }
-      }, 100);
+      statsHeader.classList.remove("hidden");
+      renderQuestion();
     }
 
     function renderMenu() {
-      state.mode = "menu";
       statsHeader.classList.add("hidden");
-      clearInterval(state.timer);
-      document.removeEventListener("keydown", handleGlobalKeydown);
-
       container.innerHTML = `
-        <section class="fade-in w-full max-w-4xl">
-          <div class="glass relative overflow-hidden rounded-[2rem] p-6 md:p-8">
-            <div class="absolute right-0 top-0 h-40 w-40 rounded-full bg-cyan-400/10 blur-3xl"></div>
-            <div class="absolute bottom-0 left-0 h-44 w-44 rounded-full bg-violet-500/10 blur-3xl"></div>
-
-            <div class="relative">
-              <div class="mb-6 inline-flex items-center gap-2 rounded-full border border-cyan-400/20 bg-cyan-400/10 px-3 py-1.5 text-xs font-bold uppercase tracking-[0.2em] text-cyan-200">
-                <i class="fa-solid fa-sparkles"></i>
-                ClassHub Practice Lab
-              </div>
-
-              <div class="grid gap-6 lg:grid-cols-[1.15fr_0.85fr] lg:items-center">
-                <div>
-                  <h2 class="text-4xl font-black tracking-tight text-white md:text-5xl">
-                    Latihan Praktik
-                    <span class="gradient-text">Machine Learning</span>
-                  </h2>
-
-                  <p class="mt-4 max-w-2xl text-sm leading-7 text-slate-300 md:text-base">
-                    Simulasi interaktif untuk menguji pemahaman pipeline, data leakage,
-                    hyperparameter tuning, evaluasi model, dan konsep dasar deep learning.
-                  </p>
-
-                  <div class="mt-6 grid grid-cols-3 gap-3">
-                    <div class="rounded-2xl border border-slate-700/70 bg-slate-950/50 p-3">
-                      <p class="mono text-[10px] uppercase tracking-widest text-slate-500">Focus</p>
-                      <p class="mt-1 font-bold text-cyan-300">Pipeline</p>
-                    </div>
-
-                    <div class="rounded-2xl border border-slate-700/70 bg-slate-950/50 p-3">
-                      <p class="mono text-[10px] uppercase tracking-widest text-slate-500">Mode</p>
-                      <p class="mt-1 font-bold text-violet-300">3 Game</p>
-                    </div>
-
-                    <div class="rounded-2xl border border-slate-700/70 bg-slate-950/50 p-3">
-                      <p class="mono text-[10px] uppercase tracking-widest text-slate-500">Goal</p>
-                      <p class="mt-1 font-bold text-emerald-300">UTS Ready</p>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="code-card rounded-3xl p-5">
-                  <div class="mb-4 flex items-center gap-2">
-                    <span class="h-3 w-3 rounded-full bg-rose-400"></span>
-                    <span class="h-3 w-3 rounded-full bg-amber-300"></span>
-                    <span class="h-3 w-3 rounded-full bg-emerald-400"></span>
-                    <span class="mono ml-2 text-xs text-slate-500">model_training.py</span>
-                  </div>
-
-                  <pre class="mono overflow-hidden text-xs leading-6 text-slate-300"><code><span class="text-violet-300">pipe</span> = Pipeline([
-  ('scale', StandardScaler()),
-  ('model', RandomForest())
-])
-
-<span class="text-cyan-300">search</span> = RandomizedSearchCV(
-  pipe,
-  param_distributions,
-  cv=StratifiedKFold()
-)
-
-search.fit(X_train, y_train)</code></pre>
-                </div>
-              </div>
-
-              <div class="mt-7 grid gap-4 md:grid-cols-3">
-                <button onclick="initGame('quiz')" class="btn-game rounded-3xl border border-emerald-400/20 bg-emerald-400/10 p-5 text-left hover:border-emerald-300/60 hover:bg-emerald-400/15">
-                  <div class="mb-4 grid h-12 w-12 place-items-center rounded-2xl bg-emerald-400/15 text-emerald-300">
-                    <i class="fa-solid fa-code-branch text-xl"></i>
-                  </div>
-                  <h3 class="font-black text-white">Model Logic</h3>
-                  <p class="mt-2 text-xs leading-5 text-slate-400">
-                    Analisis kasus pipeline, leakage, validation curve, dan evaluasi model.
-                  </p>
-                </button>
-
-                <button onclick="initGame('keyword')" class="btn-game rounded-3xl border border-violet-400/20 bg-violet-400/10 p-5 text-left hover:border-violet-300/60 hover:bg-violet-400/15">
-                  <div class="mb-4 grid h-12 w-12 place-items-center rounded-2xl bg-violet-400/15 text-violet-300">
-                    <i class="fa-solid fa-keyboard text-xl"></i>
-                  </div>
-                  <h3 class="font-black text-white">Concept Decode</h3>
-                  <p class="mt-2 text-xs leading-5 text-slate-400">
-                    Susun istilah penting seperti pipeline, leakage, tensor, epoch, dan overfit.
-                  </p>
-                </button>
-
-                <button onclick="initGame('binary')" class="btn-game rounded-3xl border border-cyan-400/20 bg-cyan-400/10 p-5 text-left hover:border-cyan-300/60 hover:bg-cyan-400/15">
-                  <div class="mb-4 grid h-12 w-12 place-items-center rounded-2xl bg-cyan-400/15 text-cyan-300">
-                    <i class="fa-solid fa-microchip text-xl"></i>
-                  </div>
-                  <h3 class="font-black text-white">Binary Stream</h3>
-                  <p class="mt-2 text-xs leading-5 text-slate-400">
-                    Kirim token ML sebagai sinyal biner 0 dan 1 dengan batas waktu.
-                  </p>
-                </button>
-              </div>
+        <section class="fade-in w-full max-w-2xl text-center">
+          <div class="glass relative overflow-hidden rounded-[2rem] p-8 md:p-12">
+            <div class="mx-auto mb-6 grid h-20 w-20 place-items-center rounded-3xl bg-cyan-400/10 text-cyan-300 border border-cyan-400/20">
+              <i class="fa-solid fa-microscope text-4xl"></i>
             </div>
-          </div>
-        </section>
-      `;
-    }
-
-    function initGame(mode) {
-      initAudio();
-
-      state.mode = mode;
-      state.score = 0;
-      state.lives = 3;
-      state.currentIndex = 0;
-
-      statsHeader.classList.remove("hidden");
-      updateStats();
-      document.addEventListener("keydown", handleGlobalKeydown);
-
-      if (mode === "quiz") {
-        state.questions = shuffleArray(rawDatabase).slice(0, 5);
-        renderQuiz();
-      }
-
-      if (mode === "keyword") {
-        state.questions = shuffleArray(anagramWords).slice(0, 5);
-        renderKeywordQuiz();
-      }
-
-      if (mode === "binary") {
-        state.questions = shuffleArray(binaryWords).slice(0, 5);
-        startNextBinaryWord();
-      }
-    }
-
-    function handleGlobalKeydown(e) {
-      if (state.lives <= 0) return;
-
-      if (state.mode === "keyword") {
-        if (e.key === "Backspace" || e.key === "Escape") {
-          resetWord();
-          return;
-        }
-
-        const key = e.key.toUpperCase();
-
-        if (/^[A-Z]$/.test(key)) {
-          for (let i = 0; i < state.scrambledLetters.length; i += 1) {
-            const btn = document.getElementById("letter-btn-" + i);
-
-            if (
-              state.scrambledLetters[i].letter === key &&
-              btn &&
-              btn.style.visibility !== "hidden"
-            ) {
-              selectLetter(i);
-              break;
-            }
-          }
-        }
-      }
-
-      if (state.mode === "binary") {
-        if (e.key === "ArrowLeft" || e.key === "0") {
-          animateBinaryButton("btn-zero");
-          handleBinaryInput("0");
-        }
-
-        if (e.key === "ArrowRight" || e.key === "1") {
-          animateBinaryButton("btn-one");
-          handleBinaryInput("1");
-        }
-      }
-    }
-
-    function animateBinaryButton(id) {
-      const btn = document.getElementById(id);
-
-      if (!btn) return;
-
-      btn.classList.add("scale-95", "bg-cyan-500/30");
-
-      setTimeout(() => {
-        btn.classList.remove("scale-95", "bg-cyan-500/30");
-      }, 120);
-    }
-
-    function renderQuiz() {
-      if (state.lives <= 0) return;
-
-      if (state.currentIndex >= state.questions.length) {
-        endGame(true, "Pemahaman kamu terhadap pipeline, tuning, dan evaluasi model sudah makin siap untuk ujian.");
-        return;
-      }
-
-      const q = state.questions[state.currentIndex];
-      const choices = shuffleArray([q[1], q[2], q[3], q[4]]);
-      const correctIndex = choices.indexOf(q[1]);
-      const explanation = escapeForAttribute(q[5]);
-
-      container.innerHTML = `
-        <section class="fade-in w-full max-w-3xl">
-          <div class="mb-4 flex items-end justify-between gap-3">
-            <div>
-              <p class="text-xs font-black uppercase tracking-[0.24em] text-emerald-300">
-                <i class="fa-solid fa-code-branch mr-2"></i>
-                Model Logic
-              </p>
-              <h2 class="mt-1 text-xl font-black text-white">
-                Debugging Konsep ML
-              </h2>
-            </div>
-
-            <div class="mono rounded-2xl border border-slate-700 bg-slate-900/70 px-3 py-2 text-xs font-bold text-slate-300">
-              Kasus ${state.currentIndex + 1}/${state.questions.length}
-            </div>
-          </div>
-
-          <div class="mb-6 h-2 overflow-hidden rounded-full bg-slate-800">
-            <div id="timer-bar-fill" class="timer-bar h-full rounded-full bg-emerald-400" style="width: 100%;"></div>
-          </div>
-
-          <div id="quiz-card" class="glass relative rounded-[1.75rem] p-5 md:p-7">
-            <div id="time-text" class="mono absolute -right-3 -top-3 grid h-12 w-12 place-items-center rounded-2xl border border-slate-700 bg-slate-950 text-xs font-black text-white shadow-xl"></div>
-
-            <div class="mb-5 inline-flex items-center gap-2 rounded-full bg-emerald-400/10 px-3 py-1.5 text-xs font-bold text-emerald-200">
-              <i class="fa-solid fa-database"></i>
-              Case-based question
-            </div>
-
-            <h3 class="text-lg font-bold leading-8 text-white md:text-xl">
-              ${q[0]}
-            </h3>
-
-            <div class="mt-6 grid grid-cols-1 gap-3">
-              ${choices.map((choice, index) => `
-                <button
-                  onclick="handleQuizAnswer(${index}, ${correctIndex}, '${explanation}')"
-                  class="btn-game flex w-full items-center gap-3 rounded-2xl border border-slate-700 bg-slate-900/70 p-4 text-left text-slate-200 hover:border-emerald-400/70 hover:bg-emerald-400/10"
-                >
-                  <span class="mono grid h-9 w-9 shrink-0 place-items-center rounded-xl border border-slate-700 bg-slate-950 font-black text-emerald-300">
-                    ${String.fromCharCode(65 + index)}
-                  </span>
-                  <span class="text-sm font-semibold leading-6 md:text-base">${choice}</span>
-                </button>
-              `).join("")}
-            </div>
-          </div>
-
-          <div id="explanation-box" class="hidden mt-5 rounded-3xl border border-emerald-400/20 bg-emerald-400/10 p-5 text-sm leading-7 text-emerald-50"></div>
-        </section>
-      `;
-
-      startTimer(40, () => handleQuizAnswer(-1, correctIndex, explanation));
-    }
-
-    function handleQuizAnswer(selectedIndex, correctIndex, explanation) {
-      clearInterval(state.timer);
-
-      const card = document.getElementById("quiz-card");
-      const expBox = document.getElementById("explanation-box");
-      const buttons = card.querySelectorAll("button");
-
-      buttons.forEach((button) => {
-        button.disabled = true;
-      });
-
-      if (selectedIndex === correctIndex) {
-        playSuccess();
-        state.score += 50;
-
-        buttons[selectedIndex].className =
-          "flex w-full items-center gap-3 rounded-2xl border border-emerald-300 bg-emerald-500/80 p-4 text-left text-white";
-      } else {
-        playError();
-        state.lives -= 1;
-        card.classList.add("shake");
-
-        if (selectedIndex >= 0) {
-          buttons[selectedIndex].className =
-            "flex w-full items-center gap-3 rounded-2xl border border-rose-300 bg-rose-500/80 p-4 text-left text-white";
-        }
-
-        buttons[correctIndex].className =
-          "flex w-full items-center gap-3 rounded-2xl border border-emerald-300 bg-emerald-500/50 p-4 text-left text-white";
-      }
-
-      expBox.classList.remove("hidden");
-      expBox.innerHTML = `
-        <p class="mb-1 font-black text-emerald-200">
-          <i class="fa-solid fa-lightbulb mr-2"></i>
-          Pembahasan
-        </p>
-        <p>${explanation}</p>
-      `;
-
-      updateStats();
-
-      if (state.lives > 0) {
-        setTimeout(() => {
-          state.currentIndex += 1;
-          renderQuiz();
-        }, 5000);
-      }
-    }
-
-    function renderKeywordQuiz() {
-      if (state.lives <= 0) return;
-
-      if (state.currentIndex >= state.questions.length) {
-        endGame(true, "Istilah inti Machine Learning sudah lebih kuat di memori kamu.");
-        return;
-      }
-
-      state.currentPuzzle = state.questions[state.currentIndex];
-      state.userAnswerObj = [];
-
-      const letters = state.currentPuzzle.word.split("");
-      let scrambled = letters.map((letter, index) => ({ letter, id: index }));
-
-      scrambled = shuffleArray(scrambled);
-
-      while (
-        scrambled.map((item) => item.letter).join("") === state.currentPuzzle.word &&
-        scrambled.length > 1
-      ) {
-        scrambled = shuffleArray(scrambled);
-      }
-
-      state.scrambledLetters = scrambled;
-
-      container.innerHTML = `
-        <section class="fade-in w-full max-w-3xl">
-          <div class="mb-4 flex items-end justify-between gap-3">
-            <div>
-              <p class="text-xs font-black uppercase tracking-[0.24em] text-violet-300">
-                <i class="fa-solid fa-keyboard mr-2"></i>
-                Concept Decode
-              </p>
-              <h2 class="mt-1 text-xl font-black text-white">
-                Susun Istilah Kritis
-              </h2>
-            </div>
-
-            <div class="mono rounded-2xl border border-slate-700 bg-slate-900/70 px-3 py-2 text-xs font-bold text-slate-300">
-              Kata ${state.currentIndex + 1}/${state.questions.length}
-            </div>
-          </div>
-
-          <div class="mb-6 h-2 overflow-hidden rounded-full bg-slate-800">
-            <div id="timer-bar-fill" class="timer-bar h-full rounded-full bg-violet-400" style="width: 100%;"></div>
-          </div>
-
-          <div class="glass rounded-[1.75rem] p-5 text-center md:p-7">
-            <div class="mx-auto mb-5 grid h-14 w-14 place-items-center rounded-2xl bg-violet-400/10 text-violet-300">
-              <i class="fa-solid fa-cubes-stacked text-2xl"></i>
-            </div>
-
-            <p class="mx-auto max-w-2xl text-base font-semibold leading-8 text-slate-200 md:text-lg">
-              “${state.currentPuzzle.hint}”
+            
+            <h2 class="text-3xl font-black tracking-tight text-white md:text-5xl mb-4">
+              Ujian Teori <span class="gradient-text">Machine Learning</span>
+            </h2>
+            
+            <p class="mx-auto max-w-xl text-sm md:text-base leading-7 text-slate-300 mb-8">
+              Kuis ini dirancang khusus dari kasus nyata di Laporan Praktikum Anda (Titanic, Breast Cancer, dan Parameter Tuning). <br><br><b>Tidak ada nyawa dan tidak ada timer.</b> Fokus pada pemahaman penjelasan dari setiap sintaks dan teori.
             </p>
 
-            <div id="answer-slots" class="mt-8 flex min-h-[56px] flex-wrap justify-center gap-2">
-              ${state.currentPuzzle.word.split("").map(() => `
-                <div class="grid h-12 w-10 place-items-center rounded-2xl border-2 border-slate-700 bg-slate-950 text-xl font-black text-white shadow-inner md:h-14 md:w-12"></div>
-              `).join("")}
-            </div>
-
-            <div id="scrambled-letters" class="mt-8 flex flex-wrap justify-center gap-2">
-              ${state.scrambledLetters.map((item, index) => `
-                <button
-                  onclick="selectLetter(${index})"
-                  id="letter-btn-${index}"
-                  class="btn-game grid h-12 w-10 place-items-center rounded-2xl border border-slate-600 bg-slate-800 text-xl font-black text-white hover:border-violet-300 hover:bg-violet-500/60 md:h-14 md:w-12"
-                >
-                  ${item.letter}
-                </button>
-              `).join("")}
-            </div>
-
-            <p class="mono mt-6 text-xs text-slate-500">
-              Ketik huruf di keyboard untuk input cepat. Backspace/Esc untuk reset.
-            </p>
-
-            <button
-              onclick="resetWord()"
-              class="mt-4 rounded-2xl border border-slate-700 bg-slate-900 px-4 py-2 text-sm font-bold text-slate-300 hover:bg-slate-800"
-            >
-              <i class="fa-solid fa-rotate-left mr-2"></i>
-              Reset
+            <button onclick="initGame()" class="btn-game inline-flex items-center gap-3 rounded-2xl bg-cyan-600 hover:bg-cyan-500 px-8 py-4 font-black text-white shadow-lg shadow-cyan-900/40 text-lg">
+              <i class="fa-solid fa-play"></i> Mulai Kuis Teori
             </button>
           </div>
         </section>
       `;
-
-      startTimer(25, () => checkKeywordAnswer(true));
     }
 
-    function selectLetter(index) {
-      const btn = document.getElementById("letter-btn-" + index);
-
-      if (!btn || btn.style.visibility === "hidden") return;
-
-      playClick();
-
-      btn.style.visibility = "hidden";
-
-      state.userAnswerObj.push({
-        letter: state.scrambledLetters[index].letter,
-        id: index
-      });
-
-      updateAnswerSlots();
-    }
-
-    function resetWord() {
-      playClick();
-
-      state.userAnswerObj = [];
-
-      state.scrambledLetters.forEach((_, index) => {
-        const btn = document.getElementById("letter-btn-" + index);
-        if (btn) btn.style.visibility = "visible";
-      });
-
-      updateAnswerSlots();
-    }
-
-    function updateAnswerSlots() {
-      const slots = document.getElementById("answer-slots").children;
-      let currentWord = "";
-
-      for (let i = 0; i < state.currentPuzzle.word.length; i += 1) {
-        if (i < state.userAnswerObj.length) {
-          slots[i].innerText = state.userAnswerObj[i].letter;
-          slots[i].className =
-            "grid h-12 w-10 place-items-center rounded-2xl border-2 border-violet-300 bg-violet-500/50 text-xl font-black text-white shadow-inner md:h-14 md:w-12";
-          currentWord += state.userAnswerObj[i].letter;
-        } else {
-          slots[i].innerText = "";
-          slots[i].className =
-            "grid h-12 w-10 place-items-center rounded-2xl border-2 border-slate-700 bg-slate-950 text-xl font-black text-white shadow-inner md:h-14 md:w-12";
-        }
+    function renderQuestion() {
+      if (state.currentIndex >= state.shuffledData.length) {
+        endGame();
+        return;
       }
 
-      if (currentWord.length === state.currentPuzzle.word.length) {
-        checkKeywordAnswer(false, currentWord);
-      }
+      const q = state.shuffledData[state.currentIndex];
+
+      container.innerHTML = `
+        <section class="fade-in w-full max-w-3xl">
+          <div class="mb-4 flex items-end justify-between">
+            <p class="text-xs font-black uppercase tracking-[0.24em] text-cyan-300">
+              <i class="fa-solid fa-book-open mr-2"></i> Kasus Analisis
+            </p>
+            <div class="mono rounded-full border border-slate-700 bg-slate-900/70 px-4 py-1 text-xs font-bold text-slate-300">
+              Soal ${state.currentIndex + 1} dari ${state.shuffledData.length}
+            </div>
+          </div>
+
+          <div class="glass rounded-[1.75rem] p-6 md:p-8 mb-6 relative">
+            <h3 class="text-lg md:text-xl font-semibold leading-relaxed text-white mb-6">
+              ${q.question}
+            </h3>
+
+            <div class="grid gap-3" id="options-container">
+              ${q.options.map((opt, i) => `
+                <button id="opt-${i}" onclick="handleAnswer(${i})" class="btn-game w-full flex items-start gap-4 rounded-2xl border border-slate-700 bg-slate-900/50 p-4 text-left text-slate-300 hover:bg-slate-800 transition-colors">
+                  <span class="mono grid h-8 w-8 shrink-0 place-items-center rounded-lg border border-slate-700 bg-slate-950 font-black text-cyan-400">
+                    ${String.fromCharCode(65 + i)}
+                  </span>
+                  <span class="text-sm leading-6 md:text-base mt-0.5">${opt.text}</span>
+                </button>
+              `).join("")}
+            </div>
+          </div>
+
+          <div id="explanation-box" class="hidden fade-in glass rounded-[1.5rem] p-6 mb-6 border-l-4 border-l-cyan-400 bg-cyan-950/20">
+            <p class="text-sm md:text-base leading-7 text-slate-200">
+              ${q.explanation}
+            </p>
+          </div>
+
+          <div class="flex justify-end">
+            <button id="next-btn" onclick="nextQuestion()" class="hidden fade-in btn-game rounded-xl bg-white text-slate-900 px-8 py-3 font-bold shadow-lg hover:bg-slate-200">
+              Lanjut ke Soal Berikutnya <i class="fa-solid fa-arrow-right ml-2"></i>
+            </button>
+          </div>
+        </section>
+      `;
     }
 
-    function checkKeywordAnswer(isTimeout, word = "") {
-      clearInterval(state.timer);
+    function handleAnswer(selectedIndex) {
+      const q = state.shuffledData[state.currentIndex];
+      const isCorrect = q.options[selectedIndex].isCorrect;
 
-      const isCorrect = word === state.currentPuzzle.word;
-      const slots = document.getElementById("answer-slots").children;
-
-      document.querySelectorAll("[id^='letter-btn-']").forEach((button) => {
-        button.disabled = true;
-      });
+      // Lock buttons
+      const containerDiv = document.getElementById("options-container");
+      const buttons = containerDiv.querySelectorAll("button");
+      buttons.forEach(btn => btn.disabled = true);
 
       if (isCorrect) {
         playSuccess();
-        state.score += 100;
-
-        for (const slot of slots) {
-          slot.className =
-            "grid h-12 w-10 place-items-center rounded-2xl border-2 border-emerald-300 bg-emerald-500/80 text-xl font-black text-white shadow-inner md:h-14 md:w-12";
-        }
+        state.score += 20;
+        scoreDisplay.innerText = state.score;
       } else {
         playError();
-        state.lives -= 1;
+      }
 
-        document.getElementById("answer-slots").parentElement.classList.add("shake");
-
-        for (let i = 0; i < slots.length; i += 1) {
-          slots[i].innerText = state.currentPuzzle.word[i];
-          slots[i].className =
-            "grid h-12 w-10 place-items-center rounded-2xl border-2 border-rose-300 bg-rose-500/80 text-xl font-black text-white shadow-inner md:h-14 md:w-12";
+      // Coloring the options
+      q.options.forEach((opt, idx) => {
+        const btn = document.getElementById(`opt-${idx}`);
+        if (opt.isCorrect) {
+          btn.classList.add("opt-correct");
+        } else if (idx === selectedIndex && !isCorrect) {
+          btn.classList.add("opt-wrong");
+        } else {
+          btn.classList.add("opt-dim");
         }
-      }
+      });
 
-      updateStats();
-
-      if (state.lives > 0) {
-        setTimeout(() => {
-          state.currentIndex += 1;
-          renderKeywordQuiz();
-        }, 2500);
-      }
+      // Show explanation & next button
+      document.getElementById("explanation-box").classList.remove("hidden");
+      document.getElementById("next-btn").classList.remove("hidden");
     }
 
-    function startNextBinaryWord() {
-      if (state.lives <= 0) return;
-
-      if (state.currentIndex >= state.questions.length) {
-        endGame(true, "Binary stream selesai. Kamu makin paham representasi token dan pola sinyal komputasi.");
-        return;
-      }
-
-      state.currentBinaryWord = state.questions[state.currentIndex];
-      state.currentBinaryCharIndex = 0;
-      state.currentBinaryInput = "";
-
-      renderBinaryBoard();
+    function nextQuestion() {
+      state.currentIndex++;
+      renderQuestion();
     }
 
-    function renderBinaryBoard() {
-      if (state.lives <= 0) return;
-
-      container.innerHTML = `
-        <section class="fade-in w-full max-w-xl">
-          <div class="mb-4 flex items-end justify-between gap-3">
-            <div>
-              <p class="text-xs font-black uppercase tracking-[0.24em] text-cyan-300">
-                <i class="fa-solid fa-microchip mr-2"></i>
-                Binary Stream
-              </p>
-              <h2 class="mt-1 text-xl font-black text-white">
-                Kirim Token sebagai Sinyal Biner
-              </h2>
-            </div>
-
-            <div class="mono rounded-2xl border border-slate-700 bg-slate-900/70 px-3 py-2 text-xs font-bold text-slate-300">
-              Token ${state.currentIndex + 1}/${state.questions.length}
-            </div>
-          </div>
-
-          <div class="mb-6 h-2 overflow-hidden rounded-full bg-slate-800">
-            <div id="timer-bar-fill" class="timer-bar h-full rounded-full bg-cyan-400" style="width: 100%;"></div>
-          </div>
-
-          <div class="glass rounded-[1.75rem] p-5 md:p-7">
-            <p class="mono text-center text-[10px] font-black uppercase tracking-[0.28em] text-slate-500">
-              Target Token
-            </p>
-
-            <div class="mt-3 flex justify-center gap-3 text-4xl font-black tracking-widest md:text-5xl">
-              ${state.currentBinaryWord.split("").map((char, index) => `
-                <span class="${
-                  index === state.currentBinaryCharIndex
-                    ? "scale-110 border-b-4 border-cyan-300 pb-1 text-cyan-300"
-                    : index < state.currentBinaryCharIndex
-                      ? "text-emerald-400/50"
-                      : "text-slate-300"
-                }">
-                  ${char}
-                </span>
-              `).join("")}
-            </div>
-
-            <div class="mt-7 rounded-3xl border border-slate-800 bg-slate-950 p-5 shadow-inner">
-              <p class="mono mb-2 text-[10px] font-bold uppercase tracking-widest text-slate-600">
-                Input Buffer
-              </p>
-
-              <div
-                id="binary-input-display"
-                class="mono grid h-20 place-items-center text-5xl font-black tracking-[0.25em] text-white"
-              ></div>
-            </div>
-
-            <div id="hint-box" class="mt-5 flex min-h-[36px] items-center justify-center text-center text-sm font-bold opacity-0 transition-all"></div>
-          </div>
-
-          <div class="mt-5 grid grid-cols-2 gap-4">
-            <button
-              id="btn-zero"
-              onclick="handleBinaryInput('0')"
-              class="btn-game rounded-[1.5rem] border border-cyan-400/20 bg-cyan-400/10 p-8 text-center text-white hover:border-cyan-300/70 hover:bg-cyan-400/20"
-            >
-              <span class="mono block text-6xl font-black">0</span>
-              <span class="mono mt-2 block text-xs uppercase tracking-widest text-cyan-200/70">
-                Arrow Left
-              </span>
-            </button>
-
-            <button
-              id="btn-one"
-              onclick="handleBinaryInput('1')"
-              class="btn-game rounded-[1.5rem] border border-violet-400/20 bg-violet-400/10 p-8 text-center text-white hover:border-violet-300/70 hover:bg-violet-400/20"
-            >
-              <span class="mono block text-6xl font-black">1</span>
-              <span class="mono mt-2 block text-xs uppercase tracking-widest text-violet-200/70">
-                Arrow Right
-              </span>
-            </button>
-          </div>
-        </section>
-      `;
-
-      startTimer(10, () => handleBinaryFail());
-    }
-
-    function handleBinaryInput(char) {
-      if (state.lives <= 0) return;
-
-      char === "0" ? playZero() : playOne();
-
-      state.currentBinaryInput += char;
-
-      const display = document.getElementById("binary-input-display");
-      display.innerText = state.currentBinaryInput;
-
-      const targetChar = state.currentBinaryWord[state.currentBinaryCharIndex];
-      const targetBinary = binaryDictionary[targetChar].binary;
-
-      if (targetBinary === state.currentBinaryInput) {
-        clearInterval(state.timer);
-        playSuccess();
-
-        state.score += 50;
-
-        updateStats();
-
-        display.classList.replace("text-white", "text-cyan-300");
-
-        setTimeout(() => {
-          state.currentBinaryInput = "";
-          state.currentBinaryCharIndex += 1;
-
-          if (state.currentBinaryCharIndex >= state.currentBinaryWord.length) {
-            state.currentIndex += 1;
-            startNextBinaryWord();
-          } else {
-            renderBinaryBoard();
-          }
-        }, 400);
-
-        return;
-      }
-
-      if (!targetBinary.startsWith(state.currentBinaryInput)) {
-        handleBinaryFail();
-      }
-    }
-
-    function handleBinaryFail() {
-      clearInterval(state.timer);
-      playError();
-
-      state.lives -= 1;
-
-      if (state.lives <= 0) {
-        updateStats();
-        return;
-      }
-
-      updateStats();
-
-      const display = document.getElementById("binary-input-display");
-
-      if (display) {
-        display.classList.replace("text-white", "text-rose-400");
-        display.parentElement.parentElement.classList.add("shake");
-      }
-
-      const hintBox = document.getElementById("hint-box");
-
-      if (hintBox) {
-        const expectedChar = state.currentBinaryWord[state.currentBinaryCharIndex];
-        const expectedBinary = binaryDictionary[expectedChar].binary;
-
-        hintBox.innerHTML = `
-          <span class="rounded-xl border border-cyan-400/30 bg-cyan-400/10 px-3 py-1 text-cyan-200">
-            ${expectedChar}
-          </span>
-          <i class="fa-solid fa-arrow-right mx-3 text-slate-600"></i>
-          <span class="mono text-lg tracking-[0.25em] text-white">
-            ${expectedBinary}
-          </span>
-        `;
-
-        hintBox.classList.remove("opacity-0");
-        hintBox.classList.add("opacity-100");
-      }
-
-      setTimeout(() => {
-        if (state.lives > 0) {
-          state.currentBinaryInput = "";
-          renderBinaryBoard();
-        }
-      }, 3000);
-    }
-
-    function endGame(isWin, winMsg = "") {
-      clearInterval(state.timer);
-      document.removeEventListener("keydown", handleGlobalKeydown);
+    function endGame() {
       statsHeader.classList.add("hidden");
-      state.mode = "result";
-
-      const statusTitle = isWin ? "Training Complete" : "Model Failed";
-      const statusColor = isWin ? "text-emerald-300" : "text-rose-300";
-      const icon = isWin ? "fa-circle-check" : "fa-triangle-exclamation";
-      const message = isWin
-        ? winMsg
-        : "Simulasi berhenti. Review lagi konsep dasar pipeline, leakage, tuning, dan evaluasi model sebelum mencoba ulang.";
-
       container.innerHTML = `
         <section class="fade-in w-full max-w-xl">
-          <div class="glass overflow-hidden rounded-[2rem] p-7 text-center md:p-8">
-            <div class="mx-auto mb-6 grid h-20 w-20 place-items-center rounded-3xl ${
-              isWin ? "bg-emerald-400/10 text-emerald-300" : "bg-rose-400/10 text-rose-300"
-            }">
-              <i class="fa-solid ${icon} text-4xl"></i>
+          <div class="glass overflow-hidden rounded-[2rem] p-8 text-center">
+            <div class="mx-auto mb-6 grid h-24 w-24 place-items-center rounded-full bg-emerald-400/10 text-emerald-400 border border-emerald-400/30">
+              <i class="fa-solid fa-flag-checkered text-5xl"></i>
             </div>
 
-            <p class="mono mb-2 text-xs font-black uppercase tracking-[0.26em] text-slate-500">
-              Evaluation Result
+            <h2 class="text-3xl font-black text-white mb-2">Simulasi Teori Selesai!</h2>
+            <p class="text-sm leading-7 text-slate-300 mb-8">
+              Semua jebakan konseptual dari materi Deep Learning, EDA, dan Hyperparameter Tuning telah dibongkar.
             </p>
 
-            <h2 class="${statusColor} text-3xl font-black">
-              ${statusTitle}
-            </h2>
-
-            <p class="mx-auto mt-4 max-w-md text-sm leading-7 text-slate-300">
-              ${message}
-            </p>
-
-            <div class="mx-auto mt-7 max-w-xs rounded-3xl border border-slate-800 bg-slate-950/80 p-5 shadow-inner">
-              <p class="mono text-[10px] font-black uppercase tracking-[0.28em] text-slate-500">
-                Final Score
-              </p>
-
-              <p class="mono mt-2 text-6xl font-black text-white">
-                ${state.score}
-              </p>
+            <div class="mx-auto max-w-xs rounded-3xl border border-slate-800 bg-slate-950/80 p-5 shadow-inner mb-8">
+              <p class="mono text-[10px] font-black uppercase tracking-[0.28em] text-slate-500 mb-2">Skor Kuis</p>
+              <p class="mono text-6xl font-black text-cyan-400">${state.score}</p>
             </div>
 
-            <button
-              onclick="renderMenu()"
-              class="btn-game mt-7 w-full rounded-2xl bg-gradient-to-r from-cyan-500 to-violet-500 px-5 py-4 font-black text-white shadow-lg shadow-cyan-950/40"
-            >
-              <i class="fa-solid fa-rotate-right mr-2"></i>
-              Kembali ke Menu Latihan
+            <button onclick="renderMenu()" class="btn-game w-full rounded-2xl bg-slate-800 hover:bg-slate-700 border border-slate-600 px-5 py-4 font-black text-white shadow-lg">
+              <i class="fa-solid fa-rotate-left mr-2"></i> Ulangi Pemanasan Teori
             </button>
           </div>
         </section>
       `;
     }
 
+    // Start App
     renderMenu();
   </script>
 </body>
