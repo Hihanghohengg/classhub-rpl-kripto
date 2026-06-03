@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulator Ujian Praktik Machine Learning - Tingkat Akhir</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* ================= ANTI CHEAT & UI CORE ================= */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #020617; 
+            color: #f8fafc;
+            overflow-x: hidden;
+            touch-action: manipulation;
+            /* NON-SELECTABLE TEXT */
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+        
+        .binary-font { font-family: 'Share Tech Mono', monospace; }
+        .neon-text { text-shadow: 0 0 10px rgba(56, 189, 248, 0.7), 0 0 20px rgba(56, 189, 248, 0.5); }
+        .neon-text-green { text-shadow: 0 0 10px rgba(74, 222, 128, 0.7), 0 0 20px rgba(74, 222, 128, 0.5); }
+        .neon-text-purple { text-shadow: 0 0 10px rgba(168, 85, 247, 0.7), 0 0 20px rgba(168, 85, 247, 0.5); }
+        
+        .grid-bg {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background-image: 
+                linear-gradient(rgba(14, 165, 233, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(14, 165, 233, 0.05) 1px, transparent 1px);
+            background-size: 30px 30px;
+            z-index: -2;
+        }
+        
+        .radar-sweep {
+            position: fixed;
+            top: 50%; left: 50%; width: 150vw; height: 150vw;
+            margin-top: -75vw; margin-left: -75vw;
+            background: conic-gradient(from 0deg, transparent 70%, rgba(56, 189, 248, 0.1) 100%);
+            border-radius: 50%;
+            animation: sweep 6s linear infinite;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        @keyframes sweep { 100% { transform: rotate(360deg); } }
+
+        .btn-game { transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1); }
+        .btn-game:active:not(:disabled) { transform: scale(0.95); }
+        .btn-game:disabled { opacity: 0.5; transform: none; cursor: not-allowed; }
+
+        .shake { animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both; }
+        @keyframes shake {
+            10%, 90% { transform: translate3d(-1px, 0, 0); }
+            20%, 80% { transform: translate3d(2px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+            40%, 60% { transform: translate3d(4px, 0, 0); }
+        }
+
+        .timer-bar { transition: width 0.1s linear, background-color 0.3s; }
+    </style>
+</head>
+<body class="flex flex-col h-screen" oncontextmenu="return false;" oncopy="return false;" oncut="return false;" onpaste="return false;">
+    <div class="grid-bg"></div>
+    <div class="radar-sweep"></div>
+
+    <header class="p-4 border-b border-slate-800 bg-slate-950/80 backdrop-blur-md flex justify-between items-center z-10 sticky top-0 shadow-lg">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-lg bg-sky-900/50 flex items-center justify-center border border-sky-500/30">
+                <i class="fa-solid fa-microchip text-sky-400"></i>
+            </div>
+            <div>
+                <h1 class="text-lg font-bold text-sky-400 neon-text uppercase tracking-widest leading-none">Lab Kecerdasan Buatan</h1>
+                <p class="text-[10px] text-slate-400 font-mono mt-1">MODULE: ML TUNING & DEEP LEARNING</p>
+            </div>
+        </div>
+        <div id="stats-header" class="hidden flex space-x-3 text-sm font-mono">
+            <div class="bg-slate-900 px-3 py-1.5 rounded-lg border border-slate-700 flex items-center shadow-inner">
+                <i class="fa-solid fa-heart text-red-500 mr-2 animate-pulse"></i> <span id="lives-display" class="font-bold text-white">3</span>
+            </div>
+            <div class="bg-slate-900 px-3 py-1.5 rounded-lg border border-slate-700 flex items-center shadow-inner">
+                <i class="fa-solid fa-bolt text-yellow-400 mr-2"></i> <span id="score-display" class="font-bold text-white">0</span>
+            </div>
+        </div>
+    </header>
+
+    <main id="app-container" class="flex-1 flex flex-col items-center justify-center p-4 relative z-10 w-full max-w-4xl mx-auto overflow-y-auto">
+        </main>
+
+    <script>
+        /* ================= DATABASE STUDI KASUS MACHINE LEARNING ================= */
+        const lessonDatabase = [
+            {
+                "lesson": "1. Data Leakage & Pipeline",
+                "items": [
+                    [
+                        "Menurut rubrik penilaian, apa yang menjadi 'Red Flag' paling fatal yang menyebabkan data leakage saat Hyperparameter Tuning?",
+                        "Melakukan fit_transform (seperti imputasi atau scaling) pada seluruh X_train sebelum proses Cross-Validation.",
+                        "Menggunakan GridSearchCV alih-alih RandomizedSearchCV.",
+                        "Menentukan scoring='roc_auc' pada dataset klasifikasi.",
+                        "Membagi data menggunakan StratifiedKFold pada kasus klasifikasi tidak seimbang.",
+                        "Data leakage terjadi jika kita membocorkan informasi distribusi data validasi ke model saat preprocessing. Ini harus diselesaikan menggunakan scikit-learn Pipeline."
+                    ],
+                    [
+                        "Bagaimana cara scikit-learn Pipeline mencegah kebocoran data (data leakage) saat melakukan K-Fold Cross Validation?",
+                        "Pipeline memastikan transformasi data (seperti scaling) hanya di-fit pada himpunan data latih spesifik di setiap lipatan (fold) CV secara terisolasi.",
+                        "Pipeline secara otomatis mengubah hyperparameter model agar fit_transform tidak pernah digunakan.",
+                        "Pipeline mengenkripsi data agar tidak terbaca oleh fold validasi.",
+                        "Pipeline menghapus missing values secara otomatis pada X_test.",
+                        "Pipeline merangkai tahap preprocessing dan modeling, sehingga setiap kali GridSearchCV melakukan split CV, preprocessing hanya belajar dari data 'train' di fold tersebut."
+                    ]
+                ]
+            },
+            {
+                "lesson": "2. Hyperparameter Tuning",
+                "items": [
+                    [
+                        "Apa interpretasi paling tepat jika grafik Validation Curve menunjukkan skor Training terus meningkat hingga 99%, namun skor Validation stagnan atau justru menurun?",
+                        "Model mengalami Overfitting, terlalu menghafal noise pada data latih dan gagal menggeneralisasi pola.",
+                        "Model mengalami Underfitting, algoritma terlalu sederhana untuk menangkap pola data.",
+                        "Data leakage telah berhasil dihindari menggunakan Pipeline.",
+                        "Hyperparameter tuning telah mencapai titik paling optimal.",
+                        "Gap yang sangat besar antara Training score yang tinggi dan Validation score yang rendah/menurun adalah indikator klasik dari Overfitting."
+                    ],
+                    [
+                        "Dalam konteks waktu komputasi (90 menit ujian), mengapa RandomizedSearchCV seringkali lebih efisien dibanding GridSearchCV?",
+                        "RandomizedSearchCV hanya menguji sampel acak dari kombinasi parameter sesuai distribusi, memberikan hasil mendekati optimal dalam waktu jauh lebih singkat.",
+                        "RandomizedSearchCV selalu menghasilkan akurasi yang lebih tinggi 100% daripada GridSearchCV.",
+                        "RandomizedSearchCV tidak memerlukan Pipeline untuk mencegah data leakage.",
+                        "GridSearchCV tidak bisa digunakan untuk model Random Forest atau Ensemble.",
+                        "GridSearch bersifat exhaustive (menguji semua kemungkinan), yang akan memakan waktu terlalu lama saat parameter grid-nya sangat luas."
+                    ]
+                ]
+            },
+            {
+                "lesson": "3. Evaluasi & Pemisahan Data",
+                "items": [
+                    [
+                        "Pada kasus klasifikasi seperti deteksi Risiko Kardiovaskular, mengapa kita wajib menggunakan stratify=y saat train_test_split?",
+                        "Untuk memastikan rasio jumlah kelas target (positif/negatif) di data latih dan uji sama dengan proporsi populasi aslinya.",
+                        "Agar data yang memiliki missing values bisa diimputasi dengan nilai median secara otomatis.",
+                        "Untuk mempercepat proses hyperparameter tuning pada GridSearchCV.",
+                        "Agar menghindari data leakage saat membagi data tabular menjadi matriks dan vektor.",
+                        "Stratifikasi sangat krusial pada klasifikasi agar model tidak secara tidak sengaja dilatih pada himpunan data yang kelas mayoritasnya overrepresented."
+                    ],
+                    [
+                        "Evaluasi model `grid.best_estimator_` terhadap himpunan data uji (X_test) idealnya dilakukan...",
+                        "Hanya SATU KALI di akhir seluruh proses sebagai estimasi performa final di dunia nyata (mencegah test set leakage).",
+                        "Di setiap iterasi pencarian hyperparameter untuk mengukur peningkatan performa.",
+                        "Sebelum proses preprocessing dimulai untuk menentukan fitur terpenting.",
+                        "Berkali-kali selama proses fine-tuning parameter grid manual.",
+                        "Mengevaluasi model berkali-kali pada test set akan menyebabkan model secara implisit 'menghafal' data uji (Test Set Leakage)."
+                    ]
+                ]
+            },
+            {
+                "lesson": "4. Pengantar Deep Learning (RNN/LSTM)",
+                "items": [
+                    [
+                        "Berdasarkan presentasi Intro to Deep Learning, apa karakteristik utama data yang cocok diolah menggunakan Recurrent Neural Network (RNN)?",
+                        "Data sekuensial atau time-series, di mana terdapat ketergantungan urutan (sequence) antara satu observasi dengan observasi lainnya.",
+                        "Data tabular murni (seperti CSV biasa) yang memiliki bentuk baris dan kolom tanpa urutan waktu.",
+                        "Data gambar beresolusi tinggi untuk pengenalan wajah statis.",
+                        "Data kategorikal yang memiliki missing values dalam jumlah masif.",
+                        "RNN dirancang dengan struktur memori internal (hidden state) untuk mengingat informasi dari langkah waktu sebelumnya pada data sekuensial (seperti teks atau runtun waktu)."
+                    ],
+                    [
+                        "Arsitektur Long Short-Term Memory (LSTM) diciptakan utamanya untuk mengatasi kelemahan apa pada Vanilla RNN?",
+                        "Masalah Vanishing Gradient yang membuat RNN kesulitan mempelajari pola ketergantungan jangka panjang (long-term dependencies) dalam sekuens.",
+                        "Ketidakmampuan RNN memproses data dalam format gambar matriks 2D (seperti fungsi CNN).",
+                        "Proses preprocessing tabular yang menyebabkan test set leakage.",
+                        "Komputasi yang memakan memori CPU terlalu besar saat melakukan GridSearchCV.",
+                        "LSTM menggunakan mekanisme 'gates' (forget, input, output) untuk mengatur aliran informasi, sehingga gradien tidak menghilang saat backpropagation pada sekuens panjang."
+                    ]
+                ]
+            }
+        ];
+
+        const rawDatabase = lessonDatabase.flatMap(group => group.items);
+
+        function shuffleArray(arr) {
+            const copy = [...arr];
+            for (let i = copy.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [copy[i], copy[j]] = [copy[j], copy[i]];
+            }
+            return copy;
+        }
+
+        const anagramWords = [
+            { "word": "PIPELINE", "hint": "Rangkaian proses preprocessing & modeling berurutan di scikit-learn untuk mencegah data leakage." },
+            { "word": "LEAKAGE", "hint": "Masalah fatal ketika informasi dari data uji tak sengaja 'bocor' ke data latih selama preprocessing." },
+            { "word": "OVERFIT", "hint": "Kondisi saat model terlalu menghafal data latih, tapi gagal memprediksi data baru dengan baik." },
+            { "word": "GRIDSEARCH", "hint": "Metode pencarian hyperparameter optimal secara exhaustive (menguji semua kombinasi pada grid)." },
+            { "word": "STRATIFIED", "hint": "Metode pemisahan data (split/K-Fold) yang mempertahankan proporsi kelas asli, wajib untuk klasifikasi." },
+            { "word": "TENSOR", "hint": "Struktur data array n-dimensi yang menjadi standar input/output pada model Deep Learning." },
+            { "word": "EPOCH", "hint": "Satu siklus komputasi melewati seluruh data latih di Neural Network." },
+            { "word": "VANISHING", "hint": "Masalah hilangnya gradien pada RNN konvensional yang dipecahkan oleh arsitektur LSTM." },
+            { "word": "IMPUTASI", "hint": "Proses mengisi nilai kosong (missing values) pada dataset, misal dengan median atau modus." },
+            { "word": "METRIK", "hint": "Standar evaluasi performa model seperti Akurasi, F1-Score, atau ROC-AUC." }
+        ];
+
+        const binaryWords = ["DATA", "NODE", "FIT", "CV", "AUC", "RNN", "ML", "LOSS"];
+
+        // Custom Binary Dictionary mapping for A-Z (0 for dot/left, 1 for dash/right)
+        const binaryDictionary = {
+            'A': { binary: "01" }, 'B': { binary: "1000" }, 'C': { binary: "1010" },
+            'D': { binary: "100" }, 'E': { binary: "0" }, 'F': { binary: "0010" },
+            'G': { binary: "110" }, 'H': { binary: "0000" }, 'I': { binary: "00" },
+            'J': { binary: "0111" }, 'K': { binary: "101" }, 'L': { binary: "0100" },
+            'M': { binary: "11" }, 'N': { binary: "10" }, 'O': { binary: "111" },
+            'P': { binary: "0110" }, 'Q': { binary: "1101" }, 'R': { binary: "010" },
+            'S': { binary: "000" }, 'T': { binary: "1" }, 'U': { binary: "001" },
+            'V': { binary: "0001" }, 'W': { binary: "011" }, 'X': { binary: "1001" },
+            'Y': { binary: "1011" }, 'Z': { binary: "1100" }
+        };
+
+        // --- GLOBAL STATE ---
+        let state = {
+            mode: 'menu', 
+            score: 0,
+            lives: 3,
+            questions: [],
+            currentIndex: 0,
+            timer: null,
+            timeLeft: 0,
+            maxTime: 0,
+            
+            currentPuzzle: null,
+            scrambledLetters: [],
+            userAnswerObj: [], 
+
+            currentMorseWord: "",
+            currentMorseCharIndex: 0,
+            currentMorseInput: ""
+        };
+
+        // --- AUDIO SYSTEM ---
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        let audioCtx;
+        function initAudio() {
+            if (!audioCtx) audioCtx = new AudioContext();
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+        }
+        function playTone(duration, frequency = 600, type = 'sine') {
+            initAudio();
+            const oscillator = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            oscillator.type = type;
+            oscillator.frequency.value = frequency;
+            oscillator.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+            oscillator.start();
+            gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime + duration/1000);
+            oscillator.stop(audioCtx.currentTime + duration/1000);
+        }
+        function playZero() { playTone(120, 800, 'square'); } // Short, higher pitch for 0
+        function playOne() { playTone(300, 400, 'square'); }  // Long, lower pitch for 1
+        function playError() { playTone(300, 150, 'sawtooth'); }
+        function playSuccess() { playTone(400, 900, 'triangle'); }
+        function playClick() { playTone(50, 1200, 'sine'); }
+
+        const container = document.getElementById('app-container');
+        const statsHeader = document.getElementById('stats-header');
+
+        function updateStats() {
+            document.getElementById('lives-display').innerText = state.lives;
+            document.getElementById('score-display').innerText = state.score;
+            if (state.lives <= 0 && state.mode !== 'menu' && state.mode !== 'result') endGame(false);
+        }
+
+        function startTimer(seconds, onTimeout) {
+            clearInterval(state.timer);
+            state.maxTime = seconds;
+            state.timeLeft = seconds;
+            const bar = document.getElementById('timer-bar-fill');
+            const timeText = document.getElementById('time-text');
+            state.timer = setInterval(() => {
+                state.timeLeft -= 0.1;
+                if(bar) {
+                    const percentage = (state.timeLeft / state.maxTime) * 100;
+                    bar.style.width = `${percentage}%`;
+                    bar.style.backgroundColor = percentage < 25 ? '#ef4444' : percentage < 50 ? '#eab308' : (state.mode === 'keyword' ? '#a855f7' : (state.mode === 'morse' ? '#38bdf8' : '#10b981'));
+                }
+                if(timeText) timeText.innerText = Math.ceil(state.timeLeft) + "s";
+                if(state.timeLeft <= 0) { clearInterval(state.timer); onTimeout(); }
+            }, 100);
+        }
+
+        // --- MENU ---
+        function renderMenu() {
+            state.mode = 'menu';
+            statsHeader.classList.add('hidden');
+            clearInterval(state.timer);
+            document.removeEventListener('keydown', handleGlobalKeydown);
+            
+            container.innerHTML = `
+                <div class="text-center w-full max-w-2xl bg-slate-900/90 p-8 rounded-2xl border border-sky-900/50 shadow-2xl backdrop-blur-sm relative overflow-hidden">
+                    <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-sky-500 to-transparent opacity-50"></div>
+                    <div class="text-6xl mb-6 text-sky-400 drop-shadow-[0_0_15px_rgba(56,189,248,0.5)]"><i class="fa-solid fa-network-wired"></i></div>
+                    <h2 class="text-3xl md:text-4xl font-black mb-3 neon-text text-white uppercase tracking-tight">Persiapan UTS Praktik</h2>
+                    <p class="text-slate-400 mb-8 font-mono text-sm">Target: Pipeline, Hyperparameter Tuning, Deep Learning Dasar</p>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                        <button onclick="initGame('quiz')" class="flex flex-col items-center p-6 bg-slate-800 hover:bg-emerald-900/40 border border-slate-700 hover:border-emerald-500 rounded-xl transition-all btn-game group">
+                            <i class="fa-solid fa-laptop-code text-3xl text-emerald-400 mb-3 group-hover:scale-110 transition-transform"></i>
+                            <h3 class="font-bold text-white mb-1">Logika Sintaks</h3>
+                            <p class="text-xs text-slate-400">Analisis Kasus Model (Diacak)</p>
+                        </button>
+                        <button onclick="initGame('keyword')" class="flex flex-col items-center p-6 bg-slate-800 hover:bg-purple-900/40 border border-slate-700 hover:border-purple-500 rounded-xl transition-all btn-game group">
+                            <i class="fa-solid fa-keyboard text-3xl text-purple-400 mb-3 group-hover:scale-110 transition-transform"></i>
+                            <h3 class="font-bold text-white mb-1">Istilah Kritis</h3>
+                            <p class="text-xs text-slate-400">Dekripsi Konsep Inti AI</p>
+                        </button>
+                        <button onclick="initGame('morse')" class="flex flex-col items-center p-6 bg-slate-800 hover:bg-sky-900/40 border border-slate-700 hover:border-sky-500 rounded-xl transition-all btn-game group">
+                            <i class="fa-solid fa-microchip text-3xl text-sky-400 mb-3 group-hover:scale-110 transition-transform"></i>
+                            <h3 class="font-bold text-white mb-1">Arus Biner</h3>
+                            <p class="text-xs text-slate-400">Konversi Sinyal 0 & 1</p>
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function initGame(mode) {
+            initAudio();
+            state.mode = mode;
+            state.score = 0;
+            state.lives = 3;
+            state.currentIndex = 0;
+            statsHeader.classList.remove('hidden');
+            updateStats();
+            document.addEventListener('keydown', handleGlobalKeydown);
+
+            if(mode === 'quiz') {
+                state.questions = shuffleArray(rawDatabase).slice(0, 5);
+                renderQuiz();
+            } else if(mode === 'keyword') {
+                state.questions = shuffleArray([...anagramWords]).slice(0, 5);
+                renderKeywordQuiz();
+            } else if(mode === 'morse') {
+                state.questions = shuffleArray([...binaryWords]).slice(0, 5);
+                startNextMorseWord();
+            }
+        }
+
+        // --- GLOBAL KEYDOWN HANDLER ---
+        function handleGlobalKeydown(e) {
+            if(state.lives <= 0) return;
+            if(state.mode === 'keyword') {
+                if(e.key === 'Backspace' || e.key === 'Escape') { resetWord(); return; }
+                const key = e.key.toUpperCase();
+                if(/^[A-Z]$/.test(key)) {
+                    for(let i=0; i<state.scrambledLetters.length; i++) {
+                        if(state.scrambledLetters[i].letter === key && document.getElementById(`letter-btn-${i}`).style.visibility !== 'hidden') {
+                            selectLetter(i); break;
+                        }
+                    }
+                }
+            } else if (state.mode === 'morse') {
+                if (e.key === 'ArrowLeft' || e.key === '0') {
+                    const btn = document.getElementById('btn-dot');
+                    if(btn) { btn.classList.add('bg-sky-600', 'translate-y-[6px]', 'border-b-0'); handleMorseInput('0'); setTimeout(() => btn.classList.remove('bg-sky-600', 'translate-y-[6px]', 'border-b-0'), 100); }
+                } else if (e.key === 'ArrowRight' || e.key === '1') {
+                    const btn = document.getElementById('btn-dash');
+                    if(btn) { btn.classList.add('bg-sky-600', 'translate-y-[6px]', 'border-b-0'); handleMorseInput('1'); setTimeout(() => btn.classList.remove('bg-sky-600', 'translate-y-[6px]', 'border-b-0'), 100); }
+                }
+            }
+        }
+
+        // --- MISI 1: QUIZ ---
+        function renderQuiz() {
+            if(state.lives <= 0) return;
+            if (state.currentIndex >= state.questions.length) { endGame(true, "Logika code dan metrik validasi lu udah matang buat ujian besok!"); return; }
+            
+            const q = state.questions[state.currentIndex];
+            let choices = [q[1], q[2], q[3], q[4]].sort(() => 0.5 - Math.random());
+            let cIdx = choices.indexOf(q[1]);
+
+            container.innerHTML = `
+                <div class="w-full max-w-2xl fade-in">
+                    <div class="mb-3 flex justify-between items-end"><span class="text-emerald-400 font-bold uppercase text-sm"><i class="fa-solid fa-laptop-code mr-2"></i>Misi 1: Logika Sintaks</span><span class="text-slate-400 text-sm font-mono font-bold">KASUS ${state.currentIndex + 1}/${state.questions.length}</span></div>
+                    <div class="w-full h-1.5 bg-slate-800 rounded-full mb-6"><div id="timer-bar-fill" class="h-full bg-emerald-400 timer-bar" style="width:100%;"></div></div>
+                    <div id="quiz-card" class="bg-slate-900 p-6 md:p-8 rounded-2xl border border-slate-700 shadow-xl relative">
+                        <div id="time-text" class="absolute -top-3 -right-3 w-10 h-10 bg-slate-800 border-2 border-slate-700 text-white font-bold rounded-full flex items-center justify-center text-xs"></div>
+                        <h3 class="text-lg font-semibold mb-6 leading-relaxed text-white">${q[0]}</h3>
+                        <div class="grid grid-cols-1 gap-3">
+                            ${choices.map((c, i) => `<button onclick="handleQuizAnswer(${i}, ${cIdx}, '${q[5].replace(/'/g, "\\'")}')" class="text-left w-full p-4 rounded-xl border border-slate-700 bg-slate-800/80 hover:bg-emerald-900/30 hover:border-emerald-500 transition-colors text-slate-300 hover:text-white flex items-center group"><div class="min-w-[32px] h-8 rounded bg-slate-950 flex items-center justify-center mr-3 font-bold text-emerald-400 border border-slate-700">${String.fromCharCode(65+i)}</div><span class="flex-1 text-sm md:text-base">${c}</span></button>`).join('')}
+                        </div>
+                    </div>
+                    <div id="explanation-box" class="hidden mt-6 bg-slate-900 p-5 rounded-xl border border-emerald-900/50 text-emerald-100 text-sm shadow-inner"></div>
+                </div>
+            `;
+            startTimer(40, () => handleQuizAnswer(-1, cIdx, q[5]));
+        }
+
+        function handleQuizAnswer(sIdx, cIdx, exp) {
+            clearInterval(state.timer);
+            const card = document.getElementById('quiz-card');
+            const expBox = document.getElementById('explanation-box');
+            const btns = card.querySelectorAll('button');
+            btns.forEach(b => b.disabled = true);
+
+            if (sIdx === cIdx) {
+                playSuccess(); state.score += 50;
+                btns[sIdx].className = "text-left w-full p-4 rounded-xl border border-emerald-400 bg-emerald-600 text-white flex items-center";
+            } else {
+                playError(); state.lives--; card.classList.add('shake');
+                if (sIdx >= 0) btns[sIdx].className = "text-left w-full p-4 rounded-xl border border-red-500 bg-red-600/80 text-white flex items-center";
+                btns[cIdx].className = "text-left w-full p-4 rounded-xl border border-emerald-500 bg-emerald-600/50 text-white flex items-center";
+            }
+            expBox.classList.remove('hidden');
+            expBox.innerHTML = `<h4 class="font-bold text-emerald-400 mb-2"><i class="fa-solid fa-code-compare mr-2"></i>Debugger Output:</h4><p class="leading-relaxed">${exp}</p>`;
+            updateStats();
+            if (state.lives > 0) setTimeout(() => { state.currentIndex++; renderQuiz(); }, 5000);
+        }
+
+        // --- MISI 2: KEYWORD (Dapat Diketik) ---
+        function renderKeywordQuiz() {
+            if(state.lives <= 0) return;
+            if (state.currentIndex >= state.questions.length) { endGame(true, "Konsep ML sudah masuk ke memori otot tangan lo. Siap coding!"); return; }
+
+            state.currentPuzzle = state.questions[state.currentIndex];
+            state.userAnswerObj = [];
+            let letters = state.currentPuzzle.word.split('');
+            let scrambled = letters.map((l, i) => ({ letter: l, id: i })).sort(() => 0.5 - Math.random());
+            while(scrambled.map(x=>x.letter).join('') === state.currentPuzzle.word && scrambled.length>1) scrambled.sort(() => 0.5 - Math.random());
+            state.scrambledLetters = scrambled;
+
+            container.innerHTML = `
+                <div class="w-full max-w-2xl fade-in flex flex-col items-center">
+                    <div class="w-full mb-3 flex justify-between"><span class="text-purple-400 font-bold uppercase text-sm"><i class="fa-solid fa-keyboard mr-2"></i>Misi 2: Istilah Kritis</span><span class="text-slate-400 text-sm font-mono font-bold">KATA ${state.currentIndex + 1}/${state.questions.length}</span></div>
+                    <div class="w-full h-1.5 bg-slate-800 rounded-full mb-8"><div id="timer-bar-fill" class="h-full bg-purple-400 timer-bar" style="width:100%;"></div></div>
+                    <div class="bg-slate-900 p-8 rounded-2xl border border-slate-700 shadow-xl w-full text-center relative">
+                        <i class="fa-solid fa-terminal text-4xl text-slate-800 absolute top-4 left-4"></i>
+                        <p class="text-lg md:text-xl text-slate-300 font-medium mb-10 leading-relaxed px-6">"${state.currentPuzzle.hint}"</p>
+                        <div id="answer-slots" class="flex flex-wrap justify-center gap-2 mb-8 min-h-[50px]">
+                            ${state.currentPuzzle.word.split('').map(() => `<div class="w-10 h-12 md:w-12 md:h-14 rounded-lg border-2 border-slate-700 bg-slate-950 flex items-center justify-center text-xl md:text-2xl font-bold text-white shadow-inner"></div>`).join('')}
+                        </div>
+                        <div id="scrambled-letters" class="flex flex-wrap justify-center gap-2">
+                            ${state.scrambledLetters.map((obj, i) => `<button onclick="selectLetter(${i})" id="letter-btn-${i}" class="w-10 h-12 md:w-12 md:h-14 rounded-lg bg-slate-700 hover:bg-purple-600 border border-slate-600 text-xl font-bold text-white shadow-lg btn-game transition-transform">${obj.letter}</button>`).join('')}
+                        </div>
+                        <p class="mt-6 text-xs text-slate-500 font-mono"><i class="fa-solid fa-keyboard"></i> Ketik via KEYBOARD untuk input lebih cepat.</p>
+                        <div class="mt-4"><button onclick="resetWord()" class="px-4 py-2 rounded-lg bg-slate-800 text-slate-300 text-sm border border-slate-600 hover:bg-slate-700">Reset / Backspace</button></div>
+                    </div>
+                </div>
+            `;
+            startTimer(25, () => checkKeywordAnswer(true));
+        }
+
+        function selectLetter(i) {
+            playClick();
+            document.getElementById(`letter-btn-${i}`).style.visibility = 'hidden';
+            state.userAnswerObj.push({ letter: state.scrambledLetters[i].letter, id: i });
+            updateAnswerSlots();
+        }
+
+        function resetWord() {
+            playClick(); state.userAnswerObj = [];
+            state.scrambledLetters.forEach((_, i) => document.getElementById(`letter-btn-${i}`).style.visibility = 'visible');
+            updateAnswerSlots();
+        }
+
+        function updateAnswerSlots() {
+            const slots = document.getElementById('answer-slots').children;
+            let currentWord = "";
+            for(let i=0; i<state.currentPuzzle.word.length; i++) {
+                if(i < state.userAnswerObj.length) {
+                    slots[i].innerText = state.userAnswerObj[i].letter;
+                    slots[i].className = "w-10 h-12 md:w-12 md:h-14 rounded-lg border-2 border-purple-500 bg-purple-900/50 flex items-center justify-center text-xl md:text-2xl font-bold text-white shadow-inner";
+                    currentWord += state.userAnswerObj[i].letter;
+                } else {
+                    slots[i].innerText = "";
+                    slots[i].className = "w-10 h-12 md:w-12 md:h-14 rounded-lg border-2 border-slate-700 bg-slate-950 flex items-center justify-center text-xl md:text-2xl font-bold text-white shadow-inner";
+                }
+            }
+            if(currentWord.length === state.currentPuzzle.word.length) checkKeywordAnswer(false, currentWord);
+        }
+
+        function checkKeywordAnswer(isTimeout, word="") {
+            clearInterval(state.timer);
+            const isCorrect = word === state.currentPuzzle.word;
+            const slots = document.getElementById('answer-slots').children;
+            document.querySelectorAll('[id^="letter-btn-"]').forEach(b => b.disabled = true);
+
+            if(isCorrect) {
+                playSuccess(); state.score += 100;
+                for(let s of slots) s.className = "w-10 h-12 md:w-12 md:h-14 rounded-lg border-2 border-emerald-400 bg-emerald-600 flex items-center justify-center text-xl md:text-2xl font-bold text-white shadow-inner";
+            } else {
+                playError(); state.lives--; document.getElementById('answer-slots').parentElement.classList.add('shake');
+                for(let i=0; i<slots.length; i++) {
+                    slots[i].innerText = state.currentPuzzle.word[i];
+                    slots[i].className = "w-10 h-12 md:w-12 md:h-14 rounded-lg border-2 border-red-500 bg-red-900/80 flex items-center justify-center text-xl md:text-2xl font-bold text-white shadow-inner";
+                }
+            }
+            updateStats();
+            if (state.lives > 0) setTimeout(() => { state.currentIndex++; renderKeywordQuiz(); }, 2500);
+        }
+
+        // --- MISI 3: BINARY STREAM (MODIFIED MORSE) ---
+        function startNextMorseWord() {
+            if(state.lives <= 0) return;
+            if(state.currentIndex >= state.questions.length) { endGame(true, "Alur komputasi dipahami. Transmisi selesai."); return; }
+            state.currentMorseWord = state.questions[state.currentIndex];
+            state.currentMorseCharIndex = 0;
+            state.currentMorseInput = "";
+            renderMorseBoard();
+        }
+
+        function renderMorseBoard() {
+            if(state.lives <= 0) return;
+            container.innerHTML = `
+                <div class="w-full max-w-md flex flex-col items-center">
+                    <div class="w-full mb-3 flex justify-between items-end"><span class="text-sky-400 font-bold uppercase text-sm"><i class="fa-solid fa-bolt mr-2"></i>Misi 3: Arus Biner</span><span class="text-slate-400 text-sm font-mono font-bold">KATA ${state.currentIndex + 1}/${state.questions.length}</span></div>
+                    <div class="w-full h-1.5 bg-slate-800 rounded-full mb-6"><div id="timer-bar-fill" class="h-full bg-sky-400 timer-bar" style="width:100%;"></div></div>
+                    <div class="w-full bg-slate-900 rounded-2xl p-6 border border-slate-700 shadow-xl mb-6">
+                        <div class="text-center mb-3 text-slate-500 font-mono text-xs font-bold tracking-widest">TRANSMIT STRING:</div>
+                        <div class="flex justify-center space-x-3 text-4xl font-black tracking-widest mb-6 font-mono">
+                            ${state.currentMorseWord.split('').map((c, i) => `<span class="${i === state.currentMorseCharIndex ? 'text-sky-400 border-b-4 border-sky-400 pb-1 scale-110 drop-shadow-[0_0_8px_rgba(56,189,248,0.8)]' : (i < state.currentMorseCharIndex ? 'text-slate-600 opacity-50' : 'text-slate-300')}">${c}</span>`).join('')}
+                        </div>
+                        <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 h-28 flex flex-col justify-center items-center shadow-inner relative">
+                            <div class="text-[10px] text-slate-600 absolute top-2 left-3 font-mono">BUFFER INPUT:</div>
+                            <div id="morse-input-display" class="text-5xl binary-font text-white tracking-[0.2em] font-bold h-12 flex items-center justify-center"></div>
+                        </div>
+                        <div id="hint-box" class="mt-5 text-center text-sm font-mono font-bold h-8 transition-all flex justify-center items-center opacity-0"></div>
+                    </div>
+                    <div class="flex w-full space-x-4">
+                        <button id="btn-dot" onclick="handleMorseInput('0')" class="flex-1 bg-slate-800 active:bg-sky-600 text-white rounded-2xl h-36 border-b-[6px] border-slate-950 active:border-b-0 active:translate-y-[6px] transition-all flex flex-col items-center justify-center shadow-lg relative group">
+                            <span class="text-6xl font-black mb-1 leading-none text-slate-200">0</span><span class="absolute bottom-2 text-[10px] text-slate-500 font-mono">Panah Kiri</span>
+                        </button>
+                        <button id="btn-dash" onclick="handleMorseInput('1')" class="flex-1 bg-slate-800 active:bg-sky-600 text-white rounded-2xl h-36 border-b-[6px] border-slate-950 active:border-b-0 active:translate-y-[6px] transition-all flex flex-col items-center justify-center shadow-lg relative group">
+                            <span class="text-6xl font-black mb-1 leading-none text-slate-200">1</span><span class="absolute bottom-2 text-[10px] text-slate-500 font-mono">Panah Kanan</span>
+                        </button>
+                    </div>
+                </div>
+            `;
+            startTimer(10, () => handleMorseFail());
+        }
+
+        function handleMorseInput(char) {
+            if(state.lives <= 0) return;
+            char === '0' ? playZero() : playOne();
+            state.currentMorseInput += char;
+            document.getElementById('morse-input-display').innerText = state.currentMorseInput;
+
+            const tChar = state.currentMorseWord[state.currentMorseCharIndex];
+            const tBinary = binaryDictionary[tChar].binary;
+
+            if (tBinary === state.currentMorseInput) {
+                clearInterval(state.timer);
+                playSuccess(); state.score += 50; updateStats();
+                document.getElementById('morse-input-display').classList.replace('text-white', 'text-sky-400');
+                setTimeout(() => {
+                    state.currentMorseInput = ""; state.currentMorseCharIndex++;
+                    if(state.currentMorseCharIndex >= state.currentMorseWord.length) { state.currentIndex++; startNextMorseWord(); }
+                    else renderMorseBoard();
+                }, 400);
+            } else if (!tBinary.startsWith(state.currentMorseInput)) {
+                handleMorseFail();
+            }
+        }
+
+        function handleMorseFail() {
+            clearInterval(state.timer);
+            playError(); state.lives--;
+            if (state.lives <= 0) { updateStats(); return; }
+            updateStats();
+
+            const display = document.getElementById('morse-input-display');
+            if(display) { display.classList.replace('text-white', 'text-red-500'); display.parentElement.parentElement.classList.add('shake'); }
+            
+            const hintBox = document.getElementById('hint-box');
+            if(hintBox) {
+                let expectedChar = state.currentMorseWord[state.currentMorseCharIndex];
+                let expectedBinary = binaryDictionary[expectedChar].binary;
+                hintBox.innerHTML = `<span class="bg-sky-500/20 text-sky-300 border border-sky-500/50 px-3 py-1 rounded tracking-widest shadow-sm">Karakter ${expectedChar}</span> <i class="fa-solid fa-arrow-right mx-2 text-slate-600"></i><span class="text-white text-lg tracking-[0.2em] font-bold">${expectedBinary}</span>`;
+                hintBox.classList.remove('opacity-0'); hintBox.classList.add('opacity-100');
+            }
+            setTimeout(() => { if (state.lives > 0) { state.currentMorseInput = ""; renderMorseBoard(); } }, 3000);
+        }
+
+        // --- END GAME ---
+        function endGame(isWin, winMsg="") {
+            clearInterval(state.timer);
+            document.removeEventListener('keydown', handleGlobalKeydown);
+            statsHeader.classList.add('hidden');
+
+            container.innerHTML = `
+                <div class="text-center w-full max-w-md bg-slate-900/90 p-8 rounded-2xl border border-slate-700 shadow-2xl backdrop-blur-sm">
+                    <div class="text-7xl mb-6 ${isWin ? 'text-emerald-400' : 'text-red-500'}"><i class="fa-solid ${isWin ? 'fa-shield-check' : 'fa-triangle-exclamation'}"></i></div>
+                    <h2 class="text-3xl font-black mb-3 ${isWin ? 'text-emerald-400' : 'text-red-500'} tracking-tight">${isWin ? 'SIMULASI BERHASIL' : 'SISTEM TERHENTI'}</h2>
+                    <p class="text-slate-300 mb-8">${isWin ? winMsg : 'Memory error. Lu kebanyakan underfitting. Tarik napas, dan coba lagi dari awal!'}</p>
+                    <div class="bg-slate-950 p-5 rounded-xl border border-slate-800 mb-8 shadow-inner relative">
+                        <div class="text-xs text-slate-500 font-mono font-bold tracking-widest">SKOR AKHIR</div>
+                        <div class="text-5xl font-black text-white font-mono">${state.score}</div>
+                    </div>
+                    <button onclick="renderMenu()" class="w-full py-4 bg-sky-600 hover:bg-sky-500 text-white font-bold rounded-xl text-lg transition-all btn-game">KEMBALI KE MAIN MENU</button>
+                </div>
+            `;
+        }
+
+        renderMenu();
+    </script>
+</body>
+</html>
