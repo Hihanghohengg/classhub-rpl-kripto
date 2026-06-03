@@ -139,10 +139,98 @@
     }
 
     .opt-dim { opacity: 0.5; }
+
+
+    /* Basic content protection / anti-copy deterrent */
+    html,
+    body,
+    #app-container,
+    button,
+    input,
+    label,
+    p,
+    h1,
+    h2,
+    h3,
+    span,
+    div {
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+      -webkit-touch-callout: none;
+    }
+
+    input {
+      -webkit-user-select: text;
+      -moz-user-select: text;
+      -ms-user-select: text;
+      user-select: text;
+    }
+
+    img, svg, canvas, iframe {
+      -webkit-user-drag: none;
+      user-drag: none;
+      pointer-events: auto;
+    }
+
+    .privacy-blur #app-container,
+    .privacy-blur header {
+      filter: blur(14px);
+      opacity: 0.18;
+      pointer-events: none;
+    }
+
+    #privacy-guard {
+      position: fixed;
+      inset: 0;
+      z-index: 99999;
+      display: none;
+      place-items: center;
+      padding: 24px;
+      background:
+        radial-gradient(circle at top, rgba(56, 189, 248, 0.14), transparent 34%),
+        rgba(2, 6, 23, 0.92);
+      backdrop-filter: blur(18px);
+    }
+
+    #privacy-guard.show {
+      display: grid;
+    }
+
+    .privacy-card {
+      max-width: 420px;
+      width: 100%;
+      border: 1px solid rgba(56, 189, 248, 0.28);
+      border-radius: 28px;
+      background: rgba(15, 23, 42, 0.92);
+      box-shadow: 0 24px 80px rgba(0, 0, 0, 0.45);
+      padding: 26px;
+      text-align: center;
+    }
+
+    @media print {
+      body * {
+        visibility: hidden !important;
+      }
+
+      body::before {
+        content: "Konten latihan tidak tersedia untuk dicetak.";
+        visibility: visible !important;
+        position: fixed;
+        inset: 0;
+        display: grid;
+        place-items: center;
+        background: #020617;
+        color: #f8fafc;
+        font: 700 18px system-ui;
+      }
+    }
+
   </style>
 </head>
 
-<body class="flex min-h-screen flex-col">
+<body class="flex min-h-screen flex-col" oncontextmenu="return false;" oncopy="return false;" oncut="return false;" onpaste="return false;" ondragstart="return false;">
   <div class="mesh-bg"></div>
   <div class="neural-bg"></div>
   <div class="floating-orb orb-a"></div>
@@ -177,6 +265,23 @@
   </header>
 
   <main id="app-container" class="relative z-10 mx-auto flex w-full max-w-6xl flex-1 flex-col items-center justify-center overflow-y-auto p-4"></main>
+
+  <div id="privacy-guard" aria-hidden="true">
+    <div class="privacy-card">
+      <div class="mx-auto mb-5 grid h-16 w-16 place-items-center rounded-3xl border border-cyan-400/25 bg-cyan-400/10 text-cyan-300">
+        <i class="fa-solid fa-shield-halved text-3xl"></i>
+      </div>
+
+      <h2 class="text-2xl font-black text-white">
+        Konten Dikunci Sementara
+      </h2>
+
+      <p id="privacy-message" class="mt-3 text-sm leading-6 text-slate-300">
+        Aksi salin, cetak, atau tangkapan layar dibatasi selama latihan berlangsung.
+      </p>
+    </div>
+  </div>
+
 
   <script>
     const PRACTICE_ID = "machine-learning";
@@ -525,6 +630,87 @@
     const container = document.getElementById("app-container");
     const statsHeader = document.getElementById("stats-header");
     const scoreDisplay = document.getElementById("score-display");
+
+
+    const privacyGuard = document.getElementById("privacy-guard");
+    const privacyMessage = document.getElementById("privacy-message");
+    let privacyTimer = null;
+
+    function showPrivacyGuard(message = "Aksi salin, cetak, atau tangkapan layar dibatasi selama latihan berlangsung.", duration = 1600) {
+      if (!privacyGuard) return;
+
+      if (privacyMessage) {
+        privacyMessage.innerText = message;
+      }
+
+      document.body.classList.add("privacy-blur");
+      privacyGuard.classList.add("show");
+      privacyGuard.setAttribute("aria-hidden", "false");
+
+      clearTimeout(privacyTimer);
+      privacyTimer = setTimeout(() => {
+        privacyGuard.classList.remove("show");
+        privacyGuard.setAttribute("aria-hidden", "true");
+        document.body.classList.remove("privacy-blur");
+      }, duration);
+    }
+
+    function blockProtectedAction(event, message) {
+      event.preventDefault();
+      event.stopPropagation();
+      showPrivacyGuard(message);
+      return false;
+    }
+
+    ["copy", "cut", "paste", "dragstart", "selectstart"].forEach((eventName) => {
+      document.addEventListener(eventName, (event) => {
+        if (event.target && event.target.id === "player-name" && eventName !== "copy" && eventName !== "cut") {
+          return;
+        }
+
+        blockProtectedAction(event, "Konten latihan tidak bisa disalin selama sesi berlangsung.");
+      }, { capture: true });
+    });
+
+    document.addEventListener("contextmenu", (event) => {
+      blockProtectedAction(event, "Klik kanan dinonaktifkan untuk menjaga integritas latihan.");
+    }, { capture: true });
+
+    document.addEventListener("keydown", (event) => {
+      const key = String(event.key || "").toLowerCase();
+      const ctrlOrMeta = event.ctrlKey || event.metaKey;
+
+      const blockedShortcut =
+        (ctrlOrMeta && ["c", "x", "s", "p", "u", "a"].includes(key)) ||
+        (ctrlOrMeta && event.shiftKey && ["i", "j", "c"].includes(key)) ||
+        key === "printscreen" ||
+        key === "f12";
+
+      if (blockedShortcut) {
+        blockProtectedAction(event, "Shortcut salin, cetak, inspect, atau screenshot dibatasi.");
+      }
+    }, { capture: true });
+
+    document.addEventListener("keyup", (event) => {
+      if (String(event.key || "").toLowerCase() === "printscreen") {
+        showPrivacyGuard("Tombol screenshot terdeteksi. Konten dikunci sementara.", 2200);
+      }
+    }, { capture: true });
+
+    window.addEventListener("blur", () => {
+      showPrivacyGuard("Halaman kehilangan fokus. Konten dikunci sementara.", 1200);
+    });
+
+    document.addEventListener("visibilitychange", () => {
+      if (document.hidden) {
+        showPrivacyGuard("Konten dikunci saat halaman tidak aktif.", 1800);
+      }
+    });
+
+    window.addEventListener("beforeprint", (event) => {
+      showPrivacyGuard("Cetak halaman dinonaktifkan untuk latihan ini.", 2200);
+      event.preventDefault();
+    });
 
     let state = {
       playerName: "",
