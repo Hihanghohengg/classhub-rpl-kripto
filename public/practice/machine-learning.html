@@ -74,6 +74,7 @@
       filter: blur(70px); opacity: 0.18; z-index: -1;
       animation: float 10s ease-in-out infinite alternate; pointer-events: none;
     }
+
     .orb-a { left: -160px; top: 12%; background: #38bdf8; }
     .orb-b { right: -170px; bottom: 8%; background: #a855f7; animation-delay: -3s; }
 
@@ -90,11 +91,17 @@
     }
 
     .btn-game { transition: all 0.16s ease; }
-    .btn-game:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 16px 40px rgba(15, 23, 42, 0.35); }
+
+    .btn-game:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 16px 40px rgba(15, 23, 42, 0.35);
+    }
+
     .btn-game:active:not(:disabled) { transform: scale(0.97); }
     .btn-game:disabled { cursor: default; }
 
     .fade-in { animation: fadeIn 0.3s ease both; }
+
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(10px); }
       to { opacity: 1; transform: translateY(0); }
@@ -102,12 +109,23 @@
 
     .gradient-text {
       background: linear-gradient(90deg, #38bdf8, #a855f7, #34d399);
-      -webkit-background-clip: text; background-clip: text; color: transparent;
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
     }
 
-    /* Opsi Jawaban Styles */
-    .opt-correct { border-color: #34d399 !important; background: rgba(52, 211, 153, 0.15) !important; color: white !important;}
-    .opt-wrong { border-color: #fb7185 !important; background: rgba(251, 113, 133, 0.15) !important; color: white !important;}
+    .opt-correct {
+      border-color: #34d399 !important;
+      background: rgba(52, 211, 153, 0.15) !important;
+      color: white !important;
+    }
+
+    .opt-wrong {
+      border-color: #fb7185 !important;
+      background: rgba(251, 113, 133, 0.15) !important;
+      color: white !important;
+    }
+
     .opt-dim { opacity: 0.5; }
   </style>
 </head>
@@ -124,10 +142,12 @@
         <div class="grid h-11 w-11 shrink-0 place-items-center rounded-2xl border border-cyan-400/25 bg-cyan-400/10 text-cyan-300 shadow-lg shadow-cyan-950/30">
           <i class="fa-solid fa-graduation-cap text-xl"></i>
         </div>
+
         <div class="min-w-0">
           <h1 class="truncate text-base font-black uppercase tracking-wide text-white md:text-lg">
             Machine Learning Lab
           </h1>
+
           <p class="mono mt-0.5 truncate text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-400">
             Sesi 1: Persiapan Teori PG
           </p>
@@ -144,10 +164,9 @@
     </div>
   </header>
 
-  <main id="app-container" class="relative z-10 mx-auto flex w-full max-w-4xl flex-1 flex-col items-center justify-center overflow-y-auto p-4"></main>
+  <main id="app-container" class="relative z-10 mx-auto flex w-full max-w-6xl flex-1 flex-col items-center justify-center overflow-y-auto p-4"></main>
 
   <script>
-    // --- BANK SOAL (30 Pertanyaan Unik dengan Distractor Setara) ---
     const quizData = [
       {
         question: "Berdasarkan hasil Exploratory Data Analysis (EDA) pada dataset Titanic, fitur manakah yang terbukti menjadi prediktor keselamatan (survival) terkuat?",
@@ -172,7 +191,7 @@
         explanation: "<strong>JAWABAN BENAR: Melakukan fit_transform pada seluruh X_train sebelum CV.</strong> Ini menyebabkan informasi dari set validasi di dalam lipatan CV bocor ke parameter scaler. Solusi mutlaknya adalah membungkusnya dalam scikit-learn Pipeline."
       },
       {
-        question: "Pada pembuatan model Neural Network, penggunaan parameter <code>class_weight</code> (contoh: Class 0: 0.56, Class 1: 4.43) bertujuan untuk?",
+        question: "Pada pembuatan model Neural Network, penggunaan parameter <code>class_weight</code> bertujuan untuk?",
         options: [
           "Mempercepat konvergensi gradien pada layer-layer awal Deep Learning agar tidak terjadi fenomena Vanishing Gradient.",
           "Memberikan penalti loss yang lebih besar pada kelas minoritas sehingga algoritma dipaksa untuk lebih memperhatikan kelas tersebut.",
@@ -180,304 +199,304 @@
           "Menggeser nilai threshold probabilitas sigmoid dari standar 0.5 menjadi proporsi yang sesuai dengan rasio data latih."
         ],
         correctIndex: 1,
-        explanation: "<strong>JAWABAN BENAR: Memberikan penalti loss yang lebih besar pada kelas minoritas.</strong> Pada dataset tidak seimbang (imbalanced), model cenderung mengabaikan kelas minoritas demi akurasi tinggi semu. Class weight memaksa model agar lebih sensitif pada kelas minoritas."
+        explanation: "<strong>JAWABAN BENAR: Memberikan penalti loss yang lebih besar pada kelas minoritas.</strong> Pada dataset tidak seimbang, model cenderung mengabaikan kelas minoritas demi akurasi tinggi semu."
       },
       {
-        question: "Mengapa F1-Score lebih direkomendasikan daripada Akurasi (Accuracy) pada evaluasi klasifikasi deteksi Kanker Payudara?",
+        question: "Mengapa F1-Score lebih direkomendasikan daripada Akurasi pada evaluasi klasifikasi deteksi Kanker Payudara?",
         options: [
           "Metrik Akurasi rentan mengalami Accuracy Paradox pada dataset imbalanced, sedangkan F1-Score memberikan rata-rata harmonik dari Precision dan Recall.",
-          "F1-Score secara matematis menghitung luas area di bawah kurva probabilitas, sehingga lebih valid untuk mengukur performa diagnostik penyakit.",
-          "Metrik Akurasi tidak mampu memproses keluaran model yang berupa probabilitas kontinu, sedangkan F1-Score didesain khusus untuk output tersebut.",
-          "F1-Score secara langsung meminimalkan waktu komputasi saat mengevaluasi metrik False Positive dan False Negative pada dataset medis berskala besar."
+          "F1-Score secara matematis menghitung luas area di bawah kurva probabilitas.",
+          "Metrik Akurasi tidak mampu memproses keluaran model berupa probabilitas kontinu.",
+          "F1-Score secara langsung meminimalkan waktu komputasi."
         ],
         correctIndex: 0,
-        explanation: "<strong>JAWABAN BENAR: Metrik Akurasi rentan mengalami Accuracy Paradox.</strong> Di kasus medis dengan data imbalanced, kita menghindari tingginya False Negative. Akurasi sangat menyesatkan jika 90% data adalah kelas sehat, karena model yang menebak 'sehat' terus menerus akan terlihat sangat akurat."
+        explanation: "<strong>JAWABAN BENAR: Accuracy Paradox.</strong> Akurasi bisa menyesatkan pada dataset imbalanced karena model dapat terlihat bagus hanya dengan menebak kelas mayoritas."
       },
       {
-        question: "Arsitektur Long Short-Term Memory (LSTM) diciptakan utamanya untuk menyelesaikan kelemahan apa pada Vanilla RNN?",
+        question: "Arsitektur LSTM diciptakan utamanya untuk menyelesaikan kelemahan apa pada Vanilla RNN?",
         options: [
-          "Fenomena Overfitting yang sering terjadi ketika jaringan Vanilla RNN dilatih menggunakan dataset sekuensial yang jumlahnya sangat terbatas.",
-          "Masalah Vanishing Gradient yang menyebabkan RNN kehilangan kemampuan mengingat informasi penting dari timestep yang jauh di masa lalu.",
-          "Tingginya komputasi memori yang dibutuhkan Vanilla RNN saat harus memproses data dalam format matriks gambar dua dimensi (pixels).",
-          "Ketidakmampuan Vanilla RNN dalam menangani dataset tabular yang memiliki persentase missing values dan outlier yang sangat ekstrem."
+          "Fenomena Overfitting pada dataset sekuensial kecil.",
+          "Masalah Vanishing Gradient yang menyebabkan RNN kehilangan kemampuan mengingat informasi penting dari timestep yang jauh.",
+          "Tingginya komputasi memori saat memproses gambar dua dimensi.",
+          "Ketidakmampuan Vanilla RNN menangani missing values."
         ],
         correctIndex: 1,
-        explanation: "<strong>JAWABAN BENAR: Masalah Vanishing Gradient.</strong> Vanilla RNN kesulitan menangani dependensi urutan jangka panjang (long-term dependencies) karena gradiennya menyusut drastis. LSTM menggunakan struktur Gates (Input, Output, Forget) untuk mempertahankan memori jangka panjang."
+        explanation: "<strong>JAWABAN BENAR: Vanishing Gradient.</strong> LSTM menggunakan gates untuk mempertahankan memori jangka panjang."
       },
       {
         question: "Apa fungsi parameter <code>stratify=y</code> saat memanggil <code>train_test_split</code>?",
         options: [
-          "Melakukan pemisahan fitur numerik dan kategorikal secara otomatis agar tidak terjadi error saat proses transformasi di dalam Pipeline.",
-          "Memastikan proporsi jumlah kelas target pada himpunan data latih dan uji terbagi persis sama dengan distribusi populasi aslinya.",
-          "Mencegah terjadinya data leakage dengan menunda proses fit_transform sampai keseluruhan himpunan X_test dipisahkan dari X_train.",
-          "Membagi himpunan data latih berdasarkan urutan waktu (time-series) agar observasi masa depan tidak bocor ke dalam observasi masa lalu."
+          "Melakukan pemisahan fitur numerik dan kategorikal.",
+          "Memastikan proporsi jumlah kelas target pada data latih dan uji sama dengan distribusi populasi aslinya.",
+          "Mencegah data leakage dengan menunda fit_transform.",
+          "Membagi data berdasarkan urutan waktu."
         ],
         correctIndex: 1,
-        explanation: "<strong>JAWABAN BENAR: Memastikan proporsi jumlah kelas target terbagi persis sama.</strong> Pembagian acak (random split) murni berisiko menghasilkan distribusi kelas yang timpang pada himpunan X_test, yang akan merusak validitas dari hasil metrik evaluasi model."
+        explanation: "<strong>JAWABAN BENAR: Menjaga proporsi kelas.</strong> Stratifikasi menjaga validitas evaluasi pada kasus klasifikasi, terutama dataset tidak seimbang."
       },
       {
-        question: "Mengapa kolom/fitur 'Cabin' pada dataset Titanic umumnya disarankan untuk di-drop saat tahap seleksi fitur?",
+        question: "Mengapa kolom 'Cabin' pada dataset Titanic umumnya disarankan untuk di-drop?",
         options: [
-          "Fitur tersebut memiliki korelasi linear yang terlalu tinggi dengan fitur kelas tiket (Pclass) sehingga menyebabkan redundansi informasi (Multikolinearitas).",
-          "Fitur tersebut memiliki persentase missing values yang sangat masif sehingga proses imputasi justru akan menciptakan noise dan bias pada model.",
-          "Fitur tersebut bertipe teks tidak terstruktur (unstructured string) yang mutlak tidak bisa diproses menggunakan teknik One-Hot Encoding apapun.",
-          "Fitur tersebut hanya relevan untuk algoritma regresi linear dan akan menurunkan akurasi secara drastis jika dipaksakan masuk ke algoritma klasifikasi."
+          "Korelasi linear terlalu tinggi dengan Pclass.",
+          "Fitur tersebut memiliki persentase missing values yang sangat masif.",
+          "Fitur tersebut bertipe teks tidak terstruktur yang mutlak tidak bisa diproses.",
+          "Fitur tersebut hanya relevan untuk regresi linear."
         ],
         correctIndex: 1,
-        explanation: "<strong>JAWABAN BENAR: Memiliki persentase missing values yang sangat masif.</strong> Jika sebuah fitur memiliki rasio nilai kosong yang ekstrem (di atas 70%), melakukan imputasi (baik mean/median/modus) akan menciptakan data sintetis yang tidak representatif dan memicu noise."
+        explanation: "<strong>JAWABAN BENAR: Missing values masif.</strong> Imputasi pada fitur dengan nilai kosong ekstrem bisa menciptakan noise dan bias."
       },
       {
-        question: "Dalam implementasi Deep Learning, apa peran utama dari mekanisme <code>EarlyStopping</code> yang dimasukkan pada argumen callbacks?",
+        question: "Dalam Deep Learning, apa peran utama dari <code>EarlyStopping</code>?",
         options: [
-          "Menghentikan proses iterasi backpropagation secara paksa apabila model terdeteksi mengalami fenomena Exploding Gradient pada layer output.",
-          "Memonitor metrik performa pada himpunan validasi dan menghentikan training saat performa tersebut mulai menurun untuk mencegah Overfitting.",
-          "Menurunkan parameter learning rate secara bertahap setiap kali fungsi loss pada himpunan data latih (training loss) mengalami stagnasi (plateau).",
-          "Menghentikan eksekusi cell pada environment cloud (seperti Google Colab) secara otomatis guna menghemat alokasi penggunaan VRAM pada GPU."
+          "Menghentikan backpropagation saat Exploding Gradient.",
+          "Memonitor metrik validasi dan menghentikan training saat performa mulai menurun untuk mencegah Overfitting.",
+          "Menurunkan learning rate bertahap.",
+          "Menghemat penggunaan GPU di cloud."
         ],
         correctIndex: 1,
-        explanation: "<strong>JAWABAN BENAR: Memonitor metrik performa dan menghentikan training untuk mencegah Overfitting.</strong> Model yang dilatih berlarut-larut pada akhirnya akan menghafal noise data latih. EarlyStopping memantau performa validasi dan menghentikan iterasi tepat saat performa mulai memburuk."
+        explanation: "<strong>JAWABAN BENAR: Mencegah Overfitting.</strong> EarlyStopping menghentikan training saat performa validasi tidak membaik."
       },
       {
-        question: "Bagaimana cara kerja Pipeline scikit-learn dalam mencegah data leakage secara spesifik?",
+        question: "Bagaimana Pipeline scikit-learn mencegah data leakage?",
         options: [
-          "Membatasi model untuk hanya melakukan fit_transform pada saat fase pengujian (testing) akhir untuk menjamin integritas metrik evaluasi.",
-          "Menunda operasi transformasi data per-fold di dalam Cross-Validation, sehingga scaler hanya mempelajari parameter dari bagian data latih saja.",
-          "Menghapus baris observasi yang mengandung missing values secara terpusat sebelum algoritma GridSearchCV mulai mencari hyperparameter terbaik.",
-          "Memisahkan pemrosesan data numerik dan data kategorikal secara paralel untuk mempercepat waktu komputasi saat melatih algoritma Random Forest."
+          "Membatasi fit_transform hanya pada fase testing akhir.",
+          "Menunda transformasi data per-fold dalam Cross-Validation, sehingga scaler hanya belajar dari bagian training fold.",
+          "Menghapus baris dengan missing values sebelum GridSearch.",
+          "Memisahkan data numerik dan kategorikal untuk mempercepat komputasi."
         ],
         correctIndex: 1,
-        explanation: "<strong>JAWABAN BENAR: Menunda operasi transformasi data per-fold.</strong> Pipeline memastikan operasi <code>fit</code> dan <code>transform</code> terjalin secara logis. Setiap kali K-Fold membagi data, preprocessor di dalam pipeline direset dan hanya belajar (fit) dari data training pada lipatan tersebut."
+        explanation: "<strong>JAWABAN BENAR: Transformasi per-fold.</strong> Preprocessor di dalam pipeline hanya di-fit pada data training tiap fold CV."
       },
       {
-        question: "Apa perbedaan fundamental dari waktu eksekusi antara GridSearchCV dan RandomizedSearchCV?",
+        question: "Apa perbedaan fundamental antara GridSearchCV dan RandomizedSearchCV?",
         options: [
-          "GridSearchCV menggunakan pendekatan heuristik probabilistik yang lebih cepat, sedangkan RandomizedSearchCV memerlukan komputasi matriks yang berat.",
-          "RandomizedSearchCV secara otomatis melakukan pemangkasan kombinasi parameter yang buruk di awal iterasi sehingga selalu lebih akurat 100%.",
-          "GridSearchCV menguji semua kombinasi parameter secara menyeluruh (exhaustive), sehingga sangat tidak efisien untuk ruang hyperparameter yang luas.",
-          "RandomizedSearchCV mengutamakan pencarian hyperparameter pada algoritma ansambel (seperti XGBoost), sedangkan GridSearchCV ditujukan untuk model linear."
+          "GridSearchCV memakai heuristik probabilistik.",
+          "RandomizedSearchCV selalu lebih akurat 100%.",
+          "GridSearchCV menguji semua kombinasi parameter secara exhaustive, sehingga tidak efisien untuk ruang parameter luas.",
+          "RandomizedSearchCV hanya untuk model ensemble."
         ],
         correctIndex: 2,
-        explanation: "<strong>JAWABAN BENAR: GridSearchCV menguji semua kombinasi secara exhaustive.</strong> Jika Anda memiliki ruang parameter yang luas, GridSearch sangat tidak efisien (mahal secara komputasi). RandomizedSearch mengambil sampel parameter dari distribusi yang ditentukan, jauh lebih hemat waktu dengan hasil mendekati optimal."
+        explanation: "<strong>JAWABAN BENAR: GridSearch exhaustive.</strong> RandomizedSearch mengambil sampel acak dari ruang parameter sehingga lebih efisien."
       },
       {
-        question: "Pada metrik evaluasi klasifikasi medis, kondisi di mana model memprediksi pasien SEHAT, padahal aslinya KANKER, disebut sebagai kesalahan tipe apa?",
+        question: "Pada klasifikasi medis, model memprediksi pasien SEHAT, padahal aslinya KANKER. Ini disebut?",
         options: [
-          "Kondisi di mana model memprediksi pasien tersebut Sehat, namun pada kenyataannya pasien tersebut benar-benar Sehat (True Negative).",
-          "Kondisi di mana model memprediksi pasien tersebut Kanker, namun pada kenyataannya pasien tersebut terbukti Sehat (False Positive).",
-          "Kondisi di mana model memprediksi pasien tersebut Sehat, namun pada kenyataannya pasien tersebut terbukti menderita Kanker (False Negative).",
-          "Kondisi di mana model memprediksi pasien tersebut Kanker, dan pada kenyataannya pasien tersebut memang menderita Kanker (True Positive)."
+          "True Negative.",
+          "False Positive.",
+          "False Negative.",
+          "True Positive."
         ],
         correctIndex: 2,
-        explanation: "<strong>JAWABAN BENAR: False Negative.</strong> Pada kasus medis, False Negative adalah tipe kesalahan yang paling fatal karena pasien yang sakit (positif kanker) dilabeli sebagai sehat (negatif), sehingga ia gagal mendapatkan penanganan awal."
+        explanation: "<strong>JAWABAN BENAR: False Negative.</strong> Ini sangat fatal dalam kasus medis karena pasien sakit gagal terdeteksi."
       },
       {
-        question: "Mengapa imputasi nilai numerik yang kosong menggunakan nilai Median seringkali lebih aman dibandingkan menggunakan Mean (Rata-rata)?",
+        question: "Mengapa imputasi numerik dengan Median sering lebih aman dibanding Mean?",
         options: [
-          "Nilai median secara sistematis mempercepat proses konvergensi aljabar di backend komputasi saat melatih algoritma Deep Learning berskala besar.",
-          "Nilai median jauh lebih tangguh (robust) dan tidak mudah terpengaruh oleh keberadaan nilai-nilai ekstrem (outliers) yang jauh dari pusat distribusi data.",
-          "Nilai mean hanya dirancang secara spesifik untuk memproses fitur bertipe kategorikal, sedangkan median mampu menangani data kontinu dan diskrit sekaligus.",
-          "Nilai median secara otomatis akan melakukan normalisasi pada sebaran data sehingga seluruh fitur numerik memiliki standar deviasi bernilai konstan satu."
+          "Median mempercepat konvergensi Deep Learning.",
+          "Median lebih robust terhadap outliers.",
+          "Mean hanya untuk fitur kategorikal.",
+          "Median otomatis melakukan normalisasi."
         ],
         correctIndex: 1,
-        explanation: "<strong>JAWABAN BENAR: Nilai median jauh lebih tangguh (robust) terhadap outliers.</strong> Rata-rata (mean) sangat mudah terseret oleh satu nilai ekstrem yang besar, sehingga hasil imputasinya bisa menjadi bias dan tidak merepresentasikan titik pusat mayoritas data."
+        explanation: "<strong>JAWABAN BENAR: Robust terhadap outliers.</strong> Mean mudah terseret nilai ekstrem."
       },
       {
-        question: "Di dalam Keras/Tensorflow, Activation Function apa yang wajib digunakan pada output layer untuk kasus Binary Classification (1 atau 0)?",
+        question: "Activation Function apa yang wajib digunakan pada output layer untuk Binary Classification?",
         options: [
-          "Rectified Linear Unit (ReLU), karena fungsi ini mencegah nilai output menjadi negatif dan mempertahankan gradien tetap stabil selama proses backpropagation.",
-          "Softmax, karena fungsi ini dirancang secara matematis untuk menormalkan vektor nilai riil menjadi distribusi probabilitas yang jumlah totalnya selalu satu.",
-          "Sigmoid, karena fungsi ini memetakan nilai output dari jaringan logit ke dalam rentang probabilitas absolut antara 0 dan 1 yang ideal untuk dua kelas.",
-          "Hyperbolic Tangent (Tanh), karena fungsi ini menyeimbangkan keluaran model pada rentang -1 hingga 1 sehingga mempercepat konvergensi algoritma optimasi."
+          "ReLU.",
+          "Softmax.",
+          "Sigmoid.",
+          "Tanh."
         ],
         correctIndex: 2,
-        explanation: "<strong>JAWABAN BENAR: Sigmoid.</strong> Fungsi Sigmoid meremas rentang angka logit berapapun menjadi angka desimal antara 0 hingga 1, yang sangat sempurna untuk diinterpretasikan sebagai persentase probabilitas pada klasifikasi biner."
+        explanation: "<strong>JAWABAN BENAR: Sigmoid.</strong> Sigmoid memetakan logit ke probabilitas 0 sampai 1."
       },
       {
-        question: "Apa loss function yang secara matematis berpasangan dengan fungsi aktivasi Sigmoid untuk menghitung kesalahan model di Binary Classification?",
+        question: "Loss function yang berpasangan dengan Sigmoid untuk Binary Classification adalah?",
         options: [
-          "Mean Squared Error (MSE), karena metrik ini mengkuadratkan setiap residu kesalahan prediksi sehingga model sangat sensitif dalam mengenali outlier.",
-          "Categorical Crossentropy, karena metrik ini dirancang khusus untuk membandingkan distribusi probabilitas pada kasus yang memiliki banyak kelas target independen.",
-          "Binary Crossentropy, karena metrik ini secara logaritmik menghitung besaran penalti atas probabilitas prediksi dibandingkan dengan label aslinya yaitu 0 atau 1.",
-          "Hinge Loss, karena metrik ini berupaya memaksimalkan margin pemisah antar kelas yang merupakan fondasi matematis utama di dalam jaringan saraf tiruan."
+          "Mean Squared Error.",
+          "Categorical Crossentropy.",
+          "Binary Crossentropy.",
+          "Hinge Loss."
         ],
         correctIndex: 2,
-        explanation: "<strong>JAWABAN BENAR: Binary Crossentropy.</strong> Metrik ini secara logaritmik menghitung besaran penalti atas probabilitas yang dihasilkan model dibandingkan dengan label aslinya yang berupa 0 atau 1. Semakin jauh probabilitas tebakan dari label asli, semakin besar nilai Loss-nya."
+        explanation: "<strong>JAWABAN BENAR: Binary Crossentropy.</strong> Cocok untuk label 0/1 dan output probabilitas sigmoid."
       },
       {
-        question: "Di dalam algoritma Random Forest, apa tujuan utama menggunakan struktur 'Ensemble' dari banyak pohon keputusan (Decision Trees)?",
+        question: "Tujuan utama Random Forest memakai banyak Decision Trees adalah?",
         options: [
-          "Menggabungkan berbagai arsitektur model berbeda (seperti SVM, KNN, dan Logistic Regression) untuk mempercepat waktu kompilasi kode python secara drastis.",
-          "Melakukan imputasi otomatis pada data observasi yang kosong dengan mengekstraksi nilai probabilitas dari ranting-ranting pohon yang paling berdekatan (k-NN).",
-          "Mencegah terjadinya overfitting dan menurunkan variansi prediksi yang merupakan masalah klasik apabila kita hanya menggunakan satu pohon keputusan yang dalam.",
-          "Meningkatkan interpretasi model secara visual sehingga pengguna dapat melihat dengan jelas setiap aturan batas kondisi (threshold) yang dipelajari oleh algoritma."
+          "Menggabungkan SVM, KNN, dan Logistic Regression.",
+          "Melakukan imputasi otomatis.",
+          "Mencegah overfitting dan menurunkan variansi prediksi.",
+          "Meningkatkan interpretasi visual aturan."
         ],
         correctIndex: 2,
-        explanation: "<strong>JAWABAN BENAR: Mencegah overfitting dan menurunkan variansi.</strong> Satu Decision Tree yang dibiarkan tumbuh dalam akan sangat rentan terhadap overfitting. Random Forest mengambil mayoritas suara (voting) dari ratusan pohon yang dilatih secara acak pada subset data."
+        explanation: "<strong>JAWABAN BENAR: Menurunkan variansi.</strong> Random Forest menggabungkan banyak pohon untuk prediksi yang lebih stabil."
       },
       {
-        question: "Dalam konteks RNN dan Deep Learning, apa yang dimaksud dengan Epoch?",
+        question: "Dalam RNN dan Deep Learning, apa yang dimaksud Epoch?",
         options: [
-          "Jumlah total layer tersembunyi (hidden layers) yang harus dilewati oleh data dari input layer hingga mencapai activation function di output layer.",
-          "Satu siklus komputasi penuh di mana algoritma jaringan saraf tiruan telah berhasil melewati dan memperbarui bobot berdasarkan seluruh himpunan data latih.",
-          "Satuan waktu metrik evaluasi yang dibutuhkan oleh algoritma GridSearchCV untuk menemukan satu kombinasi hyperparameter terbaik dari ruang pencarian.",
-          "Nilai threshold probabilitas pemisah antara kelas positif dan kelas negatif yang ditentukan secara otomatis pada tahapan evaluasi Confusion Matrix."
+          "Jumlah total hidden layer.",
+          "Satu siklus penuh model melewati seluruh data latih.",
+          "Satuan waktu GridSearchCV.",
+          "Threshold probabilitas confusion matrix."
         ],
         correctIndex: 1,
-        explanation: "<strong>JAWABAN BENAR: Satu siklus penuh melewati seluruh data latih.</strong> Saat model Anda berjalan pada Epoch ke-10, artinya algoritma telah memproses, melihat, dan memperbarui bobot (weights) berdasar seluruh data X_train sebanyak 10 kali secara penuh."
+        explanation: "<strong>JAWABAN BENAR: Satu siklus penuh melewati data latih.</strong> Pada epoch ke-10, model telah melihat seluruh data latih sebanyak 10 kali."
       },
       {
-        question: "Apa efek utama menggunakan StandardScaler pada fitur algoritma KNN (K-Nearest Neighbors)?",
+        question: "Apa efek utama StandardScaler pada KNN?",
         options: [
-          "Mengonversi setiap nilai string kategorikal menjadi matriks sparse biner agar algoritma dapat menghitung probabilitas matematis dari fitur tersebut secara tepat.",
-          "Memastikan bahwa perhitungan jarak matematis (seperti Euclidean) antar titik data tidak didominasi oleh fitur yang memiliki skala atau rentang nilai raksasa.",
-          "Secara otomatis mengidentifikasi dan menghapus fitur-fitur redundan yang memiliki nilai korelasi Pearson mendekati nol terhadap variabel target klasifikasi.",
-          "Menghasilkan output prediksi akhir dari algoritma K-Nearest Neighbors ke dalam bentuk persentase probabilitas, alih-alih sekadar label prediksi kelas mutlak."
+          "Mengubah string kategorikal menjadi sparse matrix.",
+          "Memastikan perhitungan jarak tidak didominasi fitur berskala besar.",
+          "Menghapus fitur redundan.",
+          "Menghasilkan output probabilitas."
         ],
         correctIndex: 1,
-        explanation: "<strong>JAWABAN BENAR: Memastikan perhitungan jarak tidak didominasi fitur skala raksasa.</strong> KNN mencari pola klasifikasi murni berbasis jarak poin. Jika satu kolom nilainya puluhan ribu (Gaji) dan satu kolom bernilai satuan (Umur), perbedaan Gaji akan mendominasi hasil prediksi total jika tidak di-scale."
+        explanation: "<strong>JAWABAN BENAR: Menyeimbangkan skala jarak.</strong> KNN sangat bergantung pada jarak, jadi scaling penting."
       },
       {
-        question: "Pada dataset Titanic, hasil analisis menunjukkan bahwa ukuran keluarga (Parch + SibSp) berdampak pada survival. Bagaimana polanya?",
+        question: "Pada Titanic, bagaimana pola pengaruh ukuran keluarga terhadap survival?",
         options: [
-          "Semakin besar jumlah anggota keluarga yang bepergian bersama, semakin tinggi peluang keselamatan karena mereka diprioritaskan oleh petugas sekoci.",
-          "Penumpang yang bepergian seorang diri (alone) secara mutlak memiliki tingkat kelangsungan hidup paling tinggi karena mobilitas mereka tidak terhambat.",
-          "Keluarga berukuran menengah (2 hingga 4 orang) memiliki peluang selamat terbaik, melebihi penumpang sendirian maupun keluarga yang berukuran terlalu besar.",
-          "Ukuran keluarga terbukti secara statistik tidak memiliki nilai korelasi (feature importance) yang signifikan terhadap target keselamatan penumpang kapal."
+          "Semakin besar keluarga, semakin tinggi peluang selamat.",
+          "Penumpang sendirian mutlak paling tinggi peluang selamat.",
+          "Keluarga menengah memiliki peluang selamat terbaik.",
+          "Ukuran keluarga tidak punya korelasi."
         ],
         correctIndex: 2,
-        explanation: "<strong>JAWABAN BENAR: Keluarga menengah memiliki peluang selamat terbaik.</strong> Penumpang yang sendirian cenderung kalah dalam kekacauan evakuasi, sementara keluarga yang terlalu masif (>4) sangat sulit untuk terkoordinasi menemukan dan menaiki sekoci bersama-sama."
+        explanation: "<strong>JAWABAN BENAR: Keluarga menengah terbaik.</strong> Sendirian lemah dalam evakuasi, keluarga terlalu besar sulit dikoordinasikan."
       },
       {
-        question: "Algoritma Support Vector Machine (SVM) pada dasarnya berusaha mencari pemisah antar-kelas klasifikasi yang disebut dengan?",
+        question: "SVM pada dasarnya mencari pemisah antar kelas yang disebut?",
         options: [
-          "Garis pemisah (Hyperplane) yang memiliki jarak margin maksimum atau paling lebar di antara batas titik data terluar (support vectors) dari kedua kelas.",
-          "Titik percabangan (Node) yang menghasilkan nilai Gini Impurity paling rendah untuk memastikan kemurnian pemisahan data di setiap langkah iterasi pohon.",
-          "Fungsi aktivasi non-linear yang mentransformasikan data masukan menjadi distribusi probabilitas biner agar kesalahan klasifikasi (loss) menjadi seminimal mungkin.",
-          "Vektor komponen utama (Principal Component) yang memiliki nilai variansi paling tinggi guna mereduksi dimensi data sebelum proses klasifikasi dilakukan."
+          "Hyperplane dengan margin maksimum.",
+          "Node dengan Gini Impurity terendah.",
+          "Fungsi aktivasi non-linear.",
+          "Principal Component."
         ],
         correctIndex: 0,
-        explanation: "<strong>JAWABAN BENAR: Hyperplane dengan margin maksimum.</strong> Inti matematis dari SVM adalah bukan sekadar membuat garis lurus pemisah, tetapi mencari garis (hyperplane) di mana celah kosong (margin) antara garis tersebut dengan representasi data terluar tiap kelas adalah yang paling tebal/lebar."
+        explanation: "<strong>JAWABAN BENAR: Hyperplane margin maksimum.</strong> SVM mencari batas pemisah dengan margin selebar mungkin."
       },
       {
-        question: "Apa fungsi mengekstrak nilai <code>feature_importances_</code> dari model tree-based yang sudah selesai di-tuning?",
+        question: "Fungsi <code>feature_importances_</code> pada model tree-based adalah?",
         options: [
-          "Membantu algoritma imputasi untuk memprediksi dan mengisi nilai kolom data uji (X_test) yang kosong berdasarkan pola korelasi dengan kolom-kolom lain.",
-          "Mendeteksi dan mengukur seberapa parah tingkat kebocoran data (Data Leakage) yang terjadi pada himpunan validasi di dalam tahapan proses Cross-Validation.",
-          "Mengidentifikasi secara empiris fitur mana yang paling sering memberikan penurunan ketidakteraturan (Information Gain tertinggi) saat membangun cabang pohon.",
-          "Menghitung rasio jumlah pohon estimator (n_estimators) yang gagal melakukan konvergensi optimal selama proses iterasi di algoritma Random Forest Classifier."
+          "Membantu imputasi X_test.",
+          "Mengukur data leakage.",
+          "Mengidentifikasi fitur yang paling sering memberi information gain tinggi.",
+          "Menghitung jumlah estimator gagal konvergen."
         ],
         correctIndex: 2,
-        explanation: "<strong>JAWABAN BENAR: Mengidentifikasi fitur yang memberikan Information Gain tertinggi.</strong> Fitur dengan nilai importance tertinggi (misalnya 'Gender' di Titanic) merupakan fitur yang cabangnya paling efektif dalam memisahkan dan memurnikan kelas target selama fase pelatihan pohon keputusan."
+        explanation: "<strong>JAWABAN BENAR: Mengukur kontribusi fitur.</strong> Fitur importance menunjukkan fitur paling berpengaruh dalam pemisahan kelas."
       },
       {
-        question: "Jika model Anda mendapatkan akurasi 99% di Validation Data tapi F1-Score untuk kelas targetnya hanya 10%, fenomena ini sangat mungkin disebabkan oleh?",
+        question: "Akurasi 99% tetapi F1-Score kelas target 10% kemungkinan besar disebabkan oleh?",
         options: [
-          "Kesalahan penempatan fungsi fit_transform pada Data Leakage sehingga model menghafal data uji yang ada di dalam pipeline preprocessor.",
-          "Terjadinya Underfitting akut di mana algoritma terlalu sederhana dan gagal menangkap satupun pola korelasi kompleks yang ada pada himpunan data latih.",
-          "Terjadinya fenomena Accuracy Paradox akibat model selalu menebak kelas mayoritas pada dataset yang distribusinya sangat tidak seimbang (Highly Imbalanced).",
-          "Penggunaan parameter Dropout rate yang terlalu ekstrim di dalam arsitektur layer sehingga model membuang terlalu banyak informasi bobot neuron yang vital."
+          "Data leakage dalam pipeline.",
+          "Underfitting akut.",
+          "Accuracy Paradox pada dataset highly imbalanced.",
+          "Dropout terlalu ekstrem."
         ],
         correctIndex: 2,
-        explanation: "<strong>JAWABAN BENAR: Accuracy Paradox akibat Highly Imbalanced dataset.</strong> Misal di dataset ada 990 data Sehat dan 10 Sakit. Jika model selalu menebak 'Sehat', akurasinya adalah 99%, tapi ia gagal menebak 10 data yang benar-benar sakit (Recall = 0). Oleh karena itu metrik F1-score drop drastis membongkar kepalsuan akurasi tersebut."
+        explanation: "<strong>JAWABAN BENAR: Accuracy Paradox.</strong> Model bisa akurat secara semu jika terus menebak kelas mayoritas."
       },
       {
-        question: "Pada arsitektur Deep Learning (seperti RNN dan LSTM), mengapa normalisasi data (seperti dengan MinMaxScaler/StandardScaler) sangat direkomendasikan?",
+        question: "Mengapa normalisasi data direkomendasikan pada Deep Learning?",
         options: [
-          "Karena algoritma matriks tensor pada Neural Network secara mutlak akan mengalami error kompilasi jika menerima tipe data selain desimal bernilai antara 0 dan 1.",
-          "Mencegah lonjakan nilai turunan selama proses backpropagation sehingga konvergensi pencarian titik loss minimum oleh optimizer berjalan lebih mulus dan stabil.",
-          "Mengurangi besaran alokasi penggunaan memori VRAM pada GPU karena data berskala kecil lebih mudah diproses secara komputasi paralel oleh arsitektur CUDA.",
-          "Menjadi syarat prasyarat utama agar metode pencarian hyperparameter RandomizedSearchCV dapat menghitung nilai probabilitas distribusi ruang secara optimal."
+          "Neural Network error jika data bukan 0-1.",
+          "Membantu stabilitas gradient dan konvergensi optimizer.",
+          "Mengurangi VRAM secara langsung.",
+          "Syarat utama RandomizedSearchCV."
         ],
         correctIndex: 1,
-        explanation: "<strong>JAWABAN BENAR: Memuluskan konvergensi gradient loss.</strong> Input dengan skala angka yang raksasa atau bervariasi luas akan menyebabkan lonjakan nilai (exploding gradient) saat proses perkalian dot-product antar bobot layer, yang pada akhirnya memperlambat atau merusak optimasi konvergensi model."
+        explanation: "<strong>JAWABAN BENAR: Stabilitas gradient.</strong> Skala data yang ekstrem dapat mengganggu proses optimasi."
       },
       {
-        question: "Bagaimana cara kerja Cross-Validation dengan jumlah `cv=5` berinteraksi dengan proses training?",
+        question: "Bagaimana cara kerja Cross-Validation dengan cv=5?",
         options: [
-          "Membagi seluruh dataset observasi secara acak menjadi dua bagian terpisah, yaitu himpunan sebesar 5% untuk data latih dan 95% untuk himpunan data uji.",
-          "Dataset latih dibagi ke dalam 5 lipatan, di mana model dilatih 5 kali dan pada setiap iterasi ada 1 lipatan berbeda yang bertindak sebagai himpunan validasi.",
-          "Secara otomatis melakukan oversampling (menduplikasi) himpunan data kelas minoritas menjadi 5 kali lebih besar menggunakan metode SMOTE imbalanced-learn.",
-          "Menginstruksikan modul GridSearchCV untuk mencari dan mengembalikan persis 5 kombinasi hyperparameter terbaik yang memiliki skor evaluasi tertinggi secara objektif."
+          "Membagi data 5% train dan 95% test.",
+          "Dataset latih dibagi 5 fold, model dilatih 5 kali, tiap iterasi satu fold menjadi validasi.",
+          "Melakukan oversampling kelas minoritas 5 kali.",
+          "Mengembalikan 5 parameter terbaik."
         ],
         correctIndex: 1,
-        explanation: "<strong>JAWABAN BENAR: Melatih 5 kali dengan pergantian himpunan validasi per lipatan.</strong> Mekanisme ini memastikan bahwa algoritma dievaluasi secara objektif pada semua lipatan data latih. Skor performa akhir adalah rata-rata dari 5 iterasi tersebut, menghindari bias overfitting dari satu subset pembagian data tunggal."
+        explanation: "<strong>JAWABAN BENAR: 5 fold validasi bergantian.</strong> Skor akhir biasanya rata-rata dari 5 evaluasi."
       },
       {
-        question: "Mengapa algoritma berbasis pohon seperti Random Forest tidak secara teknis 'membutuhkan' proses Feature Scaling/Standarisasi?",
+        question: "Mengapa Random Forest tidak secara teknis membutuhkan Feature Scaling?",
         options: [
-          "Karena modul RandomForestClassifier pada library scikit-learn secara otomatis memanggil fungsi StandardScaler di latar belakang sebelum memproses data.",
-          "Karena algoritma ini murni membuat keputusan berdasarkan pemotongan nilai batas kuantitatif (threshold), bukan berdasar perhitungan vektor jarak antar titik data.",
-          "Karena data yang berskala besar atau mengandung nilai desimal (float) akan secara otomatis diabaikan dan dibuang dari proses perhitungan Gini Impurity.",
-          "Karena struktur cabang pohon keputusan dirancang untuk hanya memproses himpunan data kategori berformat string melalui tahapan proses One-Hot Encoding."
+          "RandomForest otomatis memanggil StandardScaler.",
+          "Tree membuat keputusan berdasarkan threshold, bukan jarak antar titik.",
+          "Data berskala besar otomatis dibuang.",
+          "Tree hanya memproses data string."
         ],
         correctIndex: 1,
-        explanation: "<strong>JAWABAN BENAR: Membuat keputusan berdasarkan threshold batas kuantitatif.</strong> Tidak seperti KNN atau SVM yang bergantung pada perhitungan geometri persamaan jarak (Euclidean), Decision tree hanya memotong data berdasarkan batas kondisional (Contoh: Apakah Gaji > 5 Juta?). Mengubah skala tidak akan merubah letak batas urutan kondisi nilai fitur tersebut."
+        explanation: "<strong>JAWABAN BENAR: Berdasarkan threshold.</strong> Tree tidak menghitung jarak seperti KNN/SVM."
       },
       {
-        question: "Saat mendefinisikan layer LSTM di Keras, bentuk dimensi spesifik dari data yang perlu disuplai (input shape tensor 3D) adalah...",
+        question: "Input shape LSTM umumnya berbentuk?",
         options: [
-          "Input harus berformat [batch_size, number_of_pixels, color_channels] yang secara khusus ditujukan untuk meratakan struktur dimensi gambar beresolusi tinggi.",
-          "Input harus berformat [batch_size, timesteps, features] untuk mengakomodasi ukuran kelompok data, jumlah langkah waktu ke belakang, dan jumlah variabel fitur.",
-          "Input harus berformat [rows, columns, categories] agar sesuai dengan kaidah pembagian matriks tabular standar pada library Pandas DataFrame dua dimensi.",
-          "Input harus berformat [timesteps, batch_size, target_labels] guna memastikan fungsi aktivasi output layer menerima jumlah label kelas yang seimbang."
+          "[batch_size, pixels, channels].",
+          "[batch_size, timesteps, features].",
+          "[rows, columns, categories].",
+          "[timesteps, batch_size, target_labels]."
         ],
         correctIndex: 1,
-        explanation: "<strong>JAWABAN BENAR: [batch_size, timesteps, features].</strong> LSTM didesain spesifik untuk merekam data runtun sekuensial. Timesteps mewakili urutan langkah historis ke belakang yang harus diperhatikan oleh arsitektur model, sedangkan features adalah jumlah variabel pada setiap langkah waktu tunggal."
+        explanation: "<strong>JAWABAN BENAR: [batch_size, timesteps, features].</strong> Timesteps merepresentasikan urutan waktu."
       },
       {
-        question: "Fungsi utama menggunakan `DummyClassifier` sebelum melakukan pemodelan kompleks adalah?",
+        question: "Fungsi utama DummyClassifier adalah?",
         options: [
-          "Mendeteksi keberadaan pola anomali statistik untuk membuang seluruh baris data outlier yang dianggap dapat merusak performa akurasi pada model utama.",
-          "Menyediakan metrik patokan dasar (Baseline Model) berupa tebakan buta, di mana model Machine Learning sejati harus mampu mengalahkan akurasi dasar tersebut.",
-          "Merupakan lapisan preprocessor untuk mengonversi seluruh tipe variabel kategorikal bertipe string menjadi array matriks dummy (metode one-hot encoding).",
-          "Membuat model bayangan paralel yang tugasnya mengalihkan sebagian beban komputasi epoch Neural Network agar tidak memberatkan alokasi thread pada memori CPU."
+          "Membuang outlier.",
+          "Menyediakan baseline model berupa tebakan sederhana yang harus dikalahkan model sebenarnya.",
+          "Melakukan one-hot encoding.",
+          "Mengurangi beban komputasi neural network."
         ],
         correctIndex: 1,
-        explanation: "<strong>JAWABAN BENAR: Menyediakan metrik Baseline Model dasar.</strong> DummyClassifier umumnya melakukan prediksi tanpa memperhitungkan relasi fitur (seperti menebak seluruh data berdasarkan probabilitas frekuensi kemunculan kelas terbanyak). Sebuah model ML dipastikan gagal jika akurasinya berada di bawah performa DummyClassifier."
+        explanation: "<strong>JAWABAN BENAR: Baseline model.</strong> Model ML harus mengalahkan performa baseline sederhana."
       },
       {
-        question: "Pada metrik Classification Report, apa yang secara spesifik diukur oleh nilai Precision?",
+        question: "Apa yang diukur Precision?",
         options: [
-          "Metrik yang mengkalkulasi persentase keberhasilan model secara agregat dalam memprediksi semua kelas observasi, baik untuk target Positif maupun target Negatif.",
-          "Metrik yang membandingkan persentase laju iterasi komputasi yang dibutuhkan algoritma untuk mencapai konvergensi gradien di dalam parameter ruang Grid Search.",
-          "Dari seluruh observasi yang diprediksi sebagai kelas Positif oleh model, ini adalah rasio persentase observasi yang pada kenyataannya memang benar-benar Positif.",
-          "Dari seluruh observasi aktual (Ground Truth) yang berstatus Positif di dunia nyata, ini adalah rasio persentase yang berhasil ditangkap atau ditebak oleh model."
+          "Persentase keberhasilan semua prediksi.",
+          "Kecepatan konvergensi model.",
+          "Dari semua yang diprediksi positif, berapa yang benar-benar positif.",
+          "Dari semua data positif asli, berapa yang tertangkap model."
         ],
         correctIndex: 2,
-        explanation: "<strong>JAWABAN BENAR: Rasio ketepatan prediksi positif.</strong> Precision secara filosofis menjawab pertanyaan kritis: 'Ketika sistem peringatan model saya menyala dan menyatakan bahwa pasien ini menderita Kanker, seberapa dapat dipercaya ucapan tersebut?' Metrik ini sangat berguna untuk meminimalisir tuduhan/diagnosa palsu (False Positive)."
+        explanation: "<strong>JAWABAN BENAR: Ketepatan prediksi positif.</strong> Precision penting untuk meminimalkan False Positive."
       },
       {
-        question: "Berbanding terbalik dengan Precision, parameter Recall sangat memfokuskan dirinya pada upaya meminimalisir kesalahan jenis apa?",
+        question: "Recall terutama fokus meminimalisir kesalahan jenis apa?",
         options: [
-          "Meningkatkan akurasi klasifikasi dengan cara meminimalisir persentase kesalahan di mana model salah menebak data sehat sebagai kelas target (False Positives).",
-          "Meningkatkan kemampuan deteksi dengan cara mengevaluasi seberapa banyak data target negatif yang berhasil dikenali secara benar oleh model (True Negatives).",
-          "Memastikan sensitivitas deteksi tinggi dengan cara meminimalisir kejadian di mana model secara berbahaya menyatakan data target sebagai data sehat (False Negatives).",
-          "Mengevaluasi batas kemurnian prediksi dengan cara menghitung rasio keseluruhan hasil deteksi model yang bertepatan secara persis dengan data aslinya (True Positives)."
+          "False Positive.",
+          "True Negative.",
+          "False Negative.",
+          "True Positive."
         ],
         correctIndex: 2,
-        explanation: "<strong>JAWABAN BENAR: Meminimalisir False Negatives.</strong> Recall (Sensitivitas) menjawab kekhawatiran operasional: 'Dari seluruh total pasien yang terjangkit kanker secara medis di populasi nyata, ada berapa persentase jiwa yang sukses terdeteksi dan tidak lolos dari pantaun algoritma kita?'"
+        explanation: "<strong>JAWABAN BENAR: False Negative.</strong> Recall penting saat kegagalan mendeteksi kelas positif sangat berbahaya."
       },
       {
-        question: "Di dalam kurva ROC (Receiver Operating Characteristic), representasi performa model yang ideal dan terakurat akan memiliki nilai Area Under Curve (AUC) sebesar?",
+        question: "Nilai AUC ideal pada ROC adalah?",
         options: [
-          "Model mengalami fenomena Test Set Leakage akut di mana ia telah menghafal seluruh pola dataset latih sehingga menyebabkan kurva ROC berbentuk garis lurus vertikal.",
-          "Performa model setara dengan tebakan melempar koin (acak buta), mengindikasikan bahwa model tersebut benar-benar gagal mengenali distribusi perbedaan kelas data.",
-          "Model bekerja dengan probabilitas klasifikasi yang 100% sempurna tanpa satupun irisan tumpang tindih antara tebakan positif dan tebakan negatif (tanpa salah diagnosa).",
-          "Model telah melewati batas komputasi limit kalkulus yang mengakibatkan luas area di bawah kurva probabilitas menjadi tidak terhingga dan error saat dibaca scikit-learn."
+          "Indikasi test set leakage.",
+          "0.5, setara tebakan acak.",
+          "1.0, model memisahkan kelas secara sempurna.",
+          "Tidak terhingga."
         ],
         correctIndex: 2,
-        explanation: "<strong>JAWABAN BENAR: Model bekerja 100% sempurna tanpa tumpang tindih.</strong> Nilai metrik AUC ideal yang menunjukkan batas absolut akurasi klasifikasi adalah angka 1.0. Sebaliknya, apabila metrik AUC berada di kisaran 0.5, hal tersebut menandakan model Anda kehilangan arah dan kemampuannya tidak lebih baik dari sekadar tebakan acak buta."
+        explanation: "<strong>JAWABAN BENAR: AUC 1.0.</strong> AUC 0.5 berarti performa setara tebakan acak."
       },
       {
-        question: "Pada tahap preprocessing data kategorikal 'Sex' (Gender) yang isinya adalah teks 'male' dan 'female', teknik transformasi fitur apa yang sebaiknya dipakai agar dapat terbaca algoritma?",
+        question: "Fitur kategorikal seperti 'male' dan 'female' harus ditransformasi menggunakan?",
         options: [
-          "Menerapkan fungsi MinMaxScaler agar rentang probabilitas kedua kategori variabel tersebut didistribusikan secara simetris dalam skala interval antara angka 0 hingga 1.",
-          "Mengonversi kolom string tersebut menjadi bentuk representasi numerik menggunakan fungsi Label Encoding atau memecahnya ke matriks kolom biner via One-Hot Encoding.",
-          "Menggunakan teknik Feature Extraction PCA (Principal Component Analysis) untuk mereduksi dimensi teks sehingga mempercepat proses kalkulasi oleh algoritma model.",
-          "Melakukan tahapan Imputasi Strategi Modus untuk mengganti seluruh string teks tersebut dengan satu variabel kategori dominan yang paling sering muncul di populasi."
+          "MinMaxScaler.",
+          "Label Encoding atau One-Hot Encoding.",
+          "PCA.",
+          "Imputasi modus saja."
         ],
         correctIndex: 1,
-        explanation: "<strong>JAWABAN BENAR: Menggunakan Label Encoding atau One-Hot Encoding.</strong> Algoritma matematika tingkat lanjut tidak mengerti atau mampu melakukan perkalian matriks menggunakan tipe teks/string. Fitur kategorikal wajib dimanipulasi ke dalam kode biner numerik agar informasi probabilitas kelas dapat dicerna dengan valid oleh fungsi komputasi layer."
+        explanation: "<strong>JAWABAN BENAR: Encoding.</strong> Algoritma tidak dapat memproses teks mentah, sehingga kategori harus direpresentasikan secara numerik."
       }
     ];
 
@@ -485,7 +504,10 @@
     const statsHeader = document.getElementById("stats-header");
     const scoreDisplay = document.getElementById("score-display");
 
+    const LEADERBOARD_KEY = "classhub_ml_leaderboard";
+
     let state = {
+      playerName: "",
       score: 0,
       currentIndex: 0,
       shuffledData: []
@@ -493,24 +515,301 @@
 
     function shuffleArray(arr) {
       const copy = [...arr];
+
       for (let i = copy.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [copy[i], copy[j]] = [copy[j], copy[i]];
       }
+
       return copy;
     }
 
+    function getLeaderboard() {
+      try {
+        const raw = localStorage.getItem(LEADERBOARD_KEY);
+        const parsed = raw ? JSON.parse(raw) : [];
+        return Array.isArray(parsed) ? parsed : [];
+      } catch {
+        return [];
+      }
+    }
+
+    function saveLeaderboardEntry({ name, score, maxScore }) {
+      const leaderboard = getLeaderboard();
+
+      const entry = {
+        id: window.crypto && crypto.randomUUID ? crypto.randomUUID() : String(Date.now()),
+        name: name && name.trim() ? name.trim() : "Peserta",
+        score,
+        maxScore,
+        percentage: Math.round((score / maxScore) * 100),
+        createdAt: new Date().toISOString()
+      };
+
+      const updated = [...leaderboard, entry]
+        .sort((a, b) => {
+          if (b.score !== a.score) return b.score - a.score;
+          return new Date(a.createdAt) - new Date(b.createdAt);
+        })
+        .slice(0, 30);
+
+      localStorage.setItem(LEADERBOARD_KEY, JSON.stringify(updated));
+
+      return {
+        entry,
+        leaderboard: updated
+      };
+    }
+
+    function clearLeaderboard() {
+      const confirmed = confirm("Hapus semua data ranking latihan Machine Learning di browser ini?");
+
+      if (!confirmed) return;
+
+      localStorage.removeItem(LEADERBOARD_KEY);
+      renderMenu();
+    }
+
+    function formatDateTime(value) {
+      try {
+        return new Date(value).toLocaleString("id-ID", {
+          day: "2-digit",
+          month: "short",
+          hour: "2-digit",
+          minute: "2-digit"
+        });
+      } catch {
+        return "-";
+      }
+    }
+
+    function getMedal(rank) {
+      if (rank === 1) return "🥇";
+      if (rank === 2) return "🥈";
+      if (rank === 3) return "🥉";
+      return "#" + rank;
+    }
+
+    function getPodiumOrder(topThree) {
+      return [topThree[1], topThree[0], topThree[2]].filter(Boolean);
+    }
+
+    function getPodiumClass(rank) {
+      if (rank === 1) {
+        return {
+          height: "md:h-56",
+          border: "border-amber-300/40",
+          bg: "bg-amber-400/10",
+          text: "text-amber-200",
+          score: "text-amber-300",
+          icon: "bg-amber-400/15"
+        };
+      }
+
+      if (rank === 2) {
+        return {
+          height: "md:h-48",
+          border: "border-slate-300/30",
+          bg: "bg-slate-300/10",
+          text: "text-slate-200",
+          score: "text-slate-200",
+          icon: "bg-slate-300/10"
+        };
+      }
+
+      return {
+        height: "md:h-40",
+        border: "border-orange-300/30",
+        bg: "bg-orange-400/10",
+        text: "text-orange-200",
+        score: "text-orange-300",
+        icon: "bg-orange-400/10"
+      };
+    }
+
+    function renderMiniLeaderboard(leaderboard) {
+      if (!leaderboard.length) {
+        return `
+          <div class="rounded-2xl border border-slate-800 bg-slate-900/70 p-4 text-sm leading-6 text-slate-400">
+            Belum ada skor. Selesaikan latihan pertama untuk membuat ranking.
+          </div>
+        `;
+      }
+
+      return leaderboard.slice(0, 5).map((item, index) => `
+        <div class="mb-2 flex items-center justify-between gap-3 rounded-2xl border border-slate-800 bg-slate-900/70 px-3 py-2">
+          <div class="flex min-w-0 items-center gap-3">
+            <div class="grid h-8 w-8 shrink-0 place-items-center rounded-xl bg-slate-950 text-sm font-black text-cyan-300">
+              ${getMedal(index + 1)}
+            </div>
+
+            <div class="min-w-0">
+              <p class="truncate text-sm font-bold text-white">
+                ${item.name}
+              </p>
+
+              <p class="text-[11px] text-slate-500">
+                ${formatDateTime(item.createdAt)}
+              </p>
+            </div>
+          </div>
+
+          <p class="mono text-sm font-black text-cyan-300">
+            ${item.score}
+          </p>
+        </div>
+      `).join("");
+    }
+
+    function renderLeaderboard(leaderboard, currentEntryId) {
+      if (!leaderboard.length) {
+        return `
+          <div class="rounded-3xl border border-slate-800 bg-slate-950/70 p-5 text-center text-sm text-slate-400">
+            Belum ada ranking.
+          </div>
+        `;
+      }
+
+      const topThree = leaderboard.slice(0, 3);
+      const rest = leaderboard.slice(3);
+      const podiumOrder = getPodiumOrder(topThree);
+
+      return `
+        <div class="w-full">
+          <div class="mb-5 flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <p class="mono text-[10px] font-black uppercase tracking-[0.26em] text-slate-500">
+                Leaderboard
+              </p>
+
+              <h3 class="mt-1 text-xl font-black text-white">
+                Ranking Latihan Machine Learning
+              </h3>
+            </div>
+
+            <button
+              onclick="clearLeaderboard()"
+              class="rounded-xl border border-slate-700 bg-slate-900 px-3 py-2 text-xs font-bold text-slate-300 hover:bg-slate-800"
+            >
+              Reset Rank
+            </button>
+          </div>
+
+          <div class="mb-5 grid items-end gap-3 md:grid-cols-3">
+            ${podiumOrder.map((item) => {
+              const rank = leaderboard.findIndex((entry) => entry.id === item.id) + 1;
+              const style = getPodiumClass(rank);
+              const isCurrent = item.id === currentEntryId;
+
+              return `
+                <div class="flex ${style.height} flex-col justify-between rounded-[1.5rem] border ${style.border} ${style.bg} p-4 text-center ${isCurrent ? "ring-4 ring-cyan-400/20" : ""}">
+                  <div>
+                    <div class="mx-auto mb-3 grid h-14 w-14 place-items-center rounded-2xl ${style.icon} text-3xl">
+                      ${getMedal(rank)}
+                    </div>
+
+                    <p class="mono text-xs font-black uppercase tracking-widest ${style.text}">
+                      Rank ${rank}
+                    </p>
+
+                    <p class="mt-2 truncate text-lg font-black text-white">
+                      ${item.name}
+                    </p>
+                  </div>
+
+                  <div>
+                    <p class="mono text-4xl font-black ${style.score}">
+                      ${item.score}
+                    </p>
+
+                    <p class="text-xs font-semibold text-slate-400">
+                      ${item.percentage}% • ${formatDateTime(item.createdAt)}
+                    </p>
+                  </div>
+                </div>
+              `;
+            }).join("")}
+          </div>
+
+          ${
+            rest.length > 0
+              ? `
+                <div class="space-y-2">
+                  ${rest.map((item, index) => {
+                    const rank = index + 4;
+                    const isCurrent = item.id === currentEntryId;
+
+                    return `
+                      <div class="flex items-center justify-between gap-3 rounded-2xl border ${
+                        isCurrent
+                          ? "border-cyan-400/40 bg-cyan-400/10"
+                          : "border-slate-800 bg-slate-950/60"
+                      } px-4 py-3">
+                        <div class="flex min-w-0 items-center gap-3">
+                          <div class="mono grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-slate-900 font-black text-slate-300">
+                            #${rank}
+                          </div>
+
+                          <div class="min-w-0">
+                            <p class="truncate font-bold text-white">
+                              ${item.name}
+                            </p>
+
+                            <p class="text-xs text-slate-500">
+                              ${formatDateTime(item.createdAt)}
+                            </p>
+                          </div>
+                        </div>
+
+                        <div class="text-right">
+                          <p class="mono text-xl font-black text-cyan-300">
+                            ${item.score}
+                          </p>
+
+                          <p class="text-xs text-slate-500">
+                            ${item.percentage}%
+                          </p>
+                        </div>
+                      </div>
+                    `;
+                  }).join("")}
+                </div>
+              `
+              : `
+                <div class="rounded-2xl border border-slate-800 bg-slate-950/60 p-4 text-center text-sm text-slate-500">
+                  Belum ada peserta di rank 4 dan seterusnya.
+                </div>
+              `
+          }
+        </div>
+      `;
+    }
+
     function initGame() {
+      const nameInput = document.getElementById("player-name");
+      const playerName = nameInput && nameInput.value ? nameInput.value.trim() : "";
+
+      if (!playerName) {
+        alert("Isi nama peserta dulu supaya skor bisa masuk leaderboard.");
+        if (nameInput) nameInput.focus();
+        return;
+      }
+
+      state.playerName = playerName;
       state.score = 0;
       state.currentIndex = 0;
       scoreDisplay.innerText = "0";
-      
-      // Ambil 10 soal acak dari bank total 30 soal
-      let tempQuestions = shuffleArray(quizData).slice(0, 10);
-      
-      state.shuffledData = tempQuestions.map(q => {
-        let opts = q.options.map((opt, idx) => ({ text: opt, isCorrect: idx === q.correctIndex }));
+
+      const tempQuestions = shuffleArray(quizData).slice(0, 10);
+
+      state.shuffledData = tempQuestions.map((q) => {
+        let opts = q.options.map((opt, idx) => ({
+          text: opt,
+          isCorrect: idx === q.correctIndex
+        }));
+
         opts = shuffleArray(opts);
+
         return {
           question: q.question,
           options: opts,
@@ -524,24 +823,75 @@
 
     function renderMenu() {
       statsHeader.classList.add("hidden");
-      container.innerHTML = `
-        <section class="fade-in w-full max-w-2xl text-center">
-          <div class="glass relative overflow-hidden rounded-[2rem] p-8 md:p-12">
-            <div class="mx-auto mb-6 grid h-20 w-20 place-items-center rounded-3xl bg-cyan-400/10 text-cyan-300 border border-cyan-400/20">
-              <i class="fa-solid fa-microscope text-4xl"></i>
-            </div>
-            
-            <h2 class="text-3xl font-black tracking-tight text-white md:text-5xl mb-4">
-              Ujian Teori <span class="gradient-text">Machine Learning</span>
-            </h2>
-            
-            <p class="mx-auto max-w-xl text-sm md:text-base leading-7 text-slate-300 mb-8">
-              Sistem akan merotasi 10 soal acak dari bank total 30 soal yang dirancang khusus berdasarkan kasus Laporan Praktikum (Titanic, Breast Cancer, dan DL). <br><br><b>Perhatikan distraktor:</b> Semua opsi jawaban dirancang secara setara dan menjebak. Baca dengan teliti!
-            </p>
 
-            <button onclick="initGame()" class="btn-game inline-flex items-center gap-3 rounded-2xl bg-cyan-600 hover:bg-cyan-500 px-8 py-4 font-black text-white shadow-lg shadow-cyan-900/40 text-lg">
-              <i class="fa-solid fa-play"></i> Mulai Kuis Teori
-            </button>
+      const leaderboard = getLeaderboard();
+
+      container.innerHTML = `
+        <section class="fade-in w-full max-w-5xl">
+          <div class="glass relative overflow-hidden rounded-[2rem] p-8 md:p-12">
+            <div class="absolute right-0 top-0 h-40 w-40 rounded-full bg-cyan-400/10 blur-3xl"></div>
+            <div class="absolute bottom-0 left-0 h-44 w-44 rounded-full bg-violet-500/10 blur-3xl"></div>
+
+            <div class="relative grid gap-8 lg:grid-cols-[1fr_380px] lg:items-start">
+              <div>
+                <div class="mx-auto mb-6 grid h-20 w-20 place-items-center rounded-3xl bg-cyan-400/10 text-cyan-300 border border-cyan-400/20 lg:mx-0">
+                  <i class="fa-solid fa-microscope text-4xl"></i>
+                </div>
+
+                <h2 class="text-3xl font-black tracking-tight text-white md:text-5xl mb-4">
+                  Ujian Teori <span class="gradient-text">Machine Learning</span>
+                </h2>
+
+                <p class="max-w-xl text-sm md:text-base leading-7 text-slate-300 mb-6">
+                  Sistem akan merotasi 10 soal acak dari bank total 30 soal.
+                  Setelah selesai, skor kamu akan masuk ke leaderboard lokal dan ditampilkan dalam bentuk podium.
+                  <br><br>
+                  <b>Perhatikan distraktor:</b> semua opsi jawaban dirancang setara dan menjebak. Baca dengan teliti.
+                </p>
+
+                <label class="block max-w-md text-left">
+                  <span class="mb-2 block text-sm font-bold text-slate-200">
+                    Nama Peserta
+                  </span>
+
+                  <input
+                    id="player-name"
+                    type="text"
+                    maxlength="24"
+                    placeholder="Contoh: Obed"
+                    class="w-full rounded-2xl border border-slate-700 bg-slate-950/80 px-4 py-3 text-sm font-semibold text-white outline-none transition placeholder:text-slate-600 focus:border-cyan-400 focus:ring-4 focus:ring-cyan-400/10"
+                  />
+                </label>
+
+                <button
+                  onclick="initGame()"
+                  class="btn-game mt-5 inline-flex items-center gap-3 rounded-2xl bg-cyan-600 hover:bg-cyan-500 px-8 py-4 font-black text-white shadow-lg shadow-cyan-900/40 text-lg"
+                >
+                  <i class="fa-solid fa-play"></i>
+                  Mulai Kuis Teori
+                </button>
+              </div>
+
+              <div class="rounded-[1.75rem] border border-slate-800 bg-slate-950/60 p-5">
+                <div class="mb-4 flex items-center justify-between gap-3">
+                  <div>
+                    <p class="mono text-[10px] font-black uppercase tracking-[0.24em] text-slate-500">
+                      Top Score
+                    </p>
+
+                    <h3 class="mt-1 font-black text-white">
+                      Leaderboard Terakhir
+                    </h3>
+                  </div>
+
+                  <div class="grid h-10 w-10 place-items-center rounded-2xl bg-cyan-400/10 text-cyan-300">
+                    <i class="fa-solid fa-ranking-star"></i>
+                  </div>
+                </div>
+
+                ${renderMiniLeaderboard(leaderboard)}
+              </div>
+            </div>
           </div>
         </section>
       `;
@@ -561,6 +911,7 @@
             <p class="text-xs font-black uppercase tracking-[0.24em] text-cyan-300">
               <i class="fa-solid fa-book-open mr-2"></i> Kuis Konseptual
             </p>
+
             <div class="mono rounded-full border border-slate-700 bg-slate-900/70 px-4 py-1 text-xs font-bold text-slate-300">
               Soal ${state.currentIndex + 1} dari ${state.shuffledData.length}
             </div>
@@ -573,11 +924,18 @@
 
             <div class="grid gap-3" id="options-container">
               ${q.options.map((opt, i) => `
-                <button id="opt-${i}" onclick="handleAnswer(${i})" class="btn-game w-full flex items-start gap-4 rounded-2xl border border-slate-700 bg-slate-900/50 p-4 text-left text-slate-300 hover:bg-slate-800 transition-colors">
+                <button
+                  id="opt-${i}"
+                  onclick="handleAnswer(${i})"
+                  class="btn-game w-full flex items-start gap-4 rounded-2xl border border-slate-700 bg-slate-900/50 p-4 text-left text-slate-300 hover:bg-slate-800 transition-colors"
+                >
                   <span class="mono grid h-8 w-8 shrink-0 place-items-center rounded-lg border border-slate-700 bg-slate-950 font-black text-cyan-400">
                     ${String.fromCharCode(65 + i)}
                   </span>
-                  <span class="text-sm leading-6 md:text-base mt-0.5">${opt.text}</span>
+
+                  <span class="text-sm leading-6 md:text-base mt-0.5">
+                    ${opt.text}
+                  </span>
                 </button>
               `).join("")}
             </div>
@@ -604,7 +962,10 @@
 
       const containerDiv = document.getElementById("options-container");
       const buttons = containerDiv.querySelectorAll("button");
-      buttons.forEach(btn => btn.disabled = true);
+
+      buttons.forEach((btn) => {
+        btn.disabled = true;
+      });
 
       if (isCorrect) {
         state.score += 10;
@@ -612,7 +973,8 @@
       }
 
       q.options.forEach((opt, idx) => {
-        const btn = document.getElementById(`opt-${idx}`);
+        const btn = document.getElementById("opt-" + idx);
+
         if (opt.isCorrect) {
           btn.classList.add("opt-correct");
         } else if (idx === selectedIndex && !isCorrect) {
@@ -627,48 +989,77 @@
     }
 
     function nextQuestion() {
-      state.currentIndex++;
+      state.currentIndex += 1;
       renderQuestion();
     }
 
     function endGame() {
       statsHeader.classList.add("hidden");
-      
+
       const maxScore = state.shuffledData.length * 10;
-      let finalMessage = "Evaluasi Selesai. Seluruh jebakan konseptual dari materi telah dibongkar.";
-      
+
+      const result = saveLeaderboardEntry({
+        name: state.playerName,
+        score: state.score,
+        maxScore
+      });
+
+      const entry = result.entry;
+      const leaderboard = result.leaderboard;
+
+      let finalMessage = "Evaluasi selesai. Seluruh jebakan konseptual dari materi telah dibongkar.";
+
       if (state.score < 50) {
-        finalMessage = "Banyak konsep yang keliru akibat jebakan opsi (distractor). Kaji ulang penjelasan di tiap soal!";
+        finalMessage = "Banyak konsep yang masih keliru akibat jebakan opsi. Kaji ulang pembahasan dan coba lagi.";
       } else if (state.score >= 80) {
-        finalMessage = "Penguasaan teori analitik Anda sangat tajam. Anda tidak mudah terkecoh oleh opsi yang tampak ilmiah.";
+        finalMessage = "Penguasaan teori analitik kamu sangat tajam. Kamu tidak mudah terkecoh oleh opsi yang tampak ilmiah.";
       }
 
       container.innerHTML = `
-        <section class="fade-in w-full max-w-xl">
-          <div class="glass overflow-hidden rounded-[2rem] p-8 text-center">
-            <div class="mx-auto mb-6 grid h-24 w-24 place-items-center rounded-full bg-emerald-400/10 text-emerald-400 border border-emerald-400/30">
-              <i class="fa-solid fa-flag-checkered text-5xl"></i>
+        <section class="fade-in w-full max-w-6xl">
+          <div class="glass overflow-hidden rounded-[2rem] p-6 md:p-8">
+            <div class="grid gap-7 lg:grid-cols-[0.78fr_1.22fr] lg:items-start">
+              <div class="text-center lg:text-left">
+                <div class="mx-auto mb-6 grid h-24 w-24 place-items-center rounded-full bg-emerald-400/10 text-emerald-400 border border-emerald-400/30 lg:mx-0">
+                  <i class="fa-solid fa-flag-checkered text-5xl"></i>
+                </div>
+
+                <h2 class="text-3xl font-black text-white mb-2">
+                  Sesi Latihan Selesai!
+                </h2>
+
+                <p class="text-sm leading-7 text-slate-300 mb-6">
+                  ${finalMessage}
+                </p>
+
+                <div class="rounded-3xl border border-slate-800 bg-slate-950/80 p-5 shadow-inner mb-4">
+                  <p class="mono text-[10px] font-black uppercase tracking-[0.28em] text-slate-500 mb-2">
+                    Skor ${state.playerName}
+                  </p>
+
+                  <p class="mono text-6xl font-black text-cyan-400">
+                    ${state.score}<span class="text-2xl text-slate-600">/${maxScore}</span>
+                  </p>
+                </div>
+
+                <button
+                  onclick="renderMenu()"
+                  class="btn-game w-full rounded-2xl bg-slate-800 hover:bg-slate-700 border border-slate-600 px-5 py-4 font-black text-white shadow-lg"
+                >
+                  <i class="fa-solid fa-rotate-left mr-2"></i>
+                  Simulasi Baru
+                </button>
+              </div>
+
+              <div>
+                ${renderLeaderboard(leaderboard, entry.id)}
+              </div>
             </div>
-
-            <h2 class="text-3xl font-black text-white mb-2">Sesi Latihan Selesai!</h2>
-            <p class="text-sm leading-7 text-slate-300 mb-8">
-              ${finalMessage}
-            </p>
-
-            <div class="mx-auto max-w-xs rounded-3xl border border-slate-800 bg-slate-950/80 p-5 shadow-inner mb-8">
-              <p class="mono text-[10px] font-black uppercase tracking-[0.28em] text-slate-500 mb-2">Skor Akhir</p>
-              <p class="mono text-6xl font-black text-cyan-400">${state.score}<span class="text-2xl text-slate-600">/${maxScore}</span></p>
-            </div>
-
-            <button onclick="renderMenu()" class="btn-game w-full rounded-2xl bg-slate-800 hover:bg-slate-700 border border-slate-600 px-5 py-4 font-black text-white shadow-lg">
-              <i class="fa-solid fa-rotate-left mr-2"></i> Simulasi Baru (10 Soal Acak Lainnya)
-            </button>
           </div>
         </section>
       `;
     }
 
-    // Initialize App
     renderMenu();
   </script>
 </body>
