@@ -147,73 +147,337 @@
   <main id="app-container" class="relative z-10 mx-auto flex w-full max-w-4xl flex-1 flex-col items-center justify-center overflow-y-auto p-4"></main>
 
   <script>
-    // --- DATABASE SOAL (Diambil dari Laporan/Rubrik Yohanes Obed) ---
+    // --- BANK SOAL (30 Pertanyaan Unik) ---
     const quizData = [
       {
-        question: "Berdasarkan hasil Exploratory Data Analysis (EDA) Anda pada dataset Titanic, fitur manakah yang terbukti menjadi prediktor keselamatan (survival) terkuat?",
+        question: "Berdasarkan hasil Exploratory Data Analysis (EDA) pada dataset Titanic, fitur manakah yang terbukti menjadi prediktor keselamatan (survival) terkuat?",
         options: [
           "Tarif tiket (Fare), karena penumpang kaya diprioritaskan.",
-          "Gender (Sex), di mana perempuan memiliki peluang selamat jauh lebih tinggi dibanding laki-laki.",
+          "Gender (Sex), di mana perempuan memiliki peluang selamat jauh lebih tinggi.",
           "Pelabuhan asal (Embarked), karena posisi dek dipengaruhi pelabuhan.",
           "Jumlah orang tua/anak (Parch), karena keluarga besar lebih mudah selamat."
         ],
         correctIndex: 1,
-        explanation: "<strong>JAWABAN B BENAR.</strong> Dalam kesimpulan laporan Lab Titanic Anda (Poin V.1), terbukti bahwa Gender adalah prediktor terkuat dimana perempuan jauh lebih diprioritaskan. <br><br><strong>Mengapa yang lain salah?</strong> Tarif tiket (Fare) dan Kelas memang berpengaruh (poin V.2 & V.5), tapi secara statistik Gender memegang peran korelasi paling dominan dalam protokol evakuasi (women and children first). Keluarga yang terlalu besar (Parch tinggi) justru terbukti lebih sulit selamat (Poin V.4)."
+        explanation: "<strong>JAWABAN BENAR: Gender (Sex).</strong> Analisis membuktikan bahwa protokol 'women and children first' ditaati secara ketat. Secara statistik, gender memegang korelasi paling dominan dibandingkan kelas tiket atau pelabuhan asal."
       },
       {
-        question: "Menurut rubrik evaluasi dosen, apa 'Red Flag' (kesalahan fatal) yang menyebabkan terjadinya Data Leakage saat melakukan Hyperparameter Tuning?",
+        question: "Menurut rubrik evaluasi, apa 'Red Flag' yang paling fatal dan menyebabkan terjadinya Data Leakage saat melakukan preprocessing dan Hyperparameter Tuning?",
         options: [
           "Menentukan metrik scoring='roc_auc' pada dataset klasifikasi.",
-          "Menggunakan StandardScaler pada seluruh data latih (X_train) secara langsung sebelum Cross-Validation (CV) dipecah.",
-          "Membagi data menggunakan StratifiedKFold pada kasus klasifikasi yang tidak seimbang.",
+          "Melakukan fit_transform (scaling/imputasi) pada seluruh X_train sebelum Cross-Validation (CV) dipecah.",
+          "Membagi data menggunakan StratifiedKFold pada kasus imbalanced.",
           "Memakai GridSearchCV karena menguji seluruh kombinasi."
         ],
         correctIndex: 1,
-        explanation: "<strong>JAWABAN B BENAR.</strong> Ini adalah jebakan klasik. Jika Anda melakukan <code>fit_transform</code> pada seluruh X_train, scaler akan menghitung mean/std dari seluruh data latih. Saat Cross-Validation berjalan, sebagian data latih itu dijadikan 'data validasi'. Artinya, informasi dari data validasi telah 'bocor' ke scaler sebelum diprediksi. <br><br><strong>Solusi:</strong> Proses scaling WAJIB dibungkus menggunakan <code>scikit-learn Pipeline</code> agar transformasi hanya dilakukan per-lipatan (fold) CV."
+        explanation: "<strong>JAWABAN BENAR: Melakukan fit_transform pada seluruh X_train sebelum CV.</strong> Ini menyebabkan informasi dari set validasi di dalam lipatan CV bocor ke parameter scaler. Solusi mutlaknya adalah membungkusnya dalam scikit-learn Pipeline."
       },
       {
-        question: "Pada praktikum Neural Network (Pertemuan 5), Anda menggunakan parameter <code>class_weight</code> (Class 0: 0.56, Class 1: 4.43). Apa tujuan matematis dari langkah tersebut?",
+        question: "Pada pembuatan model Neural Network, penggunaan parameter <code>class_weight</code> (contoh: Class 0: 0.56, Class 1: 4.43) bertujuan untuk?",
         options: [
-          "Mencegah Vanishing Gradient pada layer awal Deep Learning.",
-          "Mengurangi kecepatan proses komputasi per epoch.",
-          "Memberikan penalti/bobot error yang lebih besar pada kelas minoritas agar model tidak bias sekadar menebak kelas mayoritas.",
-          "Mengecilkan nilai fitur numerik seperti StandardScaler."
+          "Mencegah Vanishing Gradient pada layer awal RNN.",
+          "Mempercepat waktu pelatihan dengan membuang bobot ringan.",
+          "Memberikan penalti error lebih besar pada kelas minoritas agar model tidak bias menebak kelas mayoritas.",
+          "Mengecilkan nilai fitur numerik seperti fungsi StandardScaler."
         ],
         correctIndex: 2,
-        explanation: "<strong>JAWABAN C BENAR.</strong> Pada data medis yang Anda kerjakan, jumlah pasien sakit (Yes) sangat sedikit dibanding yang sehat (No). Jika dibiarkan, Neural Network akan mengambil jalan pintas: selalu memprediksi 'No' demi akurasi 90%. Parameter <code>class_weight</code> memaksa algoritma untuk 'membayar mahal' (loss tinggi) jika salah memprediksi kelas minoritas, sehingga model menjadi seimbang."
+        explanation: "<strong>JAWABAN BENAR: Memberikan penalti error lebih besar pada kelas minoritas.</strong> Pada dataset tidak seimbang (imbalanced), model cenderung mengabaikan kelas minoritas demi akurasi tinggi semu. Class weight memaksa model agar lebih sensitif pada kelas minoritas."
       },
       {
-        question: "Dalam Lab 03 (Breast Cancer), Anda menggunakan metrik F1-Score (<code>scoring='f1'</code>) pada <code>cross_val_score</code>. Mengapa F1-Score sering lebih direkomendasikan daripada Akurasi pada kasus medis?",
+        question: "Mengapa F1-Score lebih direkomendasikan daripada Akurasi (Accuracy) pada evaluasi klasifikasi deteksi Kanker Payudara?",
         options: [
-          "Karena F1-Score menyeimbangkan Precision dan Recall, sehingga performa pada kelas minoritas (yang krusial di medis) dapat terukur dengan benar.",
-          "Karena F1-Score otomatis mencegah terjadinya data leakage saat preprocessing.",
-          "Karena Akurasi tidak bisa digunakan untuk klasifikasi biner.",
-          "Karena F1-Score menghitung luas area di bawah kurva (ROC)."
+          "Karena F1-Score menyeimbangkan Precision dan Recall, lebih kebal terhadap data imbalanced.",
+          "Karena Akurasi tidak bisa digunakan sama sekali pada output biner.",
+          "Karena F1-Score secara otomatis menormalisasi fitur.",
+          "Karena F1-Score menghitung metrik loss secara real-time pada Neural Network."
         ],
         correctIndex: 0,
-        explanation: "<strong>JAWABAN A BENAR.</strong> F1-Score adalah rata-rata harmonik dari Precision dan Recall. Dalam konteks medis (seperti kanker), kita tidak ingin model yang akurasinya tinggi tapi gagal mendeteksi pasien yang benar-benar sakit (False Negatives tinggi). <br><br><strong>Mengapa yang lain salah?</strong> Luas area di bawah kurva adalah definisi dari AUC-ROC (jawaban D). Akurasi (jawaban C) bisa digunakan untuk klasifikasi biner, namun sangat menyesatkan jika datasetnya tidak seimbang (imbalanced)."
+        explanation: "<strong>JAWABAN BENAR: F1-Score menyeimbangkan Precision dan Recall.</strong> Di kasus medis, kita menghindari tingginya False Negative. Akurasi sangat menyesatkan (Accuracy Paradox) jika 90% data adalah kelas sehat, di mana model yang menebak 'sehat' terus menerus akan terlihat akurat."
       },
       {
-        question: "Berdasarkan materi TM-9, arsitektur Long Short-Term Memory (LSTM) diciptakan utamanya untuk menyelesaikan masalah apa pada Vanilla RNN?",
+        question: "Arsitektur Long Short-Term Memory (LSTM) diciptakan utamanya untuk menyelesaikan kelemahan apa pada Vanilla RNN?",
         options: [
-          "Overfitting saat dataset terlalu kecil.",
+          "Overfitting saat ukuran batch terlalu besar.",
           "Data tabular yang memiliki banyak missing values.",
-          "Vanishing Gradient, yang membuat RNN biasa 'lupa' akan informasi awal pada sekuens data yang panjang.",
-          "Ketidakmampuan RNN memproses data dalam bentuk matriks gambar (pixels)."
+          "Vanishing Gradient, yang membuat RNN biasa kehilangan informasi sekuens masa lalu.",
+          "Lambatnya komputasi saat preprocessing teks."
         ],
         correctIndex: 2,
-        explanation: "<strong>JAWABAN C BENAR.</strong> Vanilla RNN kesulitan menangani dependensi jangka panjang karena gradien menyusut drastis (Vanishing Gradient) saat proses backpropagation melintasi banyak <i>time steps</i>. LSTM menyelesaikannya menggunakan struktur <i>Gates</i> (Forget, Input, Output) yang mengatur memori mana yang harus disimpan atau dibuang."
+        explanation: "<strong>JAWABAN BENAR: Vanishing Gradient.</strong> Vanilla RNN kesulitan menangani dependensi urutan jangka panjang (long-term dependencies) karena gradiennya menyusut drastis. LSTM menggunakan struktur Gates (Input, Output, Forget) untuk mempertahankan memori jangka panjang."
       },
       {
-        question: "Dalam kode Anda, fungsi <code>train_test_split</code> dipanggil menggunakan parameter <code>stratify=y</code>. Apa akibatnya jika parameter ini TIDAK digunakan pada kasus klasifikasi klasifikasi berisiko tinggi?",
+        question: "Apa fungsi parameter <code>stratify=y</code> saat memanggil <code>train_test_split</code>?",
         options: [
-          "Data numerik akan berubah menjadi string.",
-          "Proporsi jumlah kelas target di data Train dan data Test bisa berbeda jauh dari populasi asli, merusak objektivitas evaluasi model.",
-          "Model akan gagal melakukan import library scikit-learn.",
-          "Hyperparameter tuning akan berjalan tanpa henti (infinite loop)."
+          "Membagi dataset berdasarkan kolom waktu yang berurutan.",
+          "Memastikan proporsi kelas pada himpunan data latih dan uji identik dengan proporsi aslinya.",
+          "Melakukan cross-validation sebanyak y kali.",
+          "Menghapus nilai outlier dari variabel dependen secara otomatis."
         ],
         correctIndex: 1,
-        explanation: "<strong>JAWABAN B BENAR.</strong> <code>stratify=y</code> memastikan bahwa jika data asli memiliki rasio 80% Sehat dan 20% Sakit, maka himpunan X_train dan X_test juga akan memiliki rasio persis 80:20. Tanpa ini, pembagian acak bisa saja membuat data X_test isinya 100% data Sehat, membuat evaluasi menjadi tidak valid."
+        explanation: "<strong>JAWABAN BENAR: Mempertahankan proporsi kelas.</strong> Pembagian acak (random split) murni berisiko menghasilkan distribusi kelas yang timpang pada himpunan X_test, yang akan merusak validitas dari hasil metrik evaluasi model."
+      },
+      {
+        question: "Mengapa kolom/fitur 'Cabin' pada dataset Titanic umumnya disarankan untuk di-drop saat tahap seleksi fitur?",
+        options: [
+          "Karena tipe datanya berupa float.",
+          "Karena berisi data teks murni yang tidak bisa diproses sama sekali.",
+          "Karena memiliki persentase missing values yang sangat masif (lebih dari 70%).",
+          "Karena sangat berkorelasi positif dengan fitur usia."
+        ],
+        correctIndex: 2,
+        explanation: "<strong>JAWABAN BENAR: Memiliki missing values yang masif.</strong> Jika sebuah fitur memiliki rasio nilai kosong yang ekstrem, melakukan imputasi (baik mean/median/modus) akan menciptakan data sintetis yang tidak representatif dan memicu noise."
+      },
+      {
+        question: "Dalam implementasi Deep Learning, apa peran utama dari mekanisme <code>EarlyStopping</code> yang dimasukkan pada argumen callbacks?",
+        options: [
+          "Menghentikan training model secara otomatis jika validation loss berhenti membaik, guna mencegah overfitting.",
+          "Mencegah CPU melakukan iterasi lebih dari 10 kali secara paksa.",
+          "Mematikan environment Google Colab jika memori habis.",
+          "Menurunkan learning rate jika terjadi gradien meledak (exploding gradient)."
+        ],
+        correctIndex: 0,
+        explanation: "<strong>JAWABAN BENAR: Menghentikan training untuk mencegah overfitting.</strong> Model yang dilatih berlarut-larut pada akhirnya akan menghafal noise data latih. EarlyStopping memantau performa validasi dan menghentikan iterasi tepat saat performa mulai memburuk."
+      },
+      {
+        question: "Bagaimana cara kerja Pipeline scikit-learn dalam mencegah data leakage secara spesifik?",
+        options: [
+          "Mengenripsi nilai numerik menjadi binary.",
+          "Menunda transformasi pada set validasi hingga K-Fold memisahkan himpunan, sehingga scaler hanya di-fit pada bagian latih per lipatan.",
+          "Secara otomatis menghapus baris duplikat sebelum GridSearchCV dieksekusi.",
+          "Menambahkan lapisan layer dropout di setiap proses cross validation."
+        ],
+        correctIndex: 1,
+        explanation: "<strong>JAWABAN BENAR: Menunda transformasi data.</strong> Pipeline memastikan operasi <code>fit</code> dan <code>transform</code> terjalin secara logis. Setiap kali K-Fold membagi data, preprocessor di dalam pipeline direset dan hanya belajar (fit) dari data training pada lipatan tersebut."
+      },
+      {
+        question: "Apa perbedaan fundamental dari waktu eksekusi antara GridSearchCV dan RandomizedSearchCV?",
+        options: [
+          "GridSearch lebih efisien karena mengeksplorasi secara acak.",
+          "RandomizedSearch jauh lebih lambat tetapi selalu memberikan akurasi 100%.",
+          "GridSearch menguji semua kombinasi parameter secara exhaustive (menyeluruh), sehingga memakan waktu eksponensial jauh lebih lama.",
+          "Keduanya memiliki waktu yang sama persis jika fold CV-nya sama."
+        ],
+        correctIndex: 2,
+        explanation: "<strong>JAWABAN BENAR: GridSearch menguji semua kombinasi secara exhaustive.</strong> Jika Anda memiliki ruang parameter yang luas, GridSearch sangat tidak efisien (mahal secara komputasi). RandomizedSearch mengambil sampel parameter dari distribusi yang ditentukan, lebih hemat waktu dengan hasil mendekati optimal."
+      },
+      {
+        question: "Pada metrik evaluasi klasifikasi medis, kondisi di mana model memprediksi pasien SEHAT, padahal aslinya KANKER, disebut sebagai kesalahan tipe apa?",
+        options: [
+          "True Negative (TN)",
+          "True Positive (TP)",
+          "False Positive (FP)",
+          "False Negative (FN)"
+        ],
+        correctIndex: 3,
+        explanation: "<strong>JAWABAN BENAR: False Negative (FN).</strong> Pada kasus medis, False Negative adalah tipe kesalahan yang paling fatal karena pasien yang sakit gagal mendapatkan intervensi atau penanganan awal."
+      },
+      {
+        question: "Mengapa imputasi nilai numerik yang kosong menggunakan nilai Median seringkali lebih aman dibandingkan menggunakan Mean (Rata-rata)?",
+        options: [
+          "Median mempercepat komputasi kalkulus di backend numpy.",
+          "Median lebih kebal/tangguh (robust) terhadap nilai-nilai ekstrem (outliers) di dalam dataset.",
+          "Mean hanya dapat digunakan pada data kategorikal.",
+          "Median secara otomatis melakukan normalisasi pada rentang 0 hingga 1."
+        ],
+        correctIndex: 1,
+        explanation: "<strong>JAWABAN BENAR: Median lebih kebal terhadap outliers.</strong> Rata-rata (mean) sangat mudah terseret oleh satu nilai ekstrem yang besar, sehingga hasil imputasinya bisa menjadi bias dan tidak merepresentasikan titik pusat mayoritas data."
+      },
+      {
+        question: "Di dalam Keras/Tensorflow, Activation Function apa yang wajib digunakan pada output layer untuk kasus Binary Classification (1 atau 0)?",
+        options: [
+          "ReLU",
+          "Softmax",
+          "Sigmoid",
+          "Tanh"
+        ],
+        correctIndex: 2,
+        explanation: "<strong>JAWABAN BENAR: Sigmoid.</strong> Fungsi Sigmoid meremas rentang angka berapapun menjadi angka antara 0 hingga 1, yang sangat sempurna untuk diinterpretasikan sebagai persentase probabilitas biner."
+      },
+      {
+        question: "Apa loss function yang secara matematis berpasangan dengan fungsi aktivasi Sigmoid untuk menghitung kesalahan model di Binary Classification?",
+        options: [
+          "Mean Squared Error (MSE)",
+          "Categorical Crossentropy",
+          "Binary Crossentropy",
+          "Hinge Loss"
+        ],
+        correctIndex: 2,
+        explanation: "<strong>JAWABAN BENAR: Binary Crossentropy.</strong> Metrik ini secara logaritmik menghitung besaran penalti atas probabilitas yang dihasilkan model dibandingkan dengan label aslinya yang berupa 0 atau 1."
+      },
+      {
+        question: "Di dalam algoritma Random Forest, apa tujuan utama menggunakan struktur 'Ensemble' dari banyak pohon keputusan (Decision Trees)?",
+        options: [
+          "Mempercepat waktu kompilasi kode python secara drastis.",
+          "Untuk mempermudah imputasi data teks yang kosong.",
+          "Mengurangi variansi dan mencegah overfitting yang sering terjadi jika hanya menggunakan satu pohon keputusan yang dalam.",
+          "Memaksa data menjadi format 3D Tensor."
+        ],
+        correctIndex: 2,
+        explanation: "<strong>JAWABAN BENAR: Mencegah overfitting dan mengurangi variansi.</strong> Satu Decision Tree yang dibiarkan tumbuh dalam akan sangat rentan terhadap overfitting. Random Forest mengambil mayoritas suara (voting) dari ratusan pohon yang dilatih secara acak pada subset data."
+      },
+      {
+        question: "Dalam konteks RNN dan Deep Learning, apa yang dimaksud dengan Epoch?",
+        options: [
+          "Jumlah layer tersembunyi (hidden layer) pada suatu arsitektur model.",
+          "Satu siklus penuh di mana model telah melewati dan mempelajari seluruh himpunan data latih.",
+          "Jumlah hyperparameter yang dikonfigurasi dalam Grid Search.",
+          "Satuan probabilitas pada Confusion Matrix."
+        ],
+        correctIndex: 1,
+        explanation: "<strong>JAWABAN BENAR: Satu siklus penuh melewati seluruh data latih.</strong> Saat model Anda berjalan pada Epoch ke-10, artinya algoritma telah memproses, melihat, dan memperbarui bobot (weights) berdasar seluruh data X_train sebanyak 10 kali."
+      },
+      {
+        question: "Apa efek utama menggunakan StandardScaler pada fitur algoritma KNN (K-Nearest Neighbors)?",
+        options: [
+          "Mengubah tipe data float menjadi tipe boolean.",
+          "Memastikan tidak ada fitur skala raksasa yang mendominasi perhitungan jarak (Euclidean Distance).",
+          "Secara otomatis menghapus fitur yang korelasinya nol dengan target.",
+          "Menghasilkan output prediksi dalam bentuk probabilitas."
+        ],
+        correctIndex: 1,
+        explanation: "<strong>JAWABAN BENAR: Memastikan tidak ada fitur yang mendominasi jarak.</strong> KNN mencari pola klasifikasi murni berbasis jarak poin. Jika satu kolom nilainya puluhan ribu (Gaji) dan satu kolom bernilai satuan (Umur), perbedaan Gaji akan mengambil alih hasil prediksi total jika tidak di-*scale*."
+      },
+      {
+        question: "Pada dataset Titanic, hasil analisis menunjukkan bahwa ukuran keluarga (Parch + SibSp) berdampak pada survival. Bagaimana polanya?",
+        options: [
+          "Semakin besar anggota keluarga, semakin besar jaminan selamat.",
+          "Mereka yang bepergian sendiri (alone) memiliki peluang selamat paling tinggi secara mutlak.",
+          "Keluarga ukuran menengah/kecil (2-4 orang) memiliki tingkat selamat terbaik dibandingkan yang sendiri atau keluarga terlalu besar.",
+          "Tidak ada korelasi antara ukuran keluarga dan kelangsungan hidup sama sekali."
+        ],
+        correctIndex: 2,
+        explanation: "<strong>JAWABAN BENAR: Keluarga menengah memiliki tingkat selamat terbaik.</strong> Penumpang yang sendirian cenderung kalah dalam kekacauan, sementara keluarga yang terlalu masif (>4) sangat sulit untuk terkoordinasi menemukan dan menaiki sekoci bersama-sama."
+      },
+      {
+        question: "Algoritma Support Vector Machine (SVM) pada dasarnya berusaha mencari pemisah antar-kelas klasifikasi yang disebut dengan?",
+        options: [
+          "Hyperplane dengan jarak margin paling maksimum antar batas kelas.",
+          "Gini Impurity node paling rendah.",
+          "Struktur Hidden State yang berulang.",
+          "Principal Component dengan nilai variance tertinggi."
+        ],
+        correctIndex: 0,
+        explanation: "<strong>JAWABAN BENAR: Hyperplane dengan margin maksimum.</strong> Inti matematis dari SVM adalah bukan sekadar membuat garis lurus pemisah, tetapi mencari garis (hyperplane) di mana celah kosong (margin) antara garis tersebut dengan data terluar kelas adalah yang paling tebal/lebar."
+      },
+      {
+        question: "Apa fungsi mengekstrak nilai <code>feature_importances_</code> dari model tree-based yang sudah selesai di-tuning?",
+        options: [
+          "Membantu mengisi data uji yang berlubang.",
+          "Mengukur tingkat kebocoran data di dalam K-Fold.",
+          "Mengidentifikasi secara empiris kolom mana yang memberikan kontribusi (penurunan impurity) terbesar dalam proses prediksi target.",
+          "Menghitung jumlah estimator yang gagal dilatih."
+        ],
+        correctIndex: 2,
+        explanation: "<strong>JAWABAN BENAR: Mengidentifikasi fitur terkuat.</strong> Fitur dengan nilai importance tertinggi (misalnya 'Gender' di Titanic) merupakan fitur yang cabangnya paling sering memberikan kemurnian informasi (Information Gain tertinggi) saat pohon dibuat."
+      },
+      {
+        question: "Jika model Anda mendapatkan akurasi 99% di Validation Data tapi F1-Score untuk kelas targetnya hanya 10%, fenomena ini sangat mungkin disebabkan oleh?",
+        options: [
+          "Data Leakage pada scaler.",
+          "Underfitting pada algoritma.",
+          "Accuracy Paradox akibat dataset yang amat sangat tidak seimbang (Highly Imbalanced).",
+          "Penggunaan Dropout layer yang berlebihan."
+        ],
+        correctIndex: 2,
+        explanation: "<strong>JAWABAN BENAR: Accuracy Paradox.</strong> Misal di dataset ada 990 data Sehat dan 10 Sakit. Jika model menebak 100% 'Sehat', akurasinya adalah 99%, tapi ia gagal menebak 10 data yang benar-benar sakit (Recall 0). Oleh karena itu F1-score drop drastis."
+      },
+      {
+        question: "Pada arsitektur Deep Learning (seperti RNN dan LSTM), mengapa normalisasi data (seperti dengan MinMaxScaler/StandardScaler) sangat direkomendasikan?",
+        options: [
+          "Karena Neural Network tidak bisa memproses data berupa teks.",
+          "Mencegah nilai turunan (gradient) menjadi terlalu ekstrem dan membuat konvergensi (pencarian loss terendah) menjadi lebih mulus dan cepat.",
+          "Agar algoritma tidak menggunakan memori GPU secara berlebihan.",
+          "Itu merupakan syarat utama dari RandomizedSearchCV."
+        ],
+        correctIndex: 1,
+        explanation: "<strong>JAWABAN BENAR: Memuluskan konvergensi gradient.</strong> Input dengan skala angka yang raksasa atau bervariasi luas menyebabkan lonjakan nilai saat proses perkalian dot-product bobot dan backpropagation, memperlambat atau merusak optimasi model."
+      },
+      {
+        question: "Bagaimana cara kerja Cross-Validation dengan jumlah `cv=5` berinteraksi dengan proses training?",
+        options: [
+          "Membagi seluruh dataset menjadi 5% data latih dan 95% data uji.",
+          "Dataset latih dibagi 5 lipatan seimbang. Proses melatih model diulang 5 kali, di mana tiap iterasi 1 lipatan secara bergantian bertugas sebagai data validasi dan 4 lipatan sisanya sebagai data latih.",
+          "Data diperbanyak (diduplikasi) menjadi 5 kali lebih besar.",
+          "Mencari 5 hyperparameter terbaik secara otomatis."
+        ],
+        correctIndex: 1,
+        explanation: "<strong>JAWABAN BENAR: Iterasi 5 kali pergantian fold validasi.</strong> Mekanisme ini memastikan bahwa algoritma dievaluasi pada semua bagian dari himpunan latih. Skor akhir CV merupakan nilai rata-rata dari ke-5 proses iterasi tesebut, menghindari bias dari pembagian data tunggal."
+      },
+      {
+        question: "Mengapa algoritma berbasis pohon seperti Random Forest tidak secara teknis 'membutuhkan' proses Feature Scaling/Standarisasi?",
+        options: [
+          "Karena Random Forest sudah memilik Scaler tersembunyi di dalamnya.",
+          "Karena Decision Tree hanya membuat aturan cabang (split) berdasarkan nilai batas kuantitatif (threshold condition), bukan berdasarkan kalkulasi persamaan jarak.",
+          "Karena data kategori akan otomatis dihapus oleh algoritma.",
+          "Karena struktur pohon hanya berlaku pada input bernilai string."
+        ],
+        correctIndex: 1,
+        explanation: "<strong>JAWABAN BENAR: Berbasis threshold split, bukan jarak.</strong> Tidak seperti KNN atau Regresi Logistik yang bergantung pada perhitungan matematika linear/jarak, Decision tree hanya memotong data berdasarkan batas (X > 5). Skala tidak merubah letak urutan nilai dari fitur tersebut."
+      },
+      {
+        question: "Saat mendefinisikan layer LSTM di Keras, bentuk dimensi spesifik dari data yang perlu disuplai (input shape tensor 3D) adalah...",
+        options: [
+          "[batch_size, number_of_pixels, colors]",
+          "[batch_size, timesteps, features]",
+          "[rows, columns]",
+          "[batch_size, categories]"
+        ],
+        correctIndex: 1,
+        explanation: "<strong>JAWABAN BENAR: [batch_size, timesteps, features].</strong> LSTM didesain untuk merekam data runtun waktu. Timesteps mewakili jumlah urutan langkah ke belakang yang diperhatikan, features adalah jumlah variabel kolom pada tiap langkah tersebut."
+      },
+      {
+        question: "Fungsi utama menggunakan `DummyClassifier` sebelum melakukan pemodelan kompleks adalah?",
+        options: [
+          "Untuk membuang nilai data yang kotor.",
+          "Menyediakan Baseline Model (patokan paling dasar). Jika akurasi ML kita tidak lebih baik dari tebakan buta Dummy, artinya ada yang salah pada pendekatan ML kita.",
+          "Mengurangi bobot komputasi GPU.",
+          "Mengonversi class kategorikal menjadi array dummies (one-hot encoding)."
+        ],
+        correctIndex: 1,
+        explanation: "<strong>JAWABAN BENAR: Sebagai Baseline Model.</strong> DummyClassifier biasanya hanya menebak berdasarkan aturan dominan sederhana (misal selalu menebak kelas paling sering muncul). Model sejati kita wajib melewati skor si Dummy secara signifikan."
+      },
+      {
+        question: "Pada metrik Classification Report, apa yang diukur oleh Precision?",
+        options: [
+          "Berapa persen model berhasil memprediksi semua kelas secara global.",
+          "Berapa banyak jumlah waktu yang dibutuhkan model untuk memprediksi data.",
+          "Dari semua data yang *diprediksi Positif* oleh model, berapa persen yang *benar-benar Positif*.",
+          "Dari seluruh kejadian aslinya (Ground Truth Positif), berapa persen yang *berhasil ditebak Positif*."
+        ],
+        correctIndex: 2,
+        explanation: "<strong>JAWABAN BENAR: Presisi fokus pada akurasi dari prediksi positif.</strong> Precision menjawab: 'Ketika model saya berteriak bahwa pasien menderita Kanker, seberapa akurat ucapan itu?' (Meminimalkan False Positive / Salah Tuduh)."
+      },
+      {
+        question: "Berbanding terbalik dengan Precision, parameter Recall sangat memfokuskan dirinya pada upaya meminimalisir kesalahan jenis?",
+        options: [
+          "False Positives",
+          "True Negatives",
+          "False Negatives",
+          "True Positives"
+        ],
+        correctIndex: 2,
+        explanation: "<strong>JAWABAN BENAR: Meminimalisir False Negatives.</strong> Recall (Sensitivitas) menjawab pertanyaan: 'Dari 100 pasien yang benar-benar terkena kanker di dunia nyata, berapa orang yang berhasil model kita tangkap/temukan?'"
+      },
+      {
+        question: "Di dalam kurva ROC (Receiver Operating Characteristic), representasi performa model yang ideal dan terakurat akan memiliki nilai Area Under Curve (AUC) mendekati?",
+        options: [
+          "Nilai 0",
+          "Nilai 0.5",
+          "Nilai 1.0",
+          "Nilai Tak Terhingga"
+        ],
+        correctIndex: 2,
+        explanation: "<strong>JAWABAN BENAR: Nilai 1.0.</strong> Kurva ROC memplot True Positive Rate versus False Positive Rate. Luas sempurna 1.0 berarti model 100% sempurna memisahkan tanpa satupun tebakan yang saling tumpang tindih (salah diagnosa). Skor 0.5 berarti setara dengan melempar koin (tebakan acak buta)."
+      },
+      {
+        question: "Pada tahap preprocessing data kategorikal 'Sex' (Gender) yang isinya adalah teks 'male' dan 'female', teknik transformasi fitur apa yang sebaiknya dipakai agar dapat terbaca algoritma?",
+        options: [
+          "Standard Scaling",
+          "Label Encoding atau One-Hot Encoding",
+          "Feature Extraction PCA",
+          "Imputasi Strategi Median"
+        ],
+        correctIndex: 1,
+        explanation: "<strong>JAWABAN BENAR: Label Encoding / One-Hot Encoding.</strong> Algoritma matematika komputasi tidak mengerti alfabet/string. Kolom 'Sex' harus dirubah ke dalam representasi numerik biner (0 untuk Male, 1 untuk Female) atau kolom dummy agar bisa diproses ke dalam node parameter model."
       }
     ];
 
@@ -262,13 +526,17 @@
     }
 
     function initGame() {
-      // Siapkan data soal (acak urutan soal, dan acak urutan opsinya)
+      // Siapkan data soal (acak urutan dari 30 soal, lalu ambil 10 soal saja)
       state.score = 0;
       state.currentIndex = 0;
       scoreDisplay.innerText = "0";
       
       let tempQuestions = shuffleArray(quizData);
-      state.shuffledData = tempQuestions.map(q => {
+      
+      // Mengambil hanya 10 soal untuk satu putaran agar tidak bosan/looping terlalu panjang
+      let sessionQuestions = tempQuestions.slice(0, 10);
+      
+      state.shuffledData = sessionQuestions.map(q => {
         let opts = q.options.map((opt, idx) => ({ text: opt, isCorrect: idx === q.correctIndex }));
         opts = shuffleArray(opts);
         return {
@@ -296,7 +564,7 @@
             </h2>
             
             <p class="mx-auto max-w-xl text-sm md:text-base leading-7 text-slate-300 mb-8">
-              Kuis ini dirancang khusus dari kasus nyata di Laporan Praktikum Anda (Titanic, Breast Cancer, dan Parameter Tuning). <br><br><b>Tidak ada nyawa dan tidak ada timer.</b> Fokus pada pemahaman penjelasan dari setiap sintaks dan teori.
+              Sistem akan merotasi 10 soal acak dari bank total 30 soal yang dirancang khusus berdasarkan kasus Laporan Praktikum (Titanic, Breast Cancer, dan DL). <br><br><b>Tidak ada nyawa. Tidak ada timer.</b> Cermati penjelasan logikanya baik-baik.
             </p>
 
             <button onclick="initGame()" class="btn-game inline-flex items-center gap-3 rounded-2xl bg-cyan-600 hover:bg-cyan-500 px-8 py-4 font-black text-white shadow-lg shadow-cyan-900/40 text-lg">
@@ -319,7 +587,7 @@
         <section class="fade-in w-full max-w-3xl">
           <div class="mb-4 flex items-end justify-between">
             <p class="text-xs font-black uppercase tracking-[0.24em] text-cyan-300">
-              <i class="fa-solid fa-book-open mr-2"></i> Kasus Analisis
+              <i class="fa-solid fa-book-open mr-2"></i> Kuis Konseptual
             </p>
             <div class="mono rounded-full border border-slate-700 bg-slate-900/70 px-4 py-1 text-xs font-bold text-slate-300">
               Soal ${state.currentIndex + 1} dari ${state.shuffledData.length}
@@ -369,7 +637,7 @@
 
       if (isCorrect) {
         playSuccess();
-        state.score += 20;
+        state.score += 10;
         scoreDisplay.innerText = state.score;
       } else {
         playError();
@@ -399,6 +667,16 @@
 
     function endGame() {
       statsHeader.classList.add("hidden");
+      
+      const maxScore = state.shuffledData.length * 10;
+      let finalMessage = "Jebakan konseptual dari materi Deep Learning, EDA, dan Hyperparameter Tuning telah dibongkar.";
+      
+      if (state.score < 50) {
+        finalMessage = "Banyak materi yang terlupakan. Pastikan Anda mengkaji ulang pembahasan di setiap kesalahan.";
+      } else if (state.score >= 80) {
+        finalMessage = "Penguasaan teori Anda sangat kuat dan siap digunakan untuk fondasi tahap koding.";
+      }
+
       container.innerHTML = `
         <section class="fade-in w-full max-w-xl">
           <div class="glass overflow-hidden rounded-[2rem] p-8 text-center">
@@ -406,18 +684,18 @@
               <i class="fa-solid fa-flag-checkered text-5xl"></i>
             </div>
 
-            <h2 class="text-3xl font-black text-white mb-2">Simulasi Teori Selesai!</h2>
+            <h2 class="text-3xl font-black text-white mb-2">Sesi Latihan Selesai!</h2>
             <p class="text-sm leading-7 text-slate-300 mb-8">
-              Semua jebakan konseptual dari materi Deep Learning, EDA, dan Hyperparameter Tuning telah dibongkar.
+              ${finalMessage}
             </p>
 
             <div class="mx-auto max-w-xs rounded-3xl border border-slate-800 bg-slate-950/80 p-5 shadow-inner mb-8">
-              <p class="mono text-[10px] font-black uppercase tracking-[0.28em] text-slate-500 mb-2">Skor Kuis</p>
-              <p class="mono text-6xl font-black text-cyan-400">${state.score}</p>
+              <p class="mono text-[10px] font-black uppercase tracking-[0.28em] text-slate-500 mb-2">Skor Akhir</p>
+              <p class="mono text-6xl font-black text-cyan-400">${state.score}<span class="text-2xl text-slate-600">/${maxScore}</span></p>
             </div>
 
             <button onclick="renderMenu()" class="btn-game w-full rounded-2xl bg-slate-800 hover:bg-slate-700 border border-slate-600 px-5 py-4 font-black text-white shadow-lg">
-              <i class="fa-solid fa-rotate-left mr-2"></i> Ulangi Pemanasan Teori
+              <i class="fa-solid fa-rotate-left mr-2"></i> Pemanasan Sesi Baru (10 Soal Berbeda)
             </button>
           </div>
         </section>
