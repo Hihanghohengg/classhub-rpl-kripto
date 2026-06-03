@@ -481,18 +481,16 @@
       }
     ];
 
-    // --- GAME STATE ---
+    const container = document.getElementById("app-container");
+    const statsHeader = document.getElementById("stats-header");
+    const scoreDisplay = document.getElementById("score-display");
+
     let state = {
       score: 0,
       currentIndex: 0,
       shuffledData: []
     };
 
-    const container = document.getElementById("app-container");
-    const scoreDisplay = document.getElementById("score-display");
-    const scoreValue = document.getElementById("score-value");
-
-    // Acak Urutan Array
     function shuffleArray(arr) {
       const copy = [...arr];
       for (let i = copy.length - 1; i > 0; i--) {
@@ -505,10 +503,9 @@
     function initGame() {
       state.score = 0;
       state.currentIndex = 0;
-      scoreDisplay.classList.remove("hidden");
-      scoreValue.innerText = "0";
+      scoreDisplay.innerText = "0";
       
-      // Ambil seluruh bank soal, acak, dan ambil persis 10 soal saja untuk satu putaran
+      // Ambil 10 soal acak dari bank total 30 soal
       let tempQuestions = shuffleArray(quizData).slice(0, 10);
       
       state.shuffledData = tempQuestions.map(q => {
@@ -521,11 +518,12 @@
         };
       });
 
+      statsHeader.classList.remove("hidden");
       renderQuestion();
     }
 
     function renderMenu() {
-      scoreDisplay.classList.add("hidden");
+      statsHeader.classList.add("hidden");
       container.innerHTML = `
         <section class="fade-in w-full max-w-2xl text-center">
           <div class="glass relative overflow-hidden rounded-[2rem] p-8 md:p-12">
@@ -538,7 +536,7 @@
             </h2>
             
             <p class="mx-auto max-w-xl text-sm md:text-base leading-7 text-slate-300 mb-8">
-              Sistem akan merotasi 10 soal acak dari bank total 30 soal yang dirancang khusus berdasarkan kasus Laporan Praktikum (Titanic, Breast Cancer, dan DL). <br><br><b>Tidak ada nyawa. Tidak ada timer.</b> Cermati penjelasan logikanya baik-baik.
+              Sistem akan merotasi 10 soal acak dari bank total 30 soal yang dirancang khusus berdasarkan kasus Laporan Praktikum (Titanic, Breast Cancer, dan DL). <br><br><b>Perhatikan distraktor:</b> Semua opsi jawaban dirancang secara setara dan menjebak. Baca dengan teliti!
             </p>
 
             <button onclick="initGame()" class="btn-game inline-flex items-center gap-3 rounded-2xl bg-cyan-600 hover:bg-cyan-500 px-8 py-4 font-black text-white shadow-lg shadow-cyan-900/40 text-lg">
@@ -604,17 +602,15 @@
       const q = state.shuffledData[state.currentIndex];
       const isCorrect = q.options[selectedIndex].isCorrect;
 
-      // Lock buttons
       const containerDiv = document.getElementById("options-container");
       const buttons = containerDiv.querySelectorAll("button");
       buttons.forEach(btn => btn.disabled = true);
 
       if (isCorrect) {
         state.score += 10;
-        scoreValue.innerText = state.score;
+        scoreDisplay.innerText = state.score;
       }
 
-      // Coloring the options
       q.options.forEach((opt, idx) => {
         const btn = document.getElementById(`opt-${idx}`);
         if (opt.isCorrect) {
@@ -626,7 +622,6 @@
         }
       });
 
-      // Show explanation & next button
       document.getElementById("explanation-box").classList.remove("hidden");
       document.getElementById("next-btn").classList.remove("hidden");
     }
@@ -637,15 +632,15 @@
     }
 
     function endGame() {
-      scoreDisplay.classList.add("hidden");
+      statsHeader.classList.add("hidden");
       
       const maxScore = state.shuffledData.length * 10;
-      let finalMessage = "Jebakan konseptual dari materi Deep Learning, EDA, dan Hyperparameter Tuning telah dibongkar.";
+      let finalMessage = "Evaluasi Selesai. Seluruh jebakan konseptual dari materi telah dibongkar.";
       
       if (state.score < 50) {
-        finalMessage = "Banyak materi yang terlupakan. Pastikan Anda mengkaji ulang pembahasan di setiap kesalahan.";
+        finalMessage = "Banyak konsep yang keliru akibat jebakan opsi (distractor). Kaji ulang penjelasan di tiap soal!";
       } else if (state.score >= 80) {
-        finalMessage = "Penguasaan teori Anda sangat kuat dan siap digunakan untuk fondasi tahap koding.";
+        finalMessage = "Penguasaan teori analitik Anda sangat tajam. Anda tidak mudah terkecoh oleh opsi yang tampak ilmiah.";
       }
 
       container.innerHTML = `
@@ -666,14 +661,14 @@
             </div>
 
             <button onclick="renderMenu()" class="btn-game w-full rounded-2xl bg-slate-800 hover:bg-slate-700 border border-slate-600 px-5 py-4 font-black text-white shadow-lg">
-              <i class="fa-solid fa-rotate-left mr-2"></i> Pemanasan Sesi Baru (10 Soal Acak)
+              <i class="fa-solid fa-rotate-left mr-2"></i> Simulasi Baru (10 Soal Acak Lainnya)
             </button>
           </div>
         </section>
       `;
     }
 
-    // Start App
+    // Initialize App
     renderMenu();
   </script>
 </body>
