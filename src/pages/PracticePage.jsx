@@ -108,15 +108,6 @@ export default function PracticePage() {
             })}
           </div>
 
-          <div className="mt-4 rounded-2xl border border-amber-200 bg-amber-50 p-3 text-xs leading-5 text-amber-800 dark:border-amber-900 dark:bg-amber-950 dark:text-amber-200">
-            <p className="font-bold">Cara tambah latihan baru</p>
-
-            <p className="mt-1">
-              Taruh file HTML dari Gemini ke folder{' '}
-              <b>public/practice</b>, lalu tambahkan item baru di array{' '}
-              <b>practices</b> pada file <b>PracticePage.jsx</b>.
-            </p>
-          </div>
         </aside>
 
         <section className="min-h-0 overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900">
