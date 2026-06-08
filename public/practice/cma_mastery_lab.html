@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CMA Mastery Lab — Offline HTML</title>
+  <style>
+    :root {
+      --bg:#06070a; --panel:#0c0f14; --panel2:#10141c; --panel3:#151a24;
+      --text:#f4f7fb; --muted:#9ba8b8; --soft:#64748b; --line:#222938;
+      --accent:#8b5cf6; --accent2:#22d3ee; --ok:#22c55e; --warn:#f59e0b; --bad:#ef4444;
+      --code:#080a0f; --shadow: 0 24px 80px rgba(0,0,0,.45);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin:0; min-height:100vh; background:
+        radial-gradient(circle at 15% 10%, rgba(139,92,246,.28), transparent 28%),
+        radial-gradient(circle at 80% 0%, rgba(34,211,238,.18), transparent 25%),
+        radial-gradient(circle at 50% 100%, rgba(34,197,94,.10), transparent 30%), var(--bg);
+      color:var(--text); font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    button, input, textarea { font: inherit; }
+    .hidden { display:none !important; }
+    .shell { width: min(1440px, 100%); margin:0 auto; }
+    .hero { min-height:100vh; display:grid; place-items:center; padding:28px; }
+    .login-card { width:min(920px,100%); display:grid; grid-template-columns: 1.1fr .9fr; gap:0; border:1px solid rgba(255,255,255,.09); border-radius:30px; overflow:hidden; background:rgba(12,15,20,.76); backdrop-filter: blur(24px); box-shadow:var(--shadow); }
+    .hero-copy { padding:46px; border-right:1px solid rgba(255,255,255,.08); }
+    .badge { display:inline-flex; align-items:center; gap:8px; padding:8px 12px; border:1px solid rgba(139,92,246,.35); border-radius:999px; background:rgba(139,92,246,.1); color:#ddd6fe; font-size:13px; }
+    .hero h1 { font-size: clamp(38px, 6vw, 72px); line-height:.94; margin:20px 0 18px; letter-spacing:-.06em; }
+    .hero p { color:var(--muted); font-size:17px; line-height:1.65; margin:0; max-width:58ch; }
+    .login-form { padding:46px; display:flex; flex-direction:column; justify-content:center; gap:16px; }
+    .field { display:flex; flex-direction:column; gap:8px; }
+    label { color:#cbd5e1; font-size:13px; font-weight:650; }
+    input { width:100%; border:1px solid var(--line); background:#090c12; color:var(--text); border-radius:16px; padding:15px 16px; outline:none; }
+    input:focus, textarea:focus { border-color:rgba(34,211,238,.7); box-shadow:0 0 0 4px rgba(34,211,238,.08); }
+    .btn { border:1px solid rgba(255,255,255,.1); color:var(--text); background:linear-gradient(180deg,#1a2030,#111722); padding:12px 16px; border-radius:14px; cursor:pointer; transition:.18s ease; display:inline-flex; justify-content:center; align-items:center; gap:8px; font-weight:700; }
+    .btn:hover { transform:translateY(-1px); border-color:rgba(255,255,255,.22); }
+    .btn-primary { background:linear-gradient(135deg,var(--accent),#4f46e5 55%,#0891b2); border-color:transparent; }
+    .btn-good { background:linear-gradient(135deg,#16a34a,#0891b2); border-color:transparent; }
+    .btn-ghost { background:rgba(255,255,255,.04); }
+    .btn-danger { background:rgba(239,68,68,.12); border-color:rgba(239,68,68,.35); color:#fecaca; }
+    .app { min-height:100vh; display:grid; grid-template-columns: 292px 1fr; }
+    .sidebar { position:sticky; top:0; height:100vh; border-right:1px solid rgba(255,255,255,.08); background:rgba(6,7,10,.76); backdrop-filter:blur(20px); padding:18px; overflow:auto; }
+    .brand { display:flex; align-items:center; gap:12px; padding:12px 10px 22px; }
+    .logo { width:42px; height:42px; border-radius:14px; background:linear-gradient(135deg,var(--accent),var(--accent2)); display:grid; place-items:center; box-shadow:0 12px 40px rgba(139,92,246,.36); font-weight:900; }
+    .brand strong { display:block; letter-spacing:-.03em; }
+    .brand span { display:block; color:var(--muted); font-size:12px; margin-top:3px; }
+    .profile-mini { border:1px solid rgba(255,255,255,.08); background:rgba(255,255,255,.04); border-radius:20px; padding:14px; margin-bottom:16px; }
+    .progress-wrap { height:8px; background:#111827; border-radius:999px; overflow:hidden; margin:12px 0 8px; }
+    .progress-bar { height:100%; width:0%; background:linear-gradient(90deg,var(--accent),var(--accent2),var(--ok)); border-radius:999px; transition:.3s ease; }
+    .nav-title { color:var(--soft); font-size:12px; margin:18px 8px 8px; text-transform:uppercase; letter-spacing:.12em; }
+    .module-nav { display:flex; flex-direction:column; gap:8px; }
+    .module-btn { width:100%; text-align:left; border:1px solid rgba(255,255,255,.06); background:rgba(255,255,255,.035); color:var(--text); border-radius:16px; padding:12px; cursor:pointer; display:grid; grid-template-columns: 1fr auto; gap:8px; align-items:center; }
+    .module-btn:hover { background:rgba(255,255,255,.065); }
+    .module-btn.active { border-color:rgba(34,211,238,.45); background:rgba(34,211,238,.08); }
+    .module-btn.locked { opacity:.48; cursor:not-allowed; }
+    .module-name { font-size:13px; font-weight:750; line-height:1.35; }
+    .module-meta { font-size:12px; color:var(--muted); margin-top:4px; }
+    .lock { color:var(--soft); }
+    .main { padding:24px; overflow:hidden; }
+    .topbar { display:flex; justify-content:space-between; gap:18px; align-items:center; margin-bottom:18px; }
+    .topbar h2 { margin:0; font-size:24px; letter-spacing:-.04em; }
+    .topbar p { margin:5px 0 0; color:var(--muted); }
+    .dashboard { display:flex; flex-direction:column; gap:20px; }
+    .stats { display:grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap:14px; }
+    .stat { border:1px solid rgba(255,255,255,.08); border-radius:22px; background:rgba(12,15,20,.72); padding:18px; }
+    .stat b { font-size:30px; letter-spacing:-.05em; }
+    .stat span { display:block; color:var(--muted); margin-top:5px; font-size:13px; }
+    .module-grid { display:grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap:14px; }
+    .module-card { border:1px solid rgba(255,255,255,.08); border-radius:24px; background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.025)); padding:18px; min-height:190px; display:flex; flex-direction:column; justify-content:space-between; box-shadow:0 14px 45px rgba(0,0,0,.18); }
+    .module-card.locked { opacity:.56; }
+    .module-card h3 { margin:10px 0 8px; font-size:18px; letter-spacing:-.04em; }
+    .pill { display:inline-flex; width:max-content; align-items:center; border:1px solid rgba(255,255,255,.09); border-radius:999px; padding:6px 9px; color:#cbd5e1; background:rgba(255,255,255,.04); font-size:12px; }
+    .lesson-area { display:grid; grid-template-columns: minmax(340px, .82fr) minmax(520px, 1.18fr); gap:16px; height:calc(100vh - 48px); }
+    .panel { border:1px solid rgba(255,255,255,.08); background:rgba(12,15,20,.78); border-radius:24px; overflow:hidden; box-shadow:0 16px 70px rgba(0,0,0,.24); }
+    .instruction { display:flex; flex-direction:column; min-height:0; }
+    .panel-head { padding:16px 18px; border-bottom:1px solid rgba(255,255,255,.08); background:rgba(255,255,255,.03); display:flex; justify-content:space-between; gap:12px; align-items:center; }
+    .panel-head small { color:var(--muted); }
+    .lesson-list { padding:12px; display:flex; gap:8px; flex-wrap:wrap; border-bottom:1px solid rgba(255,255,255,.08); }
+    .lesson-chip { border:1px solid rgba(255,255,255,.08); background:rgba(255,255,255,.04); color:var(--text); border-radius:12px; padding:8px 10px; cursor:pointer; font-size:12px; }
+    .lesson-chip.done { border-color:rgba(34,197,94,.5); color:#bbf7d0; }
+    .lesson-chip.current { border-color:rgba(34,211,238,.6); background:rgba(34,211,238,.1); }
+    .lesson-chip.locked { color:var(--soft); opacity:.48; cursor:not-allowed; }
+    .instruction-body { padding:20px; overflow:auto; }
+    .crumb { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:14px; }
+    .instruction h1 { margin:0 0 8px; font-size:30px; letter-spacing:-.05em; }
+    .objective { color:#dbeafe; line-height:1.6; margin:0 0 18px; }
+    .callout { border:1px solid rgba(34,211,238,.24); background:rgba(34,211,238,.07); border-radius:18px; padding:14px; color:#dffafe; line-height:1.6; white-space:pre-wrap; }
+    code { background:rgba(255,255,255,.08); color:#e9d5ff; padding:2px 6px; border-radius:7px; }
+    .hint-box { margin-top:14px; border:1px solid rgba(245,158,11,.25); background:rgba(245,158,11,.06); border-radius:18px; padding:14px; color:#fde68a; line-height:1.55; display:none; }
+    .test-list { margin-top:14px; display:flex; flex-direction:column; gap:8px; }
+    .test-item { color:#cbd5e1; border:1px solid rgba(255,255,255,.07); border-radius:14px; padding:10px; background:rgba(255,255,255,.03); font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace; font-size:12px; }
+    .workspace { display:grid; grid-template-rows: 1fr 220px; gap:16px; min-height:0; }
+    .editor-panel, .terminal-panel { display:flex; flex-direction:column; min-height:0; }
+    .editor-toolbar { padding:12px; border-bottom:1px solid rgba(255,255,255,.08); display:flex; justify-content:space-between; align-items:center; gap:12px; background:#0a0d13; }
+    .dots { display:flex; gap:7px; }
+    .dot { width:11px; height:11px; border-radius:50%; background:#ef4444; box-shadow:18px 0 #f59e0b, 36px 0 #22c55e; }
+    .filetab { color:var(--muted); font-size:13px; }
+    .editor-wrap { position:relative; flex:1; min-height:0; background:var(--code); }
+    textarea { width:100%; height:100%; resize:none; border:0; outline:none; background:transparent; color:#e5e7eb; padding:18px 18px 18px 62px; line-height:1.55; font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono",monospace; font-size:14px; tab-size:4; }
+    .line-nos { position:absolute; left:0; top:0; bottom:0; width:44px; padding:18px 8px; text-align:right; color:#475569; border-right:1px solid rgba(255,255,255,.06); font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace; font-size:14px; line-height:1.55; overflow:hidden; user-select:none; }
+    .terminal { flex:1; min-height:0; overflow:auto; background:#05070a; padding:14px 16px; color:#d1fae5; font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace; font-size:13px; line-height:1.55; white-space:pre-wrap; }
+    .term-muted { color:#64748b; } .term-ok { color:#86efac; } .term-bad { color:#fca5a5; } .term-warn { color:#fde68a; }
+    .footer-actions { padding:12px; display:flex; gap:10px; justify-content:space-between; align-items:center; border-top:1px solid rgba(255,255,255,.08); background:rgba(255,255,255,.03); }
+    .shortcut { color:var(--soft); font-size:12px; }
+    .toast { position:fixed; right:22px; bottom:22px; max-width:420px; padding:14px 16px; border-radius:16px; background:#111827; color:#e5e7eb; border:1px solid rgba(255,255,255,.12); box-shadow:var(--shadow); transform:translateY(18px); opacity:0; pointer-events:none; transition:.22s ease; z-index:20; }
+    .toast.show { opacity:1; transform:translateY(0); }
+    @media (max-width: 1120px) {
+      .app { grid-template-columns:1fr; } .sidebar { position:relative; height:auto; } .main { padding:14px; }
+      .lesson-area { grid-template-columns:1fr; height:auto; } .workspace { min-height:720px; } .module-grid,.stats { grid-template-columns:repeat(2,1fr); }
+      .login-card { grid-template-columns:1fr; } .hero-copy { border-right:0; border-bottom:1px solid rgba(255,255,255,.08); }
+    }
+    @media (max-width: 640px) { .module-grid,.stats { grid-template-columns:1fr; } .topbar { flex-direction:column; align-items:flex-start; } .hero-copy,.login-form { padding:28px; } }
+  </style>
+</head>
+<body>
+  <div id="login" class="hero">
+    <div class="login-card">
+      <section class="hero-copy">
+        <span class="badge">✦ Offline HTML • Python mini-runner • CMA path</span>
+        <h1>CMA Mastery Lab</h1>
+        <p>Platform latihan bertahap dari nol: print, aritmetika, byte, bitwise, fungsi modular, S-Box, P-Box, sampai studi kasus membaca spesifikasi algoritma dan mencocokkan test vector.</p>
+      </section>
+      <section class="login-form">
+        <div class="field">
+          <label for="username">Masukkan username untuk masuk dashboard</label>
+          <input id="username" placeholder="contoh: Obed" autocomplete="off" />
+        </div>
+        <button class="btn btn-primary" id="enterBtn">Masuk ke Dashboard →</button>
+        <p style="color:var(--muted);font-size:13px;line-height:1.6;margin:0">Tidak memakai login server. Progres disimpan lokal di browser berdasarkan username.</p>
+      </section>
+    </div>
+  </div>
+
+  <div id="app" class="app hidden">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="logo">C</div>
+        <div><strong>CMA Mastery Lab</strong><span>Codex-style offline trainer</span></div>
+      </div>
+      <div class="profile-mini">
+        <div style="display:flex;justify-content:space-between;gap:12px;align-items:center">
+          <div><div style="font-weight:800" id="profileName">User</div><div style="color:var(--muted);font-size:12px">Learning session</div></div>
+          <button class="btn btn-ghost" id="logoutBtn" style="padding:8px 10px;font-size:12px">Ganti</button>
+        </div>
+        <div class="progress-wrap"><div class="progress-bar" id="globalProgress"></div></div>
+        <div style="color:var(--muted);font-size:12px" id="globalText">0/0 level selesai</div>
+      </div>
+      <button class="btn btn-primary" id="dashboardBtn" style="width:100%;margin-bottom:8px">Dashboard</button>
+      <div class="nav-title">Modul</div>
+      <div class="module-nav" id="moduleNav"></div>
+      <div style="margin-top:18px;display:flex;gap:8px;flex-direction:column">
+        <button class="btn btn-ghost" id="continueBtn">Lanjutkan level aktif</button>
+        <button class="btn btn-danger" id="resetBtn">Reset progres</button>
+      </div>
+    </aside>
+
+    <main class="main">
+      <section id="dashboard" class="dashboard"></section>
+      <section id="lessonView" class="lesson-area hidden">
+        <div class="panel instruction">
+          <div class="panel-head">
+            <div><strong id="lessonModuleTitle">Modul</strong><br><small id="lessonIndexText">Level</small></div>
+            <span class="pill" id="lessonStatus">Locked</span>
+          </div>
+          <div class="lesson-list" id="lessonChips"></div>
+          <div class="instruction-body">
+            <div class="crumb" id="crumbs"></div>
+            <h1 id="lessonTitle"></h1>
+            <p class="objective" id="lessonObjective"></p>
+            <div class="callout" id="lessonInstructions"></div>
+            <div class="test-list" id="testList"></div>
+            <div class="hint-box" id="hintBox"></div>
+          </div>
+          <div class="footer-actions">
+            <button class="btn btn-ghost" id="hintBtn">Tampilkan petunjuk</button>
+            <button class="btn btn-ghost" id="backDashBtn">Dashboard</button>
+          </div>
+        </div>
+        <div class="workspace">
+          <div class="panel editor-panel">
+            <div class="editor-toolbar">
+              <div class="dots"><span class="dot"></span></div>
+              <div class="filetab" id="fileName">level.py</div>
+              <div style="display:flex;gap:8px">
+                <button class="btn btn-ghost" id="restoreBtn">Reset kode</button>
+                <button class="btn" id="runBtn">Run</button>
+                <button class="btn btn-good" id="checkBtn">Check</button>
+              </div>
+            </div>
+            <div class="editor-wrap">
+              <div class="line-nos" id="lineNos">1</div>
+              <textarea id="editor" spellcheck="false"></textarea>
+            </div>
+          </div>
+          <div class="panel terminal-panel">
+            <div class="panel-head"><strong>Terminal</strong><small>Ctrl+Enter untuk Run • Ctrl+S untuk Check</small></div>
+            <div class="terminal" id="terminal"><span class="term-muted">$ pilih level lalu jalankan kode</span></div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+  <div class="toast" id="toast"></div>
+
+<script>
+const LESSONS = [{"id": "m1-1", "module": 1, "moduleTitle": "Modul 1 — Nol Mutlak Python", "title": "Print pertama", "objective": "Mengenal output program.", "instructions": "Cetak teks persis: `Hello, World!`", "starter": "# tulis kode di bawah", "expectedOutput": "Hello, World!", "tests": [], "hint": "Gunakan print(\"...\")."}, {"id": "m1-2", "module": 1, "moduleTitle": "Modul 1 — Nol Mutlak Python", "title": "Print kalimat", "objective": "Melatih konsistensi string.", "instructions": "Cetak teks persis: `Saya siap belajar CMA`", "starter": "# cetak kalimat target", "expectedOutput": "Saya siap belajar CMA", "tests": [], "hint": "Huruf besar/kecil harus sama."}, {"id": "m1-3", "module": 1, "moduleTitle": "Modul 1 — Nol Mutlak Python", "title": "Variabel teks", "objective": "Menyimpan data sederhana ke variabel.", "instructions": "Buat variabel `nama` berisi `Obed`, lalu cetak variabel itu.", "starter": "nama = \"\"\nprint(nama)", "expectedOutput": "Obed", "tests": [], "hint": "Isi string di antara tanda petik."}, {"id": "m1-4", "module": 1, "moduleTitle": "Modul 1 — Nol Mutlak Python", "title": "Dua baris output", "objective": "Membaca output baris demi baris.", "instructions": "Cetak dua baris: baris pertama `CMA`, baris kedua `Lab`.", "starter": "# baris 1\n# baris 2", "expectedOutput": "CMA\nLab", "tests": [], "hint": "Gunakan dua perintah print."}, {"id": "m1-5", "module": 1, "moduleTitle": "Modul 1 — Nol Mutlak Python", "title": "Variabel angka", "objective": "Membedakan angka dan teks.", "instructions": "Buat `a = 10` dan `b = 5`, lalu cetak `a` dan `b` pada dua baris.", "starter": "a = 0\nb = 0\nprint(a)\nprint(b)", "expectedOutput": "10\n5", "tests": [], "hint": "Angka tidak perlu tanda petik."}, {"id": "m1-6", "module": 1, "moduleTitle": "Modul 1 — Nol Mutlak Python", "title": "Checkpoint dasar", "objective": "Menggabungkan string dan angka.", "instructions": "Buat `judul = \"Dasar Python\"` dan `level = 1`, lalu cetak keduanya pada dua baris.", "starter": "judul = \"\"\nlevel = 0\nprint(judul)\nprint(level)", "expectedOutput": "Dasar Python\n1", "tests": [], "hint": "Pastikan nilai variabel diisi sebelum diprint."}, {"id": "m2-1", "module": 2, "moduleTitle": "Modul 2 — Aritmetika dari Nol", "title": "Penjumlahan", "objective": "Menggunakan operator `+`.", "instructions": "Cetak hasil dari `7 + 5`.", "starter": "print()", "expectedOutput": "12", "tests": [], "hint": "Isi ekspresi di dalam print."}, {"id": "m2-2", "module": 2, "moduleTitle": "Modul 2 — Aritmetika dari Nol", "title": "Pengurangan", "objective": "Menggunakan operator `-`.", "instructions": "Cetak hasil dari `20 - 8`.", "starter": "print()", "expectedOutput": "12", "tests": [], "hint": "Baca instruksi pelan-pelan. Pecah masalah menjadi nilai kecil, lalu cetak hasilnya untuk verifikasi."}, {"id": "m2-3", "module": 2, "moduleTitle": "Modul 2 — Aritmetika dari Nol", "title": "Perkalian", "objective": "Menggunakan operator `*`.", "instructions": "Cetak hasil dari `6 * 7`.", "starter": "print()", "expectedOutput": "42", "tests": [], "hint": "Baca instruksi pelan-pelan. Pecah masalah menjadi nilai kecil, lalu cetak hasilnya untuk verifikasi."}, {"id": "m2-4", "module": 2, "moduleTitle": "Modul 2 — Aritmetika dari Nol", "title": "Pembagian", "objective": "Menggunakan operator `/` untuk pembagian.", "instructions": "Cetak hasil dari `24 / 6`.", "starter": "print()", "expectedOutput": "4", "tests": [], "hint": "Baca instruksi pelan-pelan. Pecah masalah menjadi nilai kecil, lalu cetak hasilnya untuk verifikasi."}, {"id": "m2-5", "module": 2, "moduleTitle": "Modul 2 — Aritmetika dari Nol", "title": "KABATAKU", "objective": "Memahami urutan operasi.", "instructions": "Cetak hasil dari `(8 + 2) * 3`.", "starter": "# gunakan tanda kurung\nprint()", "expectedOutput": "30", "tests": [], "hint": "Kurung dikerjakan dulu."}, {"id": "m2-6", "module": 2, "moduleTitle": "Modul 2 — Aritmetika dari Nol", "title": "Kuadrat", "objective": "Menggunakan operator pangkat `**`.", "instructions": "Cetak hasil dari `9` kuadrat.", "starter": "print()", "expectedOutput": "81", "tests": [], "hint": "Di Python, kuadrat bisa ditulis 9 ** 2."}, {"id": "m2-7", "module": 2, "moduleTitle": "Modul 2 — Aritmetika dari Nol", "title": "Modulo", "objective": "Memahami sisa bagi.", "instructions": "Cetak sisa bagi dari `29 % 8`.", "starter": "print()", "expectedOutput": "5", "tests": [], "hint": "Modulo penting untuk memahami pembatasan nilai byte."}, {"id": "m2-8", "module": 2, "moduleTitle": "Modul 2 — Aritmetika dari Nol", "title": "Checkpoint aritmetika", "objective": "Menggabungkan variabel dan operasi kompleks.", "instructions": "Buat `x = 6` dan `y = 4`, lalu cetak `(x + y) ** 2`.", "starter": "x = 0\ny = 0\nprint()", "expectedOutput": "100", "tests": [], "hint": "Baca instruksi pelan-pelan. Pecah masalah menjadi nilai kecil, lalu cetak hasilnya untuk verifikasi."}, {"id": "m3-1", "module": 3, "moduleTitle": "Modul 3 — Sistem Bilangan, Hex, dan Byte", "title": "Biner", "objective": "Melihat representasi biner.", "instructions": "Cetak bentuk biner dari angka `10` menggunakan `bin()`.", "starter": "print(bin())", "expectedOutput": "0b1010", "tests": [], "hint": "bin(10) menghasilkan bentuk biner."}, {"id": "m3-2", "module": 3, "moduleTitle": "Modul 3 — Sistem Bilangan, Hex, dan Byte", "title": "Heksadesimal", "objective": "Melihat representasi hex.", "instructions": "Cetak bentuk hex dari angka `255` menggunakan `hex()`.", "starter": "print(hex())", "expectedOutput": "0xff", "tests": [], "hint": "Baca instruksi pelan-pelan. Pecah masalah menjadi nilai kecil, lalu cetak hasilnya untuk verifikasi."}, {"id": "m3-3", "module": 3, "moduleTitle": "Modul 3 — Sistem Bilangan, Hex, dan Byte", "title": "Format dua digit hex", "objective": "Membiasakan format test vector.", "instructions": "Buat `x = 15`, lalu cetak sebagai hex dua digit kapital: `0F`.", "starter": "x = 0\nprint(f\"{x:02X}\")", "expectedOutput": "0F", "tests": [], "hint": "Format :02X artinya minimal 2 digit, pakai huruf kapital."}, {"id": "m3-4", "module": 3, "moduleTitle": "Modul 3 — Sistem Bilangan, Hex, dan Byte", "title": "Char ke angka", "objective": "Mengubah karakter menjadi kode ASCII.", "instructions": "Cetak nilai ASCII dari karakter `A` menggunakan `ord()`.", "starter": "print(ord())", "expectedOutput": "65", "tests": [], "hint": "Baca instruksi pelan-pelan. Pecah masalah menjadi nilai kecil, lalu cetak hasilnya untuk verifikasi."}, {"id": "m3-5", "module": 3, "moduleTitle": "Modul 3 — Sistem Bilangan, Hex, dan Byte", "title": "Angka ke char", "objective": "Mengubah angka ASCII menjadi karakter.", "instructions": "Cetak karakter dari angka `66` menggunakan `chr()`.", "starter": "print(chr())", "expectedOutput": "B", "tests": [], "hint": "Baca instruksi pelan-pelan. Pecah masalah menjadi nilai kecil, lalu cetak hasilnya untuk verifikasi."}, {"id": "m3-6", "module": 3, "moduleTitle": "Modul 3 — Sistem Bilangan, Hex, dan Byte", "title": "Format byte biner", "objective": "Membaca byte 8-bit.", "instructions": "Buat `p = 170`, lalu cetak sebagai biner 8 digit: `10101010`.", "starter": "p = 0\nprint(f\"{p:08b}\")", "expectedOutput": "10101010", "tests": [], "hint": "Baca instruksi pelan-pelan. Pecah masalah menjadi nilai kecil, lalu cetak hasilnya untuk verifikasi."}, {"id": "m3-7", "module": 3, "moduleTitle": "Modul 3 — Sistem Bilangan, Hex, dan Byte", "title": "Checkpoint representasi", "objective": "Menggabungkan bin, hex, dan format.", "instructions": "Buat `x = 255`, lalu cetak `bin(x)`, `hex(x)`, dan `x` sebagai hex dua digit kapital pada tiga baris.", "starter": "x = 0\nprint(bin(x))\nprint(hex(x))\nprint(f\"{x:02X}\")", "expectedOutput": "0b11111111\n0xff\nFF", "tests": [], "hint": "Baca instruksi pelan-pelan. Pecah masalah menjadi nilai kecil, lalu cetak hasilnya untuk verifikasi."}, {"id": "m4-1", "module": 4, "moduleTitle": "Modul 4 — Bitwise Core untuk Kriptografi", "title": "XOR", "objective": "Memahami operator `^`.", "instructions": "Cetak hasil `0b1010 ^ 0b0101`.", "starter": "print()", "expectedOutput": "15", "tests": [], "hint": "XOR bernilai 1 jika bit berbeda."}, {"id": "m4-2", "module": 4, "moduleTitle": "Modul 4 — Bitwise Core untuk Kriptografi", "title": "Masking 8-bit", "objective": "Membatasi nilai ke rentang byte.", "instructions": "Buat `x = 300`, lalu cetak `x & 0xFF`.", "starter": "x = 0\nprint()", "expectedOutput": "44", "tests": [], "hint": "0xFF adalah mask 8-bit: 11111111."}, {"id": "m4-3", "module": 4, "moduleTitle": "Modul 4 — Bitwise Core untuk Kriptografi", "title": "OR bit", "objective": "Menggabungkan bit dengan `|`.", "instructions": "Cetak hasil `0b1000 | 0b0011`.", "starter": "print()", "expectedOutput": "11", "tests": [], "hint": "Baca instruksi pelan-pelan. Pecah masalah menjadi nilai kecil, lalu cetak hasilnya untuk verifikasi."}, {"id": "m4-4", "module": 4, "moduleTitle": "Modul 4 — Bitwise Core untuk Kriptografi", "title": "NOT dengan mask", "objective": "Menghindari efek integer tak terbatas Python.", "instructions": "Buat `x = 0b00001111`, lalu cetak `(~x) & 0xFF`.", "starter": "x = 0\nprint()", "expectedOutput": "240", "tests": [], "hint": "Tanpa mask, NOT di Python bisa menghasilkan angka negatif."}, {"id": "m4-5", "module": 4, "moduleTitle": "Modul 4 — Bitwise Core untuk Kriptografi", "title": "Shift kiri", "objective": "Menggeser bit ke kiri.", "instructions": "Cetak `((0x12 << 1) & 0xFF)`.", "starter": "print()", "expectedOutput": "36", "tests": [], "hint": "Baca instruksi pelan-pelan. Pecah masalah menjadi nilai kecil, lalu cetak hasilnya untuk verifikasi."}, {"id": "m4-6", "module": 4, "moduleTitle": "Modul 4 — Bitwise Core untuk Kriptografi", "title": "Shift kanan", "objective": "Menggeser bit ke kanan.", "instructions": "Cetak `(0x80 >> 4)`.", "starter": "print()", "expectedOutput": "8", "tests": [], "hint": "Baca instruksi pelan-pelan. Pecah masalah menjadi nilai kecil, lalu cetak hasilnya untuk verifikasi."}, {"id": "m4-7", "module": 4, "moduleTitle": "Modul 4 — Bitwise Core untuk Kriptografi", "title": "Rotate left 8-bit", "objective": "Membedakan shift dan rotasi.", "instructions": "Buat fungsi `rol8(x, n)` yang melakukan circular left rotation 8-bit: `((x << n) | (x >> (8 - n))) & 0xFF`.", "starter": "def rol8(x, n):\n    return 0", "expectedOutput": null, "tests": [{"fn": "rol8", "args": [129, 1], "expected": 3}, {"fn": "rol8", "args": [18, 4], "expected": 33}, {"fn": "rol8", "args": [255, 3], "expected": 255}], "hint": "Bagian yang tumpah di kiri dimasukkan lagi dari kanan."}, {"id": "m4-8", "module": 4, "moduleTitle": "Modul 4 — Bitwise Core untuk Kriptografi", "title": "Checkpoint XOR + mask", "objective": "Membuat fungsi byte-safe.", "instructions": "Buat fungsi `xor_mask(x, k)` yang mengembalikan `(x ^ k) & 0xFF`.", "starter": "def xor_mask(x, k):\n    return 0", "expectedOutput": null, "tests": [{"fn": "xor_mask", "args": [170, 85], "expected": 255}, {"fn": "xor_mask", "args": [300, 18], "expected": 46}, {"fn": "xor_mask", "args": [0, 255], "expected": 255}], "hint": "Baca instruksi pelan-pelan. Pecah masalah menjadi nilai kecil, lalu cetak hasilnya untuk verifikasi."}, {"id": "m5-1", "module": 5, "moduleTitle": "Modul 5 — Fungsi dan Modularisasi", "title": "Fungsi tambah", "objective": "Membuat fungsi sederhana.", "instructions": "Buat fungsi `tambah(a, b)` yang mengembalikan `a + b`.", "starter": "def tambah(a, b):\n    return 0", "expectedOutput": null, "tests": [{"fn": "tambah", "args": [2, 3], "expected": 5}, {"fn": "tambah", "args": [10, -4], "expected": 6}], "hint": "Baca instruksi pelan-pelan. Pecah masalah menjadi nilai kecil, lalu cetak hasilnya untuk verifikasi."}, {"id": "m5-2", "module": 5, "moduleTitle": "Modul 5 — Fungsi dan Modularisasi", "title": "Fungsi kuadrat", "objective": "Mengembalikan hasil pangkat.", "instructions": "Buat fungsi `kuadrat(x)` yang mengembalikan `x ** 2`.", "starter": "def kuadrat(x):\n    return 0", "expectedOutput": null, "tests": [{"fn": "kuadrat", "args": [4], "expected": 16}, {"fn": "kuadrat", "args": [9], "expected": 81}], "hint": "Baca instruksi pelan-pelan. Pecah masalah menjadi nilai kecil, lalu cetak hasilnya untuk verifikasi."}, {"id": "m5-3", "module": 5, "moduleTitle": "Modul 5 — Fungsi dan Modularisasi", "title": "Byte add", "objective": "Menangani overflow byte.", "instructions": "Buat fungsi `byte_add(a, b)` yang mengembalikan `(a + b) & 0xFF`.", "starter": "def byte_add(a, b):\n    return 0", "expectedOutput": null, "tests": [{"fn": "byte_add", "args": [250, 10], "expected": 4}, {"fn": "byte_add", "args": [1, 2], "expected": 3}, {"fn": "byte_add", "args": [255, 1], "expected": 0}], "hint": "Baca instruksi pelan-pelan. Pecah masalah menjadi nilai kecil, lalu cetak hasilnya untuk verifikasi."}, {"id": "m5-4", "module": 5, "moduleTitle": "Modul 5 — Fungsi dan Modularisasi", "title": "Format fungsi hex", "objective": "Menghasilkan output test vector.", "instructions": "Buat fungsi `to_hex(x)` yang mengembalikan string hex dua digit kapital dari `x & 0xFF`.", "starter": "def to_hex(x):\n    return \"\"", "expectedOutput": null, "tests": [{"fn": "to_hex", "args": [15], "expected": "0F"}, {"fn": "to_hex", "args": [255], "expected": "FF"}, {"fn": "to_hex", "args": [300], "expected": "2C"}], "hint": "Gunakan f-string: f\"{x & 0xFF:02X}\"."}, {"id": "m5-5", "module": 5, "moduleTitle": "Modul 5 — Fungsi dan Modularisasi", "title": "XOR tiga input", "objective": "Menyusun operasi bitwise.", "instructions": "Buat fungsi `xor3(a, b, c)` yang mengembalikan `a ^ b ^ c`.", "starter": "def xor3(a, b, c):\n    return 0", "expectedOutput": null, "tests": [{"fn": "xor3", "args": [1, 2, 3], "expected": 0}, {"fn": "xor3", "args": [170, 85, 15], "expected": 240}], "hint": "Baca instruksi pelan-pelan. Pecah masalah menjadi nilai kecil, lalu cetak hasilnya untuk verifikasi."}, {"id": "m5-6", "module": 5, "moduleTitle": "Modul 5 — Fungsi dan Modularisasi", "title": "Encrypt byte sederhana", "objective": "Membuat primitive enkripsi paling dasar.", "instructions": "Buat fungsi `encrypt_byte(p, k)` yang mengembalikan `(p ^ k) & 0xFF`.", "starter": "def encrypt_byte(p, k):\n    return 0", "expectedOutput": null, "tests": [{"fn": "encrypt_byte", "args": [58, 199], "expected": 253}, {"fn": "encrypt_byte", "args": [0, 255], "expected": 255}], "hint": "Baca instruksi pelan-pelan. Pecah masalah menjadi nilai kecil, lalu cetak hasilnya untuk verifikasi."}, {"id": "m5-7", "module": 5, "moduleTitle": "Modul 5 — Fungsi dan Modularisasi", "title": "Checkpoint round kecil", "objective": "Membaca spesifikasi kecil menjadi fungsi.", "instructions": "Buat fungsi `round1(p, k, c)`. Spesifikasi: `t = p ^ k`, lalu hasil `return (t + c) & 0xFF`.", "starter": "def round1(p, k, c):\n    t = 0\n    return 0", "expectedOutput": null, "tests": [{"fn": "round1", "args": [16, 15, 1], "expected": 32}, {"fn": "round1", "args": [240, 15, 2], "expected": 1}], "hint": "Baca instruksi pelan-pelan. Pecah masalah menjadi nilai kecil, lalu cetak hasilnya untuk verifikasi."}, {"id": "m6-1", "module": 6, "moduleTitle": "Modul 6 — S-Box dan P-Box Mini", "title": "Substitusi nibble", "objective": "Menggunakan tabel S-Box sederhana.", "instructions": "Buat fungsi `sub_nibble(x)`. Gunakan S-Box: `[0x6,0x4,0xC,0x5,0x0,0x7,0x2,0xE,0x1,0xF,0x3,0xD,0x8,0xA,0x9,0xB]`. Return `S[x & 0xF]`.", "starter": "def sub_nibble(x):\n    S = [0x6,0x4,0xC,0x5,0x0,0x7,0x2,0xE,0x1,0xF,0x3,0xD,0x8,0xA,0x9,0xB]\n    return 0", "expectedOutput": null, "tests": [{"fn": "sub_nibble", "args": [0], "expected": 6}, {"fn": "sub_nibble", "args": [10], "expected": 3}, {"fn": "sub_nibble", "args": [31], "expected": 11}], "hint": "Baca instruksi pelan-pelan. Pecah masalah menjadi nilai kecil, lalu cetak hasilnya untuk verifikasi."}, {"id": "m6-2", "module": 6, "moduleTitle": "Modul 6 — S-Box dan P-Box Mini", "title": "Substitusi byte", "objective": "Memecah byte menjadi high nibble dan low nibble.", "instructions": "Buat fungsi `sub_byte_nibbles(x)`: substitusi high nibble dan low nibble memakai S-Box yang sama, lalu gabungkan kembali.", "starter": "def sub_byte_nibbles(x):\n    S = [0x6,0x4,0xC,0x5,0x0,0x7,0x2,0xE,0x1,0xF,0x3,0xD,0x8,0xA,0x9,0xB]\n    hi = 0\n    lo = 0\n    return 0", "expectedOutput": null, "tests": [{"fn": "sub_byte_nibbles", "args": [0], "expected": 102}, {"fn": "sub_byte_nibbles", "args": [175], "expected": 59}, {"fn": "sub_byte_nibbles", "args": [60], "expected": 88}], "hint": "High nibble: (x >> 4) & 0xF. Low nibble: x & 0xF. Gabung: (hi << 4) | lo."}, {"id": "m6-3", "module": 6, "moduleTitle": "Modul 6 — S-Box dan P-Box Mini", "title": "Swap nibble", "objective": "Menukar 4 bit atas dan 4 bit bawah.", "instructions": "Buat fungsi `swap_nibbles(x)` yang menukar high nibble dan low nibble dari byte 8-bit.", "starter": "def swap_nibbles(x):\n    return 0", "expectedOutput": null, "tests": [{"fn": "swap_nibbles", "args": [171], "expected": 186}, {"fn": "swap_nibbles", "args": [18], "expected": 33}, {"fn": "swap_nibbles", "args": [240], "expected": 15}], "hint": "Pakai ((x & 0x0F) << 4) | ((x & 0xF0) >> 4)."}, {"id": "m6-4", "module": 6, "moduleTitle": "Modul 6 — S-Box dan P-Box Mini", "title": "Bit reversal 4-bit", "objective": "Membuat P-Box mini.", "instructions": "Buat fungsi `bitrev4(x)` yang membalik urutan 4 bit. Contoh: `0b1100` menjadi `0b0011`.", "starter": "def bitrev4(x):\n    return 0", "expectedOutput": null, "tests": [{"fn": "bitrev4", "args": [12], "expected": 3}, {"fn": "bitrev4", "args": [10], "expected": 5}, {"fn": "bitrev4", "args": [1], "expected": 8}], "hint": "Ambil tiap bit dengan shift dan &, lalu letakkan di posisi sebaliknya."}, {"id": "m6-5", "module": 6, "moduleTitle": "Modul 6 — S-Box dan P-Box Mini", "title": "Permutasi byte", "objective": "Menggabungkan P-Box untuk dua nibble.", "instructions": "Definisikan `bitrev4(x)`, lalu buat `permute_byte(x)` yang membalik bit high nibble dan low nibble secara terpisah.", "starter": "def bitrev4(x):\n    return 0\n\ndef permute_byte(x):\n    return 0", "expectedOutput": null, "tests": [{"fn": "permute_byte", "args": [195], "expected": 60}, {"fn": "permute_byte", "args": [165], "expected": 90}, {"fn": "permute_byte", "args": [18], "expected": 132}], "hint": "High nibble: (x >> 4) & 0xF. Low nibble: x & 0xF."}, {"id": "m6-6", "module": 6, "moduleTitle": "Modul 6 — S-Box dan P-Box Mini", "title": "Checkpoint S-Box layer", "objective": "Menyusun beberapa primitive.", "instructions": "Buat `sub_byte_nibbles(x)`, `swap_nibbles(x)`, lalu `sbox_layer(x)` yang menjalankan substitusi byte kemudian swap nibble.", "starter": "def sub_byte_nibbles(x):\n    S = [0x6,0x4,0xC,0x5,0x0,0x7,0x2,0xE,0x1,0xF,0x3,0xD,0x8,0xA,0x9,0xB]\n    return 0\n\ndef swap_nibbles(x):\n    return 0\n\ndef sbox_layer(x):\n    return 0", "expectedOutput": null, "tests": [{"fn": "sbox_layer", "args": [0], "expected": 102}, {"fn": "sbox_layer", "args": [175], "expected": 179}, {"fn": "sbox_layer", "args": [60], "expected": 133}], "hint": "Baca instruksi pelan-pelan. Pecah masalah menjadi nilai kecil, lalu cetak hasilnya untuk verifikasi."}, {"id": "m7-1", "module": 7, "moduleTitle": "Modul 7 — Primitive Enkripsi Byte", "title": "XOR key", "objective": "Menerapkan key mixing.", "instructions": "Buat fungsi `xor_key(block, key)` yang mengembalikan `(block ^ key) & 0xFF`.", "starter": "def xor_key(block, key):\n    return 0", "expectedOutput": null, "tests": [{"fn": "xor_key", "args": [170, 85], "expected": 255}, {"fn": "xor_key", "args": [58, 199], "expected": 253}], "hint": "Baca instruksi pelan-pelan. Pecah masalah menjadi nilai kecil, lalu cetak hasilnya untuk verifikasi."}, {"id": "m7-2", "module": 7, "moduleTitle": "Modul 7 — Primitive Enkripsi Byte", "title": "Add constant", "objective": "Menambahkan konstanta ronde.", "instructions": "Buat fungsi `add_constant(block, c)` yang mengembalikan `(block + c) & 0xFF`.", "starter": "def add_constant(block, c):\n    return 0", "expectedOutput": null, "tests": [{"fn": "add_constant", "args": [250, 10], "expected": 4}, {"fn": "add_constant", "args": [16, 34], "expected": 50}], "hint": "Baca instruksi pelan-pelan. Pecah masalah menjadi nilai kecil, lalu cetak hasilnya untuk verifikasi."}, {"id": "m7-3", "module": 7, "moduleTitle": "Modul 7 — Primitive Enkripsi Byte", "title": "Simple round", "objective": "Menyusun XOR lalu rotasi.", "instructions": "Buat fungsi `simple_round(x, k)`. Spesifikasi: `t = x ^ k`, lalu `return rol8(t, 3)` dengan rotasi 8-bit.", "starter": "def rol8(x, n):\n    return 0\n\ndef simple_round(x, k):\n    return 0", "expectedOutput": null, "tests": [{"fn": "simple_round", "args": [58, 199], "expected": 239}, {"fn": "simple_round", "args": [0, 255], "expected": 255}, {"fn": "simple_round", "args": [18, 52], "expected": 49}], "hint": "Baca instruksi pelan-pelan. Pecah masalah menjadi nilai kecil, lalu cetak hasilnya untuk verifikasi."}, {"id": "m7-4", "module": 7, "moduleTitle": "Modul 7 — Primitive Enkripsi Byte", "title": "Inverse round", "objective": "Membuat dekripsi dari operasi rotasi.", "instructions": "Buat `ror8(x, n)`, lalu `decrypt_simple_round(c, k)`. Spesifikasi: `t = ror8(c, 3)`, lalu `return (t ^ k) & 0xFF`.", "starter": "def ror8(x, n):\n    return 0\n\ndef decrypt_simple_round(c, k):\n    return 0", "expectedOutput": null, "tests": [{"fn": "decrypt_simple_round", "args": [239, 199], "expected": 58}, {"fn": "decrypt_simple_round", "args": [49, 52], "expected": 18}], "hint": "Baca instruksi pelan-pelan. Pecah masalah menjadi nilai kecil, lalu cetak hasilnya untuk verifikasi."}, {"id": "m7-5", "module": 7, "moduleTitle": "Modul 7 — Primitive Enkripsi Byte", "title": "Two-round encrypt", "objective": "Menyusun fungsi ronde secara modular.", "instructions": "Buat `rol8`, `simple_round`, lalu `two_round_encrypt(p, k1, k2)` yang menjalankan dua ronde berturut-turut.", "starter": "def rol8(x, n):\n    return 0\n\ndef simple_round(x, k):\n    return 0\n\ndef two_round_encrypt(p, k1, k2):\n    return 0", "expectedOutput": null, "tests": [{"fn": "two_round_encrypt", "args": [58, 199, 85], "expected": 213}, {"fn": "two_round_encrypt", "args": [18, 52, 86], "expected": 59}], "hint": "Baca instruksi pelan-pelan. Pecah masalah menjadi nilai kecil, lalu cetak hasilnya untuk verifikasi."}, {"id": "m7-6", "module": 7, "moduleTitle": "Modul 7 — Primitive Enkripsi Byte", "title": "Checkpoint test vector", "objective": "Membaca dan memverifikasi test vector.", "instructions": "Buat semua fungsi yang diperlukan, lalu buat `check_vector()` yang mengembalikan hasil `two_round_encrypt(0x3A, 0xC7, 0x55)`.", "starter": "def rol8(x, n):\n    return 0\n\ndef simple_round(x, k):\n    return 0\n\ndef two_round_encrypt(p, k1, k2):\n    return 0\n\ndef check_vector():\n    return 0", "expectedOutput": null, "tests": [{"fn": "check_vector", "args": [], "expected": 213}], "hint": "Output test vector numeriknya adalah 213 atau 0xD5."}, {"id": "m8-1", "module": 8, "moduleTitle": "Modul 8 — Simulasi Studi Kasus CMA", "title": "Spec Simple-X", "objective": "Menerjemahkan spesifikasi ke kode.", "instructions": "Spesifikasi: `C = ROL8(P XOR K, 3)`. Buat fungsi `simple_x_encrypt(p, k)`.", "starter": "def rol8(x, n):\n    return 0\n\ndef simple_x_encrypt(p, k):\n    return 0", "expectedOutput": null, "tests": [{"fn": "simple_x_encrypt", "args": [58, 199], "expected": 239}, {"fn": "simple_x_encrypt", "args": [18, 52], "expected": 49}], "hint": "Baca instruksi pelan-pelan. Pecah masalah menjadi nilai kecil, lalu cetak hasilnya untuk verifikasi."}, {"id": "m8-2", "module": 8, "moduleTitle": "Modul 8 — Simulasi Studi Kasus CMA", "title": "Inverse Simple-X", "objective": "Membalik urutan operasi enkripsi.", "instructions": "Untuk dekripsi Simple-X: `P = ROR8(C, 3) XOR K`. Buat fungsi `simple_x_decrypt(c, k)`.", "starter": "def ror8(x, n):\n    return 0\n\ndef simple_x_decrypt(c, k):\n    return 0", "expectedOutput": null, "tests": [{"fn": "simple_x_decrypt", "args": [239, 199], "expected": 58}, {"fn": "simple_x_decrypt", "args": [49, 52], "expected": 18}], "hint": "Baca instruksi pelan-pelan. Pecah masalah menjadi nilai kecil, lalu cetak hasilnya untuk verifikasi."}, {"id": "m8-3", "module": 8, "moduleTitle": "Modul 8 — Simulasi Studi Kasus CMA", "title": "Spec MiniSub", "objective": "Menggabungkan key mixing dan S-Box.", "instructions": "Spesifikasi: `C = SBOX_NIBBLE(P XOR K)`, diterapkan ke high nibble dan low nibble. Buat `mini_sub_encrypt(p, k)`.", "starter": "def mini_sub_encrypt(p, k):\n    S = [0x6,0x4,0xC,0x5,0x0,0x7,0x2,0xE,0x1,0xF,0x3,0xD,0x8,0xA,0x9,0xB]\n    x = 0\n    hi = 0\n    lo = 0\n    return 0", "expectedOutput": null, "tests": [{"fn": "mini_sub_encrypt", "args": [58, 199], "expected": 186}, {"fn": "mini_sub_encrypt", "args": [18, 52], "expected": 194}, {"fn": "mini_sub_encrypt", "args": [175, 1], "expected": 57}], "hint": "Baca instruksi pelan-pelan. Pecah masalah menjadi nilai kecil, lalu cetak hasilnya untuk verifikasi."}, {"id": "m8-4", "module": 8, "moduleTitle": "Modul 8 — Simulasi Studi Kasus CMA", "title": "Spec ByteMixer", "objective": "Membaca urutan operasi dengan presisi.", "instructions": "Spesifikasi ByteMixer: `t = (P XOR K) + C`, mask 8-bit, lalu swap nibble. Buat `byte_mixer(p, k, c)`.", "starter": "def swap_nibbles(x):\n    return 0\n\ndef byte_mixer(p, k, c):\n    return 0", "expectedOutput": null, "tests": [{"fn": "byte_mixer", "args": [16, 15, 1], "expected": 2}, {"fn": "byte_mixer", "args": [240, 15, 2], "expected": 16}, {"fn": "byte_mixer", "args": [58, 199, 17], "expected": 224}], "hint": "Baca instruksi pelan-pelan. Pecah masalah menjadi nilai kecil, lalu cetak hasilnya untuk verifikasi."}, {"id": "m8-5", "module": 8, "moduleTitle": "Modul 8 — Simulasi Studi Kasus CMA", "title": "Final Case — CMA Mini Cipher", "objective": "Membangun algoritma dari modul kecil.", "instructions": "Implementasikan `cma_mini_encrypt(p, k1, k2, rc)`. Spesifikasi: 1) `a = mini_sub_encrypt(p, k1)`, 2) `b = byte_mixer(a, k2, rc)`, 3) `return ROL8(b, 1)`.", "starter": "def rol8(x, n):\n    return 0\n\ndef mini_sub_encrypt(p, k):\n    S = [0x6,0x4,0xC,0x5,0x0,0x7,0x2,0xE,0x1,0xF,0x3,0xD,0x8,0xA,0x9,0xB]\n    return 0\n\ndef swap_nibbles(x):\n    return 0\n\ndef byte_mixer(p, k, c):\n    return 0\n\ndef cma_mini_encrypt(p, k1, k2, rc):\n    return 0", "expectedOutput": null, "tests": [{"fn": "cma_mini_encrypt", "args": [58, 199, 85, 17], "expected": 0}, {"fn": "cma_mini_encrypt", "args": [18, 52, 86, 7], "expected": 115}], "hint": "Kerjakan dari fungsi paling kecil. Jangan langsung tulis semuanya di return final."}, {"id": "m8-6", "module": 8, "moduleTitle": "Modul 8 — Simulasi Studi Kasus CMA", "title": "Final Vector Report", "objective": "Menulis output akhir seperti laporan uji.", "instructions": "Buat fungsi `final_vector()` yang mengembalikan hex dua digit kapital dari `cma_mini_encrypt(0x3A, 0xC7, 0x55, 0x11)`.", "starter": "def rol8(x, n):\n    return 0\n\ndef mini_sub_encrypt(p, k):\n    S = [0x6,0x4,0xC,0x5,0x0,0x7,0x2,0xE,0x1,0xF,0x3,0xD,0x8,0xA,0x9,0xB]\n    return 0\n\ndef swap_nibbles(x):\n    return 0\n\ndef byte_mixer(p, k, c):\n    return 0\n\ndef cma_mini_encrypt(p, k1, k2, rc):\n    return 0\n\ndef final_vector():\n    return \"\"", "expectedOutput": null, "tests": [{"fn": "final_vector", "args": [], "expected": "00"}], "hint": "Gunakan f\"{hasil:02X}\" untuk format laporan test vector."}];
+const MODULES = [...new Map(LESSONS.map(l => [l.module, { id:l.module, title:l.moduleTitle }])).values()];
+
+let username = localStorage.getItem('cma_lab_username') || '';
+let progress = { completed: {}, code: {}, lastLesson: 0 };
+let currentLessonIndex = 0;
+
+const $ = (id) => document.getElementById(id);
+
+function storageKey() { return 'cma_lab_progress_' + username.toLowerCase().trim(); }
+function loadProgress() {
+  try { progress = JSON.parse(localStorage.getItem(storageKey())) || { completed: {}, code: {}, lastLesson: 0 }; }
+  catch(e) { progress = { completed: {}, code: {}, lastLesson: 0 }; }
+  if(!progress.completed) progress.completed = {};
+  if(!progress.code) progress.code = {};
+  if(typeof progress.lastLesson !== 'number') progress.lastLesson = 0;
+}
+function saveProgress() { localStorage.setItem(storageKey(), JSON.stringify(progress)); }
+function completedCount() { return LESSONS.filter(l => progress.completed[l.id]).length; }
+function availableIndex() {
+  for(let i=0;i<LESSONS.length;i++) if(!progress.completed[LESSONS[i].id]) return i;
+  return LESSONS.length - 1;
+}
+function isLessonUnlocked(i) { return i <= availableIndex() || progress.completed[LESSONS[i]?.id]; }
+function isModuleUnlocked(m) { return LESSONS.findIndex(l=>l.module===m) <= availableIndex(); }
+function moduleLessons(m) { return LESSONS.filter(l => l.module === m); }
+function moduleDone(m) { return moduleLessons(m).filter(l => progress.completed[l.id]).length; }
+function moduleTotal(m) { return moduleLessons(m).length; }
+function moduleStartIndex(m) { return LESSONS.findIndex(l => l.module === m); }
+function escapeHtml(s) { return String(s).replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c])); }
+function showToast(msg) { const t=$('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'), 2400); }
+
+function enterApp(name) {
+  username = name.trim();
+  if(!username) return showToast('Username tidak boleh kosong.');
+  localStorage.setItem('cma_lab_username', username);
+  loadProgress();
+  $('login').classList.add('hidden'); $('app').classList.remove('hidden');
+  $('profileName').textContent = username;
+  renderAll();
+}
+
+$('enterBtn').addEventListener('click', () => enterApp($('username').value));
+$('username').addEventListener('keydown', e => { if(e.key==='Enter') enterApp($('username').value); });
+$('logoutBtn').addEventListener('click', () => { localStorage.removeItem('cma_lab_username'); username=''; $('app').classList.add('hidden'); $('login').classList.remove('hidden'); $('username').focus(); });
+$('resetBtn').addEventListener('click', () => { if(confirm('Reset semua progres untuk username ini?')) { progress={completed:{}, code:{}, lastLesson:0}; saveProgress(); renderAll(); openDashboard(); } });
+$('dashboardBtn').addEventListener('click', openDashboard);
+$('backDashBtn').addEventListener('click', openDashboard);
+$('continueBtn').addEventListener('click', () => openLesson(Math.min(availableIndex(), LESSONS.length-1)));
+
+function renderAll() { renderSidebar(); renderDashboard(); updateGlobalProgress(); }
+function updateGlobalProgress() {
+  const done = completedCount(); const total = LESSONS.length; const pct = Math.round(done/total*100);
+  $('globalProgress').style.width = pct + '%'; $('globalText').textContent = `${done}/${total} level selesai • ${pct}%`;
+}
+function renderSidebar() {
+  const nav = $('moduleNav'); nav.innerHTML='';
+  MODULES.forEach(m => {
+    const locked = !isModuleUnlocked(m.id);
+    const btn = document.createElement('button'); btn.className='module-btn' + (locked?' locked':'') + (LESSONS[currentLessonIndex]?.module===m.id?' active':'');
+    btn.innerHTML = `<div><div class="module-name">${escapeHtml(m.title)}</div><div class="module-meta">${moduleDone(m.id)}/${moduleTotal(m.id)} level selesai</div></div><div class="lock">${locked?'🔒':'›'}</div>`;
+    btn.onclick = () => { if(locked) return showToast('Selesaikan level sebelumnya dulu.'); openLesson(moduleStartIndex(m.id)); };
+    nav.appendChild(btn);
+  });
+}
+function renderDashboard() {
+  const done = completedCount(); const total = LESSONS.length; const active = availableIndex()+1;
+  const dash = $('dashboard');
+  dash.innerHTML = `
+    <div class="topbar"><div><h2>Dashboard belajar</h2><p>Halo, ${escapeHtml(username)}. Jalur ini dikunci bertahap supaya fondasi tidak loncat.</p></div><button class="btn btn-primary" onclick="openLesson(${Math.min(availableIndex(), LESSONS.length-1)})">Mulai / Lanjutkan →</button></div>
+    <div class="stats">
+      <div class="stat"><b>${done}</b><span>Level selesai</span></div>
+      <div class="stat"><b>${total-done}</b><span>Level tersisa</span></div>
+      <div class="stat"><b>${MODULES.length}</b><span>Modul belajar</span></div>
+      <div class="stat"><b>${Math.round(done/total*100)}%</b><span>Progres total</span></div>
+    </div>
+    <div class="module-grid">
+      ${MODULES.map(m => {
+        const locked=!isModuleUnlocked(m.id); const d=moduleDone(m.id), t=moduleTotal(m.id);
+        const first=moduleStartIndex(m.id);
+        return `<article class="module-card ${locked?'locked':''}">
+          <div><span class="pill">${locked?'🔒 Terkunci':'✦ Terbuka'}</span><h3>${escapeHtml(m.title)}</h3><p style="color:var(--muted);line-height:1.55;margin:0">${moduleDescription(m.id)}</p></div>
+          <div><div class="progress-wrap"><div class="progress-bar" style="width:${Math.round(d/t*100)}%"></div></div><button class="btn ${locked?'btn-ghost':'btn-primary'}" style="width:100%;margin-top:10px" onclick="openLesson(${first})">${locked?'Selesaikan modul sebelumnya':'Buka modul'}</button></div>
+        </article>`;
+      }).join('')}
+    </div>`;
+}
+function moduleDescription(id) {
+  return {
+    1:'Mulai dari output, string, variabel, dan disiplin baris program.',
+    2:'Latihan kabataku, kuadrat, modulo, dan ekspresi bertingkat.',
+    3:'Konversi biner, hex, ASCII, dan format byte untuk test vector.',
+    4:'XOR, mask, shift, rotate, dan operasi bitwise inti kriptografi.',
+    5:'Membuat fungsi kecil yang rapi agar algoritma mudah diuji.',
+    6:'S-Box, P-Box mini, substitusi nibble, dan permutasi bit.',
+    7:'Primitive enkripsi byte: key mixing, round, inverse, dan test vector.',
+    8:'Simulasi studi kasus ala membaca spesifikasi modul lalu mengodingkannya.'
+  }[id] || '';
+}
+function openDashboard() { $('dashboard').classList.remove('hidden'); $('lessonView').classList.add('hidden'); renderAll(); }
+
+function openLesson(index) {
+  if(index < 0 || index >= LESSONS.length) return;
+  if(!isLessonUnlocked(index)) return showToast('Level ini masih terkunci. Selesaikan level aktif dulu.');
+  currentLessonIndex = index; progress.lastLesson = index; saveProgress();
+  $('dashboard').classList.add('hidden'); $('lessonView').classList.remove('hidden');
+  renderLesson(); renderSidebar(); updateGlobalProgress();
+}
+window.openLesson = openLesson;
+
+function renderLesson() {
+  const l = LESSONS[currentLessonIndex];
+  $('lessonModuleTitle').textContent = l.moduleTitle;
+  $('lessonIndexText').textContent = `Level ${currentLessonIndex+1} dari ${LESSONS.length}`;
+  $('lessonStatus').textContent = progress.completed[l.id] ? 'Selesai' : (currentLessonIndex===availableIndex() ? 'Level aktif' : 'Terbuka');
+  $('lessonTitle').textContent = l.title;
+  $('lessonObjective').textContent = l.objective;
+  $('lessonInstructions').innerHTML = renderInlineMarkdown(l.instructions);
+  $('fileName').textContent = l.id + '.py';
+  $('hintBox').textContent = l.hint; $('hintBox').style.display='none';
+  $('editor').value = progress.code[l.id] ?? l.starter;
+  updateLineNos();
+  renderLessonChips(l.module);
+  renderCrumbs(l);
+  renderTests(l);
+  $('terminal').innerHTML = `<span class="term-muted">$ python ${l.id}.py
+# Jalankan kode untuk melihat output.</span>`;
+}
+function renderInlineMarkdown(text) {
+  return escapeHtml(text).replace(/`([^`]+)`/g, '<code>$1</code>');
+}
+function renderCrumbs(l) {
+  $('crumbs').innerHTML = `<span class="pill">Modul ${l.module}</span><span class="pill">${l.tests.length ? 'Validasi fungsi' : 'Validasi output'}</span>`;
+}
+function renderTests(l) {
+  const box = $('testList');
+  if(l.expectedOutput) {
+    box.innerHTML = `<div class="test-item">Expected output:
+${escapeHtml(l.expectedOutput)}</div>`;
+  } else {
+    box.innerHTML = l.tests.map(t => `<div class="test-item">${t.fn}(${(t.args||[]).map(formatVal).join(', ')}) → ${formatVal(t.expected)}</div>`).join('');
+  }
+}
+function renderLessonChips(moduleId) {
+  const chips=$('lessonChips'); chips.innerHTML='';
+  LESSONS.forEach((l,i)=>{ if(l.module!==moduleId) return; const locked=!isLessonUnlocked(i); const b=document.createElement('button'); b.className='lesson-chip '+(progress.completed[l.id]?'done ':'')+(i===currentLessonIndex?'current ':'')+(locked?'locked':''); b.textContent=(i+1).toString().padStart(2,'0'); b.title=l.title; b.onclick=()=>{ if(locked) showToast('Selesaikan level aktif dulu.'); else openLesson(i); }; chips.appendChild(b); });
+}
+function formatVal(v) { if(typeof v === 'string') return '"'+v+'"'; if(typeof v === 'number') return v + ' / 0x' + ((v&255).toString(16).toUpperCase().padStart(2,'0')); return String(v); }
+
+$('hintBtn').addEventListener('click', () => { const h=$('hintBox'); h.style.display = h.style.display==='none' ? 'block' : 'none'; });
+$('restoreBtn').addEventListener('click', () => { const l=LESSONS[currentLessonIndex]; $('editor').value=l.starter; progress.code[l.id]=l.starter; saveProgress(); updateLineNos(); });
+$('runBtn').addEventListener('click', () => runOnly());
+$('checkBtn').addEventListener('click', () => checkLesson());
+$('editor').addEventListener('input', () => { const l=LESSONS[currentLessonIndex]; progress.code[l.id]=$('editor').value; saveProgress(); updateLineNos(); });
+$('editor').addEventListener('keydown', e => {
+  if(e.key==='Tab') { e.preventDefault(); const s=e.target.selectionStart, end=e.target.selectionEnd; e.target.value=e.target.value.substring(0,s)+'    '+e.target.value.substring(end); e.target.selectionStart=e.target.selectionEnd=s+4; updateLineNos(); }
+  if(e.ctrlKey && e.key==='Enter') { e.preventDefault(); runOnly(); }
+  if(e.ctrlKey && (e.key==='s' || e.key==='S')) { e.preventDefault(); checkLesson(); }
+});
+function updateLineNos() { const n=$('editor').value.split('\n').length; $('lineNos').innerHTML = Array.from({length:n},(_,i)=>i+1).join('<br>'); }
+
+function runOnly() {
+  const l=LESSONS[currentLessonIndex]; const code=$('editor').value; progress.code[l.id]=code; saveProgress();
+  const res = runMiniPython(code);
+  let out = `<span class="term-muted">$ python ${l.id}.py</span>
+`;
+  if(res.error) out += `<span class="term-bad">${escapeHtml(res.error)}</span>`;
+  else out += escapeHtml(res.output || '');
+  $('terminal').innerHTML = out || '<span class="term-muted">(no output)</span>';
+}
+function checkLesson() {
+  const l=LESSONS[currentLessonIndex]; const code=$('editor').value; progress.code[l.id]=code; saveProgress();
+  const res = runMiniPython(code);
+  let lines = [`<span class="term-muted">$ check ${l.id}.py</span>`];
+  if(res.error) { lines.push(`<span class="term-bad">${escapeHtml(res.error)}</span>`); $('terminal').innerHTML = lines.join('\n'); return; }
+  let ok = true;
+  if(l.expectedOutput) {
+    const actual = normalizeOut(res.output), expected = normalizeOut(l.expectedOutput);
+    if(actual === expected) lines.push(`<span class="term-ok">✓ Output sesuai.</span>`);
+    else { ok=false; lines.push(`<span class="term-bad">✗ Output belum sesuai.</span>`); lines.push(`<span class="term-muted">Expected:</span>
+${escapeHtml(expected)}`); lines.push(`<span class="term-muted">Actual:</span>
+${escapeHtml(actual || '(kosong)')}`); }
+  } else {
+    for(const t of l.tests) {
+      try {
+        const fn = res.env[t.fn];
+        if(typeof fn !== 'function') throw new Error(`NameError: fungsi '${t.fn}' belum didefinisikan`);
+        const actual = fn(...(t.args||[]));
+        if(sameValue(actual, t.expected)) lines.push(`<span class="term-ok">✓ ${t.fn}(${(t.args||[]).map(formatVal).join(', ')}) = ${formatVal(actual)}</span>`);
+        else { ok=false; lines.push(`<span class="term-bad">✗ ${t.fn}(${(t.args||[]).map(formatVal).join(', ')}) expected ${formatVal(t.expected)} tetapi dapat ${formatVal(actual)}</span>`); }
+      } catch(e) { ok=false; lines.push(`<span class="term-bad">✗ ${escapeHtml(e.message || String(e))}</span>`); }
+    }
+  }
+  if(ok) {
+    progress.completed[l.id] = true; progress.lastLesson = Math.min(currentLessonIndex+1, LESSONS.length-1); saveProgress();
+    lines.push(`<span class="term-ok">
+Level selesai. Modul berikutnya terbuka jika semua level sebelumnya sudah beres.</span>`);
+    if(currentLessonIndex < LESSONS.length-1) lines.push(`<span class="term-muted">Klik Lanjutkan untuk masuk level berikutnya.</span>`);
+    renderAll(); renderLessonChips(l.module); $('lessonStatus').textContent='Selesai';
+  }
+  $('terminal').innerHTML = lines.join('\n');
+}
+function normalizeOut(s) { return String(s ?? '').replace(/\r/g,'').trim(); }
+function sameValue(a,b) { return typeof b==='number' ? Number(a)===b : String(a)===String(b); }
+
+// Mini Python Runner: subset untuk latihan ini, bukan compiler Python penuh.
+function runMiniPython(code) {
+  const runtime = { env: {}, output: [], functions: {} };
+  try {
+    const lines = code.replace(/\r/g,'').split('\n');
+    executeBlock(lines, runtime, 0, false);
+    return { output: runtime.output.map(v=>String(v)).join('\n'), env: {...runtime.env, ...runtime.functions}, error:null };
+  } catch(e) {
+    return { output: runtime.output.map(v=>String(v)).join('\n'), env: {...runtime.env, ...runtime.functions}, error: e.message || String(e) };
+  }
+}
+function stripComment(line) {
+  let inS=false, inD=false;
+  for(let i=0;i<line.length;i++) { const c=line[i]; if(c==="'" && !inD) inS=!inS; else if(c==='"' && !inS) inD=!inD; else if(c==='#' && !inS && !inD) return line.slice(0,i); }
+  return line;
+}
+function indentOf(line) { const m=line.match(/^\s*/); return m?m[0].replace(/	/g,'    ').length:0; }
+function executeBlock(lines, runtime, baseIndent=0, inFunction=false, localEnv=null) {
+  const env = localEnv || runtime.env;
+  let i=0;
+  while(i<lines.length) {
+    let raw = lines[i];
+    let line = stripComment(raw).replace(/\s+$/,'');
+    if(!line.trim()) { i++; continue; }
+    const indent = indentOf(raw);
+    const t = line.trim();
+    if(indent < baseIndent) break;
+    if(t.startsWith('def ')) {
+      const m = t.match(/^def\s+([A-Za-z_]\w*)\s*\(([^)]*)\)\s*:\s*$/);
+      if(!m) throw new Error('SyntaxError: format fungsi harus def nama(arg1, arg2):');
+      const name=m[1]; const args=m[2].trim()?m[2].split(',').map(x=>x.trim()).filter(Boolean):[];
+      let body=[]; i++;
+      while(i<lines.length) {
+        const next=lines[i];
+        if(next.trim() && indentOf(next)<=indent) break;
+        body.push(next.replace(/^ {1,4}/,'')); i++;
+      }
+      runtime.functions[name] = (...vals) => {
+        const fenv = {...runtime.env, ...runtime.functions};
+        args.forEach((a,idx)=>{ fenv[a]=vals[idx]; });
+        const ret = executeFunctionBody(body, runtime, fenv);
+        return ret;
+      };
+      runtime.env[name] = runtime.functions[name];
+      continue;
+    }
+    executeStatement(t, runtime, env, inFunction);
+    i++;
+  }
+}
+function executeFunctionBody(body, runtime, env) {
+  for(let raw of body) {
+    let t = stripComment(raw).trim();
+    if(!t) continue;
+    if(t.startsWith('return ')) return evalExpr(t.slice(7), {...env, ...runtime.functions});
+    executeStatement(t, runtime, env, true);
+  }
+  return undefined;
+}
+function executeStatement(t, runtime, env, inFunction) {
+  if(t.startsWith('print')) {
+    const m=t.match(/^print\s*\((.*)\)\s*$/);
+    if(!m) throw new Error('SyntaxError: print harus ditulis print(...)');
+    runtime.output.push(evalExpr(m[1], {...env, ...runtime.functions})); return;
+  }
+  if(t.startsWith('return ')) throw new Error('SyntaxError: return hanya boleh di dalam fungsi');
+  const assign = t.match(/^([A-Za-z_]\w*)\s*=\s*(.+)$/);
+  if(assign) { env[assign[1]] = evalExpr(assign[2], {...env, ...runtime.functions}); return; }
+  if(t) evalExpr(t, {...env, ...runtime.functions});
+}
+function evalExpr(expr, env) {
+  expr = expr.trim();
+  if(!expr) return '';
+  if(/^f(["']).*\1$/.test(expr)) return evalFString(expr, env);
+  const bad = /(document|window|localStorage|sessionStorage|fetch|XMLHttpRequest|Function|constructor|eval|import|globalThis|process|require|=>|;|\{|\})/;
+  if(bad.test(expr)) throw new Error('SecurityError: ekspresi di luar subset mini Python tidak diizinkan');
+  let js = expr
+    .replace(/\bTrue\b/g,'true').replace(/\bFalse\b/g,'false').replace(/\bNone\b/g,'null')
+    .replace(/\bhex\s*\(/g,'py_hex(').replace(/\bbin\s*\(/g,'py_bin(').replace(/\bord\s*\(/g,'py_ord(').replace(/\bchr\s*\(/g,'py_chr(');
+  js = transformFloorDiv(js);
+  const names = Object.keys(env).filter(k=>/^[A-Za-z_]\w*$/.test(k));
+  const values = names.map(k=>env[k]);
+  try {
+    return Function(...names, 'py_hex','py_bin','py_ord','py_chr', `'use strict'; return (${js});`)(...values, py_hex, py_bin, py_ord, py_chr);
+  } catch(e) {
+    if(e instanceof ReferenceError) throw new Error('NameError: ada variabel/fungsi yang belum didefinisikan');
+    throw new Error('SyntaxError/RuntimeError: ' + (e.message || e));
+  }
+}
+function transformFloorDiv(s) {
+  // Cukup untuk ekspresi sederhana: a // b, (a+b) // c, x // 2.
+  let prev;
+  const re = /([A-Za-z_][\w\[\]]*|0x[0-9a-fA-F]+|0b[01]+|\d+|\([^()]+\))\s*\/\/\s*([A-Za-z_][\w\[\]]*|0x[0-9a-fA-F]+|0b[01]+|\d+|\([^()]+\))/g;
+  do { prev=s; s=s.replace(re, 'Math.floor(($1)/($2))'); } while(s!==prev && s.includes('//'));
+  return s;
+}
+function evalFString(expr, env) {
+  const quote=expr[1]; let body=expr.slice(2,-1);
+  return body.replace(/\{([^{}]+)\}/g, (_, inner) => {
+    let [ex, fmt] = inner.split(':');
+    let val = evalExpr(ex.trim(), env);
+    if(fmt) return applyFormat(val, fmt.trim());
+    return String(val);
+  });
+}
+function applyFormat(val, fmt) {
+  const m = fmt.match(/^0?(\d+)?([Xxb])$/);
+  if(!m) return String(val);
+  const width = m[1] ? parseInt(m[1],10) : 0; const type=m[2];
+  let n = Number(val);
+  let s = type.toLowerCase()==='x' ? (n>>>0).toString(16) : (n>>>0).toString(2);
+  if(type==='X') s=s.toUpperCase();
+  return s.padStart(width, '0');
+}
+function py_hex(x) { let n=Number(x); return (n<0?'-0x'+(-n).toString(16):'0x'+n.toString(16)); }
+function py_bin(x) { let n=Number(x); return (n<0?'-0b'+(-n).toString(2):'0b'+n.toString(2)); }
+function py_ord(x) { const s=String(x); if(!s.length) throw new Error('TypeError: ord() butuh karakter'); return s.codePointAt(0); }
+function py_chr(x) { return String.fromCodePoint(Number(x)); }
+
+if(username) { $('username').value=username; enterApp(username); } else { $('username').focus(); }
+</script>
+</body>
+</html>
