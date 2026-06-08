@@ -10,7 +10,7 @@ const practices = [
   {
     id: 'secure-sdlc',
     title: 'Latihan Secure SDLC',
-    course: 'Metode Perancangan Program Aman',
+    course: 'Keamanan Perangkat Lunak',
     description:
       'Simulasi CBT dari materi Secure SDLC, STRIDE, CIA Triad, Secure Coding, SAST, dan DAST.',
     url: '/practice/secure-sdlc.html',
@@ -18,7 +18,7 @@ const practices = [
   },
   {
     id: 'kapita-selekta-pernika',
-    title: 'Latihan Pernika & Sandi Morse',
+    title: 'Latihan Pernika & Sandi',
     course: 'Kapita Selekta',
     description:
       'Simulator latihan UTS tentang Pernika, SDR, jammer, OTP, sandi Morse, dan komunikasi taktis.',
@@ -36,12 +36,12 @@ const practices = [
   },
   {
     id: 'cma-mastery-lab',
-    title: 'Latihan CMA',
-    course: 'CMA Lesson',
+    title: 'CMA Mastery Lab',
+    course: 'Computer Misuse Act',
     description:
-      'Simulator latihan Cryptography Modul Analysis.',
+      'Latihan CMA berbasis modul untuk pembelajaran bertahap, bertingkat, dan berlanjut.',
     url: '/practice/cma-mastery-lab.html',
-    type: 'Simulator'
+    type: 'Modul'
   }
 ];
 
@@ -56,7 +56,7 @@ export default function PracticePage() {
         </h2>
 
         <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
-          Tersedia latihan soal berbasis CBT dari materi kuliah di ClassHub.
+          Tempat latihan soal berbasis CBT dari materi kuliah. File latihan dibuat dari Gemini, lalu ditampilkan langsung di ClassHub.
         </p>
       </div>
 
@@ -116,6 +116,16 @@ export default function PracticePage() {
               );
             })}
           </div>
+
+          <div className="mt-4 rounded-2xl border border-amber-200 bg-amber-50 p-3 text-xs leading-5 text-amber-800 dark:border-amber-900 dark:bg-amber-950 dark:text-amber-200">
+            <p className="font-bold">Cara tambah latihan baru</p>
+
+            <p className="mt-1">
+              Taruh file HTML dari Gemini ke folder{' '}
+              <b>public/practice</b>, lalu tambahkan item baru di array{' '}
+              <b>practices</b> pada file <b>PracticePage.jsx</b>.
+            </p>
+          </div>
         </aside>
 
         <section className="min-h-0 overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900">
@@ -140,7 +150,7 @@ export default function PracticePage() {
               href={selected.url}
               target="_blank"
               rel="noreferrer"
-              className="inline-flex shrink-0 items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 transition hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700"
+              className="inline-flex shrink-0 items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 transition hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800"
             >
               <ExternalLink size={15} />
               Buka Tab Baru
