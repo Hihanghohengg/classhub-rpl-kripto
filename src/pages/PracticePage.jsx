@@ -33,7 +33,7 @@ const practices = [
       'Simulator latihan praktik tentang pipeline, data leakage, hyperparameter tuning, evaluasi model, RNN, dan LSTM.',
     url: '/practice/machine-learning.html',
     type: 'Simulator'
-  }
+  },
   {
     id: 'cma-mastery-lab',
     title: 'Latihan CMA',
@@ -116,7 +116,6 @@ export default function PracticePage() {
               );
             })}
           </div>
-
         </aside>
 
         <section className="min-h-0 overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900">
