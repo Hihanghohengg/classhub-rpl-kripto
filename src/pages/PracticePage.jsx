@@ -10,7 +10,7 @@ const practices = [
   {
     id: 'secure-sdlc',
     title: 'Latihan Secure SDLC',
-    course: 'Keamanan Perangkat Lunak',
+    course: 'Metode Perancangan Program Aman',
     description:
       'Simulasi CBT dari materi Secure SDLC, STRIDE, CIA Triad, Secure Coding, SAST, dan DAST.',
     url: '/practice/secure-sdlc.html',
@@ -18,7 +18,7 @@ const practices = [
   },
   {
     id: 'kapita-selekta-pernika',
-    title: 'Latihan Pernika & Sandi',
+    title: 'Latihan Pernika & Sandi Morse',
     course: 'Kapita Selekta',
     description:
       'Simulator latihan UTS tentang Pernika, SDR, jammer, OTP, sandi Morse, dan komunikasi taktis.',
@@ -34,6 +34,15 @@ const practices = [
     url: '/practice/machine-learning.html',
     type: 'Simulator'
   }
+  {
+    id: 'cma-mastery-lab',
+    title: 'Latihan CMA',
+    course: 'CMA Lesson',
+    description:
+      'Simulator latihan Cryptography Modul Analysis.',
+    url: '/practice/cma-mastery-lab.html',
+    type: 'Simulator'
+  }
 ];
 
 export default function PracticePage() {
@@ -47,7 +56,7 @@ export default function PracticePage() {
         </h2>
 
         <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
-          Tempat latihan soal berbasis CBT dari materi kuliah. File latihan dibuat dari Gemini, lalu ditampilkan langsung di ClassHub.
+          Tersedia latihan soal berbasis CBT dari materi kuliah di ClassHub.
         </p>
       </div>
 
