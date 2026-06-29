@@ -1,6 +1,20 @@
 import { serve } from "https://deno.land/std@0.224.0/http/server.ts";
 
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers":
+    "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Methods": "POST, OPTIONS"
+};
+
 serve(async (req) => {
+  // Handle preflight request
+  if (req.method === "OPTIONS") {
+    return new Response("ok", {
+      headers: corsHeaders
+    });
+  }
+
   try {
     const {
       title = "",
@@ -15,14 +29,13 @@ serve(async (req) => {
       throw new Error("Telegram Secret belum diset.");
     }
 
-    const text =
-`${title}
+    const text = `${title}
 
 ${body}
 
 ${url}`;
 
-    const res = await fetch(
+    const telegramRes = await fetch(
       `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`,
       {
         method: "POST",
@@ -38,16 +51,17 @@ ${url}`;
       }
     );
 
-    const result = await res.json();
+    const result = await telegramRes.json();
 
     return new Response(JSON.stringify(result), {
+      status: 200,
       headers: {
+        ...corsHeaders,
         "Content-Type": "application/json"
       }
     });
 
   } catch (err) {
-
     return new Response(
       JSON.stringify({
         success: false,
@@ -56,6 +70,7 @@ ${url}`;
       {
         status: 500,
         headers: {
+          ...corsHeaders,
           "Content-Type": "application/json"
         }
       }
