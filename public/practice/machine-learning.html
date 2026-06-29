@@ -1,0 +1,1271 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Latihan Machine Learning - ClassHub</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600;700&display=swap"
+    rel="stylesheet"
+  />
+
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+  />
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    :root {
+      --bg: #020617;
+      --panel: rgba(15, 23, 42, 0.82);
+      --line: rgba(148, 163, 184, 0.18);
+      --cyan: #38bdf8;
+      --violet: #a855f7;
+      --emerald: #34d399;
+      --rose: #fb7185;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      min-height: 100%;
+      background:
+        radial-gradient(circle at top left, rgba(56, 189, 248, 0.16), transparent 34%),
+        radial-gradient(circle at top right, rgba(168, 85, 247, 0.18), transparent 36%),
+        radial-gradient(circle at bottom, rgba(16, 185, 129, 0.12), transparent 34%),
+        var(--bg);
+      color: #f8fafc;
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      overflow-x: hidden;
+      touch-action: manipulation;
+    }
+
+    body { min-height: 100vh; }
+
+    .mono { font-family: "JetBrains Mono", monospace; }
+
+    .mesh-bg {
+      position: fixed;
+      inset: 0;
+      z-index: -3;
+      background-image:
+        linear-gradient(rgba(56, 189, 248, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(168, 85, 247, 0.045) 1px, transparent 1px);
+      background-size: 36px 36px;
+      mask-image: linear-gradient(to bottom, rgba(0,0,0,0.8), transparent 90%);
+      pointer-events: none;
+    }
+
+    .neural-bg {
+      position: fixed;
+      inset: 0;
+      z-index: -2;
+      pointer-events: none;
+      opacity: 0.55;
+      background:
+        radial-gradient(circle at 16% 18%, rgba(56, 189, 248, 0.34) 0 2px, transparent 3px),
+        radial-gradient(circle at 30% 38%, rgba(168, 85, 247, 0.32) 0 2px, transparent 3px),
+        radial-gradient(circle at 62% 24%, rgba(52, 211, 153, 0.34) 0 2px, transparent 3px);
+    }
+
+    .floating-orb {
+      position: fixed;
+      width: 420px;
+      height: 420px;
+      border-radius: 999px;
+      filter: blur(70px);
+      opacity: 0.18;
+      z-index: -1;
+      animation: float 10s ease-in-out infinite alternate;
+      pointer-events: none;
+    }
+
+    .orb-a { left: -160px; top: 12%; background: #38bdf8; }
+    .orb-b { right: -170px; bottom: 8%; background: #a855f7; animation-delay: -3s; }
+
+    @keyframes float {
+      from { transform: translate3d(0, 0, 0) scale(1); }
+      to { transform: translate3d(34px, -28px, 0) scale(1.08); }
+    }
+
+    .glass {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      box-shadow: 0 22px 60px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255,255,255,0.05);
+      backdrop-filter: blur(18px);
+    }
+
+    .btn-game { transition: all 0.16s ease; }
+
+    .btn-game:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 16px 40px rgba(15, 23, 42, 0.35);
+    }
+
+    .btn-game:active:not(:disabled) { transform: scale(0.97); }
+    .btn-game:disabled { cursor: default; }
+
+    .fade-in { animation: fadeIn 0.3s ease both; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .gradient-text {
+      background: linear-gradient(90deg, #38bdf8, #a855f7, #34d399);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .opt-correct {
+      border-color: #34d399 !important;
+      background: rgba(52, 211, 153, 0.15) !important;
+      color: white !important;
+    }
+
+    .opt-wrong {
+      border-color: #fb7185 !important;
+      background: rgba(251, 113, 133, 0.15) !important;
+      color: white !important;
+    }
+
+    .opt-dim { opacity: 0.5; }
+
+
+    /* Basic content protection / anti-copy deterrent */
+    html,
+    body,
+    #app-container,
+    button,
+    input,
+    label,
+    p,
+    h1,
+    h2,
+    h3,
+    span,
+    div {
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+      -webkit-touch-callout: none;
+    }
+
+    input {
+      -webkit-user-select: text;
+      -moz-user-select: text;
+      -ms-user-select: text;
+      user-select: text;
+    }
+
+    img, svg, canvas, iframe {
+      -webkit-user-drag: none;
+      user-drag: none;
+      pointer-events: auto;
+    }
+
+    .privacy-blur #app-container,
+    .privacy-blur header {
+      filter: blur(14px);
+      opacity: 0.18;
+      pointer-events: none;
+    }
+
+    #privacy-guard {
+      position: fixed;
+      inset: 0;
+      z-index: 99999;
+      display: none;
+      place-items: center;
+      padding: 24px;
+      background:
+        radial-gradient(circle at top, rgba(56, 189, 248, 0.14), transparent 34%),
+        rgba(2, 6, 23, 0.92);
+      backdrop-filter: blur(18px);
+    }
+
+    #privacy-guard.show {
+      display: grid;
+    }
+
+    .privacy-card {
+      max-width: 420px;
+      width: 100%;
+      border: 1px solid rgba(56, 189, 248, 0.28);
+      border-radius: 28px;
+      background: rgba(15, 23, 42, 0.92);
+      box-shadow: 0 24px 80px rgba(0, 0, 0, 0.45);
+      padding: 26px;
+      text-align: center;
+    }
+
+    @media print {
+      body * {
+        visibility: hidden !important;
+      }
+
+      body::before {
+        content: "Konten latihan tidak tersedia untuk dicetak.";
+        visibility: visible !important;
+        position: fixed;
+        inset: 0;
+        display: grid;
+        place-items: center;
+        background: #020617;
+        color: #f8fafc;
+        font: 700 18px system-ui;
+      }
+    }
+
+  </style>
+</head>
+
+<body class="flex min-h-screen flex-col" oncontextmenu="return false;" oncopy="return false;" oncut="return false;" onpaste="return false;" ondragstart="return false;">
+  <div class="mesh-bg"></div>
+  <div class="neural-bg"></div>
+  <div class="floating-orb orb-a"></div>
+  <div class="floating-orb orb-b"></div>
+
+  <header class="sticky top-0 z-20 border-b border-slate-800/80 bg-slate-950/75 px-4 py-3 backdrop-blur-xl">
+    <div class="mx-auto flex w-full max-w-6xl items-center justify-between gap-3">
+      <div class="flex min-w-0 items-center gap-3">
+        <div class="grid h-11 w-11 shrink-0 place-items-center rounded-2xl border border-cyan-400/25 bg-cyan-400/10 text-cyan-300 shadow-lg shadow-cyan-950/30">
+          <i class="fa-solid fa-graduation-cap text-xl"></i>
+        </div>
+
+        <div class="min-w-0">
+          <h1 class="truncate text-base font-black uppercase tracking-wide text-white md:text-lg">
+            Machine Learning Lab
+          </h1>
+
+          <p class="mono mt-0.5 truncate text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-400">
+            Sesi 1: Persiapan Teori PG
+          </p>
+        </div>
+      </div>
+
+      <div id="stats-header" class="hidden items-center gap-2 text-sm">
+        <div class="glass inline-flex items-center gap-2 rounded-2xl px-4 py-2">
+          <i class="fa-solid fa-chart-line text-cyan-400"></i>
+          <span class="mono font-bold text-slate-400">Skor:</span>
+          <span id="score-display" class="mono font-black text-white text-lg">0</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main id="app-container" class="relative z-10 mx-auto flex w-full max-w-6xl flex-1 flex-col items-center justify-center overflow-y-auto p-4"></main>
+
+  <div id="privacy-guard" aria-hidden="true">
+    <div class="privacy-card">
+      <div class="mx-auto mb-5 grid h-16 w-16 place-items-center rounded-3xl border border-cyan-400/25 bg-cyan-400/10 text-cyan-300">
+        <i class="fa-solid fa-shield-halved text-3xl"></i>
+      </div>
+
+      <h2 class="text-2xl font-black text-white">
+        Konten Dikunci Sementara
+      </h2>
+
+      <p id="privacy-message" class="mt-3 text-sm leading-6 text-slate-300">
+        Aksi salin, cetak, atau tangkapan layar dibatasi selama latihan berlangsung.
+      </p>
+    </div>
+  </div>
+
+
+  <script>
+    const PRACTICE_ID = "machine-learning";
+
+    const SUPABASE_URL = "https://znewoivpdunjxynrwlop.supabase.co";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpuZXdvaXZwZHVuanh5bnJ3bG9wIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg5MDI3NDksImV4cCI6MjA5NDQ3ODc0OX0.14Z8pOOday6A8C5bpzYwkcoifYpxdfTOOV5ljuHhrps";
+
+    const supabaseClient = window.supabase.createClient(
+      SUPABASE_URL,
+      SUPABASE_ANON_KEY
+    );
+
+    const quizData = [
+      {
+        question: "Berdasarkan EDA Titanic, fitur apa yang paling kuat memprediksi survival?",
+        options: [
+          "Tarif tiket dan posisi kelas.",
+          "Gender berdasarkan prioritas evakuasi.",
+          "Jumlah keluarga yang bepergian.",
+          "Pelabuhan asal keberangkatan."
+        ],
+        correctIndex: 1,
+        explanation: "<strong>JAWABAN BENAR: Gender.</strong> Analisis Titanic menunjukkan protokol evakuasi perempuan dan anak-anak membuat gender menjadi prediktor survival yang sangat kuat."
+      },
+      {
+        question: "Apa red flag utama yang menyebabkan data leakage saat tuning?",
+        options: [
+          "Preprocessing dilakukan sebelum CV.",
+          "Ruang parameter terlalu luas.",
+          "StratifiedKFold dipakai klasifikasi.",
+          "Scoring ROC-AUC dipakai model."
+        ],
+        correctIndex: 0,
+        explanation: "<strong>JAWABAN BENAR: Preprocessing sebelum CV.</strong> Scaling/imputasi yang di-fit sebelum Cross-Validation membuat informasi validasi bocor ke proses training. Solusinya gunakan Pipeline."
+      },
+      {
+        question: "Apa tujuan utama penggunaan class_weight pada Neural Network?",
+        options: [
+          "Mempercepat konvergensi gradien.",
+          "Memberi penalti lebih ke minoritas.",
+          "Mengurangi dimensi fitur otomatis.",
+          "Mengubah threshold sigmoid."
+        ],
+        correctIndex: 1,
+        explanation: "<strong>JAWABAN BENAR: Penalti lebih ke kelas minoritas.</strong> Pada dataset tidak seimbang, class_weight membuat kesalahan pada kelas minoritas dihukum lebih besar."
+      },
+      {
+        question: "Mengapa F1-Score lebih tepat daripada Accuracy pada data medis imbalanced?",
+        options: [
+          "Accuracy mudah tertipu kelas dominan.",
+          "F1 menghitung area kurva ROC.",
+          "Accuracy tidak membaca probabilitas.",
+          "F1 mengurangi waktu evaluasi."
+        ],
+        correctIndex: 0,
+        explanation: "<strong>JAWABAN BENAR: Accuracy mudah tertipu kelas dominan.</strong> Pada dataset imbalanced, model bisa tampak akurat hanya karena sering menebak kelas mayoritas. F1 menyeimbangkan precision dan recall."
+      },
+      {
+        question: "Kelemahan Vanilla RNN yang ditangani oleh LSTM adalah?",
+        options: [
+          "Overfitting pada dataset kecil.",
+          "Vanishing gradient jangka panjang.",
+          "Memori besar untuk gambar 2D.",
+          "Missing values pada data tabular."
+        ],
+        correctIndex: 1,
+        explanation: "<strong>JAWABAN BENAR: Vanishing gradient.</strong> LSTM memakai mekanisme gates untuk mempertahankan informasi penting pada sekuens panjang."
+      },
+      {
+        question: "Fungsi stratify=y pada train_test_split adalah?",
+        options: [
+          "Memisahkan fitur kategorikal.",
+          "Menjaga proporsi kelas target.",
+          "Menunda proses fit_transform.",
+          "Membagi data berdasarkan waktu."
+        ],
+        correctIndex: 1,
+        explanation: "<strong>JAWABAN BENAR: Menjaga proporsi kelas target.</strong> Stratify memastikan distribusi kelas di train dan test tetap mirip dengan data aslinya."
+      },
+      {
+        question: "Mengapa fitur Cabin di Titanic sering dihapus?",
+        options: [
+          "Terlalu mirip dengan Pclass.",
+          "Missing values terlalu banyak.",
+          "Tidak bisa di-encoding sama sekali.",
+          "Hanya cocok untuk regresi."
+        ],
+        correctIndex: 1,
+        explanation: "<strong>JAWABAN BENAR: Missing values terlalu banyak.</strong> Jika nilai kosong sangat masif, imputasi dapat menciptakan noise dan bias."
+      },
+      {
+        question: "Peran utama EarlyStopping dalam Deep Learning adalah?",
+        options: [
+          "Menghentikan exploding gradient.",
+          "Mengurangi learning rate otomatis.",
+          "Mencegah training saat validasi memburuk.",
+          "Menghemat VRAM saat training."
+        ],
+        correctIndex: 2,
+        explanation: "<strong>JAWABAN BENAR: Mencegah training saat validasi memburuk.</strong> EarlyStopping menghentikan training ketika performa validasi tidak membaik agar model tidak overfit."
+      },
+      {
+        question: "Bagaimana Pipeline mencegah data leakage?",
+        options: [
+          "Fit hanya dilakukan saat testing.",
+          "Transformasi dilakukan per fold.",
+          "Missing values dihapus terpusat.",
+          "Fitur numerik diproses paralel."
+        ],
+        correctIndex: 1,
+        explanation: "<strong>JAWABAN BENAR: Transformasi dilakukan per fold.</strong> Pipeline memastikan scaler/imputer hanya belajar dari training fold, bukan validasi fold."
+      },
+      {
+        question: "Perbedaan utama GridSearchCV dan RandomizedSearchCV adalah?",
+        options: [
+          "GridSearch menguji semua kombinasi.",
+          "RandomizedSearch selalu paling akurat.",
+          "GridSearch hanya untuk model linear.",
+          "RandomizedSearch tanpa validasi."
+        ],
+        correctIndex: 0,
+        explanation: "<strong>JAWABAN BENAR: GridSearch menguji semua kombinasi.</strong> GridSearch exhaustive, sedangkan RandomizedSearch mengambil sampel acak sehingga lebih hemat waktu."
+      },
+      {
+        question: "Pasien diprediksi sehat padahal sebenarnya kanker. Ini disebut?",
+        options: [
+          "True Negative.",
+          "False Positive.",
+          "False Negative.",
+          "True Positive."
+        ],
+        correctIndex: 2,
+        explanation: "<strong>JAWABAN BENAR: False Negative.</strong> Pada kasus medis, ini berbahaya karena pasien sakit gagal terdeteksi."
+      },
+      {
+        question: "Mengapa median sering lebih aman dari mean untuk imputasi?",
+        options: [
+          "Median lebih tahan outlier.",
+          "Median mempercepat gradient.",
+          "Median hanya untuk kategori.",
+          "Median otomatis normalisasi."
+        ],
+        correctIndex: 0,
+        explanation: "<strong>JAWABAN BENAR: Median lebih tahan outlier.</strong> Mean mudah tertarik oleh nilai ekstrem, sedangkan median lebih robust."
+      },
+      {
+        question: "Output layer binary classification biasanya memakai aktivasi?",
+        options: [
+          "ReLU.",
+          "Softmax.",
+          "Sigmoid.",
+          "Tanh."
+        ],
+        correctIndex: 2,
+        explanation: "<strong>JAWABAN BENAR: Sigmoid.</strong> Sigmoid menghasilkan probabilitas antara 0 dan 1, cocok untuk klasifikasi biner."
+      },
+      {
+        question: "Loss function yang cocok dengan sigmoid binary classification adalah?",
+        options: [
+          "Mean Squared Error.",
+          "Categorical Crossentropy.",
+          "Binary Crossentropy.",
+          "Hinge Loss."
+        ],
+        correctIndex: 2,
+        explanation: "<strong>JAWABAN BENAR: Binary Crossentropy.</strong> Loss ini cocok untuk label 0/1 dan output probabilitas sigmoid."
+      },
+      {
+        question: "Tujuan Random Forest memakai banyak tree adalah?",
+        options: [
+          "Menggabungkan model berbeda.",
+          "Melakukan imputasi otomatis.",
+          "Menurunkan variansi prediksi.",
+          "Memvisualkan aturan model."
+        ],
+        correctIndex: 2,
+        explanation: "<strong>JAWABAN BENAR: Menurunkan variansi prediksi.</strong> Banyak tree membuat prediksi lebih stabil daripada satu decision tree yang mudah overfit."
+      },
+      {
+        question: "Dalam training Neural Network, epoch berarti?",
+        options: [
+          "Jumlah hidden layer model.",
+          "Satu siklus melewati data latih.",
+          "Waktu eksekusi GridSearch.",
+          "Threshold klasifikasi akhir."
+        ],
+        correctIndex: 1,
+        explanation: "<strong>JAWABAN BENAR: Satu siklus melewati data latih.</strong> Jika 10 epoch, model melihat seluruh data latih sebanyak 10 kali."
+      },
+      {
+        question: "Mengapa StandardScaler penting untuk KNN?",
+        options: [
+          "Mencegah dominasi skala fitur.",
+          "Mengubah string jadi angka.",
+          "Menghapus fitur redundan.",
+          "Menghasilkan probabilitas."
+        ],
+        correctIndex: 0,
+        explanation: "<strong>JAWABAN BENAR: Mencegah dominasi skala fitur.</strong> KNN berbasis jarak, sehingga fitur berskala besar dapat mendominasi hasil."
+      },
+      {
+        question: "Pada Titanic, pola ukuran keluarga terhadap survival adalah?",
+        options: [
+          "Keluarga besar paling aman.",
+          "Sendirian selalu paling aman.",
+          "Keluarga menengah lebih baik.",
+          "Ukuran keluarga tidak relevan."
+        ],
+        correctIndex: 2,
+        explanation: "<strong>JAWABAN BENAR: Keluarga menengah lebih baik.</strong> Sendirian kurang terbantu, sedangkan keluarga terlalu besar sulit dikoordinasikan."
+      },
+      {
+        question: "SVM mencari batas pemisah antar kelas yang disebut?",
+        options: [
+          "Hyperplane margin maksimum.",
+          "Node Gini paling rendah.",
+          "Activation function output.",
+          "Principal component utama."
+        ],
+        correctIndex: 0,
+        explanation: "<strong>JAWABAN BENAR: Hyperplane margin maksimum.</strong> SVM mencari pemisah dengan margin selebar mungkin terhadap support vectors."
+      },
+      {
+        question: "Fungsi feature_importances_ pada tree-based model adalah?",
+        options: [
+          "Membantu imputasi X_test.",
+          "Mengukur data leakage.",
+          "Menilai kontribusi fitur.",
+          "Menghitung estimator gagal."
+        ],
+        correctIndex: 2,
+        explanation: "<strong>JAWABAN BENAR: Menilai kontribusi fitur.</strong> Feature importance menunjukkan fitur mana yang paling membantu pemisahan kelas."
+      },
+      {
+        question: "Accuracy 99% tetapi F1 kelas target 10% biasanya berarti?",
+        options: [
+          "Ada test set leakage.",
+          "Model sangat underfit.",
+          "Terjadi accuracy paradox.",
+          "Dropout terlalu besar."
+        ],
+        correctIndex: 2,
+        explanation: "<strong>JAWABAN BENAR: Accuracy paradox.</strong> Pada data imbalanced, model bisa tampak akurat karena menebak kelas mayoritas, tetapi gagal mendeteksi kelas target."
+      },
+      {
+        question: "Normalisasi data membantu Deep Learning karena?",
+        options: [
+          "Input wajib bernilai 0-1.",
+          "Gradient lebih stabil.",
+          "VRAM langsung berkurang.",
+          "RandomizedSearch wajib scaling."
+        ],
+        correctIndex: 1,
+        explanation: "<strong>JAWABAN BENAR: Gradient lebih stabil.</strong> Skala fitur yang ekstrem dapat mengganggu optimasi dan memperlambat konvergensi."
+      },
+      {
+        question: "Cross-Validation cv=5 berarti?",
+        options: [
+          "Train 5% dan test 95%.",
+          "Lima fold validasi bergantian.",
+          "Minoritas diduplikasi 5 kali.",
+          "Mengambil 5 parameter terbaik."
+        ],
+        correctIndex: 1,
+        explanation: "<strong>JAWABAN BENAR: Lima fold validasi bergantian.</strong> Model dilatih lima kali, setiap kali satu fold berbeda menjadi validasi."
+      },
+      {
+        question: "Mengapa Random Forest tidak wajib scaling?",
+        options: [
+          "Scaler dipanggil otomatis.",
+          "Tree memakai threshold nilai.",
+          "Nilai besar akan dibuang.",
+          "Tree hanya membaca string."
+        ],
+        correctIndex: 1,
+        explanation: "<strong>JAWABAN BENAR: Tree memakai threshold nilai.</strong> Tree tidak berbasis jarak seperti KNN atau SVM."
+      },
+      {
+        question: "Input shape umum untuk LSTM adalah?",
+        options: [
+          "Batch, pixels, channels.",
+          "Batch, timesteps, features.",
+          "Rows, columns, categories.",
+          "Timesteps, labels, target."
+        ],
+        correctIndex: 1,
+        explanation: "<strong>JAWABAN BENAR: Batch, timesteps, features.</strong> LSTM memproses data sekuensial dengan dimensi waktu."
+      },
+      {
+        question: "Fungsi DummyClassifier adalah?",
+        options: [
+          "Membuang outlier otomatis.",
+          "Menyediakan baseline model.",
+          "Melakukan one-hot encoding.",
+          "Mengurangi beban neural net."
+        ],
+        correctIndex: 1,
+        explanation: "<strong>JAWABAN BENAR: Menyediakan baseline model.</strong> Model asli harus mengalahkan performa tebakan sederhana."
+      },
+      {
+        question: "Precision mengukur apa?",
+        options: [
+          "Akurasi semua prediksi.",
+          "Kecepatan konvergensi.",
+          "Ketepatan prediksi positif.",
+          "Jumlah positif yang tertangkap."
+        ],
+        correctIndex: 2,
+        explanation: "<strong>JAWABAN BENAR: Ketepatan prediksi positif.</strong> Precision menjawab: dari semua yang diprediksi positif, berapa yang benar-benar positif."
+      },
+      {
+        question: "Recall terutama menekan kesalahan apa?",
+        options: [
+          "False Positive.",
+          "True Negative.",
+          "False Negative.",
+          "True Positive."
+        ],
+        correctIndex: 2,
+        explanation: "<strong>JAWABAN BENAR: False Negative.</strong> Recall penting saat kelas positif tidak boleh lolos dari deteksi."
+      },
+      {
+        question: "Nilai AUC ROC ideal adalah?",
+        options: [
+          "0.0.",
+          "0.5.",
+          "1.0.",
+          "Tidak terhingga."
+        ],
+        correctIndex: 2,
+        explanation: "<strong>JAWABAN BENAR: 1.0.</strong> AUC 1.0 berarti model memisahkan kelas secara sempurna, sedangkan 0.5 setara tebakan acak."
+      },
+      {
+        question: "Fitur kategorikal seperti male/female harus diubah dengan?",
+        options: [
+          "MinMaxScaler.",
+          "Encoding kategori.",
+          "PCA langsung.",
+          "Imputasi median."
+        ],
+        correctIndex: 1,
+        explanation: "<strong>JAWABAN BENAR: Encoding kategori.</strong> Label Encoding atau One-Hot Encoding membuat kategori teks bisa dibaca algoritma."
+      }
+    ];
+
+    const container = document.getElementById("app-container");
+    const statsHeader = document.getElementById("stats-header");
+    const scoreDisplay = document.getElementById("score-display");
+
+
+    const privacyGuard = document.getElementById("privacy-guard");
+    const privacyMessage = document.getElementById("privacy-message");
+    let privacyTimer = null;
+
+    function showPrivacyGuard(message = "Aksi salin, cetak, atau tangkapan layar dibatasi selama latihan berlangsung.", duration = 1600) {
+      if (!privacyGuard) return;
+
+      if (privacyMessage) {
+        privacyMessage.innerText = message;
+      }
+
+      document.body.classList.add("privacy-blur");
+      privacyGuard.classList.add("show");
+      privacyGuard.setAttribute("aria-hidden", "false");
+
+      clearTimeout(privacyTimer);
+      privacyTimer = setTimeout(() => {
+        privacyGuard.classList.remove("show");
+        privacyGuard.setAttribute("aria-hidden", "true");
+        document.body.classList.remove("privacy-blur");
+      }, duration);
+    }
+
+    function blockProtectedAction(event, message) {
+      event.preventDefault();
+      event.stopPropagation();
+      showPrivacyGuard(message);
+      return false;
+    }
+
+    ["copy", "cut", "paste", "dragstart", "selectstart"].forEach((eventName) => {
+      document.addEventListener(eventName, (event) => {
+        if (event.target && event.target.id === "player-name" && eventName !== "copy" && eventName !== "cut") {
+          return;
+        }
+
+        blockProtectedAction(event, "Konten latihan tidak bisa disalin selama sesi berlangsung.");
+      }, { capture: true });
+    });
+
+    document.addEventListener("contextmenu", (event) => {
+      blockProtectedAction(event, "Klik kanan dinonaktifkan untuk menjaga integritas latihan.");
+    }, { capture: true });
+
+    document.addEventListener("keydown", (event) => {
+      const key = String(event.key || "").toLowerCase();
+      const ctrlOrMeta = event.ctrlKey || event.metaKey;
+
+      const blockedShortcut =
+        (ctrlOrMeta && ["c", "x", "s", "p", "u", "a"].includes(key)) ||
+        (ctrlOrMeta && event.shiftKey && ["i", "j", "c"].includes(key)) ||
+        key === "printscreen" ||
+        key === "f12";
+
+      if (blockedShortcut) {
+        blockProtectedAction(event, "Shortcut salin, cetak, inspect, atau screenshot dibatasi.");
+      }
+    }, { capture: true });
+
+    document.addEventListener("keyup", (event) => {
+      if (String(event.key || "").toLowerCase() === "printscreen") {
+        showPrivacyGuard("Tombol screenshot terdeteksi. Konten dikunci sementara.", 2200);
+      }
+    }, { capture: true });
+
+    window.addEventListener("blur", () => {
+      showPrivacyGuard("Halaman kehilangan fokus. Konten dikunci sementara.", 1200);
+    });
+
+    document.addEventListener("visibilitychange", () => {
+      if (document.hidden) {
+        showPrivacyGuard("Konten dikunci saat halaman tidak aktif.", 1800);
+      }
+    });
+
+    window.addEventListener("beforeprint", (event) => {
+      showPrivacyGuard("Cetak halaman dinonaktifkan untuk latihan ini.", 2200);
+      event.preventDefault();
+    });
+
+    let state = {
+      playerName: "",
+      score: 0,
+      currentIndex: 0,
+      shuffledData: []
+    };
+
+    function shuffleArray(arr) {
+      const copy = [...arr];
+
+      for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+
+      return copy;
+    }
+
+    async function getLeaderboard() {
+      const { data, error } = await supabaseClient
+        .from("practice_scores")
+        .select("*")
+        .eq("practice_id", PRACTICE_ID)
+        .order("score", { ascending: false })
+        .order("created_at", { ascending: true })
+        .limit(50);
+
+      if (error) {
+        console.error("Gagal mengambil leaderboard:", error.message);
+        return [];
+      }
+
+      return data || [];
+    }
+
+    async function saveLeaderboardEntry({ name, score, maxScore }) {
+      const payload = {
+        practice_id: PRACTICE_ID,
+        player_name: name.trim(),
+        score,
+        max_score: maxScore,
+        percentage: Math.round((score / maxScore) * 100)
+      };
+
+      const { data: inserted, error: insertError } = await supabaseClient
+        .from("practice_scores")
+        .insert(payload)
+        .select("*")
+        .single();
+
+      if (insertError) {
+        console.error("Gagal menyimpan skor:", insertError.message);
+
+        return {
+          entry: null,
+          leaderboard: await getLeaderboard()
+        };
+      }
+
+      const leaderboard = await getLeaderboard();
+
+      return {
+        entry: inserted,
+        leaderboard
+      };
+    }
+
+    async function clearLeaderboard() {
+      alert("Reset leaderboard global tidak dibuka untuk user. Hapus data lewat Supabase Dashboard jika diperlukan.");
+    }
+
+    function formatDateTime(value) {
+      try {
+        return new Date(value).toLocaleString("id-ID", {
+          day: "2-digit",
+          month: "short",
+          hour: "2-digit",
+          minute: "2-digit"
+        });
+      } catch {
+        return "-";
+      }
+    }
+
+    function getMedal(rank) {
+      if (rank === 1) return "🥇";
+      if (rank === 2) return "🥈";
+      if (rank === 3) return "🥉";
+      return "#" + rank;
+    }
+
+    function getPodiumOrder(topThree) {
+      return [topThree[1], topThree[0], topThree[2]].filter(Boolean);
+    }
+
+    function getPodiumClass(rank) {
+      if (rank === 1) {
+        return {
+          height: "md:h-56",
+          border: "border-amber-300/40",
+          bg: "bg-amber-400/10",
+          text: "text-amber-200",
+          score: "text-amber-300",
+          icon: "bg-amber-400/15"
+        };
+      }
+
+      if (rank === 2) {
+        return {
+          height: "md:h-48",
+          border: "border-slate-300/30",
+          bg: "bg-slate-300/10",
+          text: "text-slate-200",
+          score: "text-slate-200",
+          icon: "bg-slate-300/10"
+        };
+      }
+
+      return {
+        height: "md:h-40",
+        border: "border-orange-300/30",
+        bg: "bg-orange-400/10",
+        text: "text-orange-200",
+        score: "text-orange-300",
+        icon: "bg-orange-400/10"
+      };
+    }
+
+    function renderMiniLeaderboard(leaderboard) {
+      if (!leaderboard.length) {
+        return `
+          <div class="rounded-2xl border border-slate-800 bg-slate-900/70 p-4 text-sm leading-6 text-slate-400">
+            Belum ada skor. Selesaikan latihan pertama untuk membuat ranking.
+          </div>
+        `;
+      }
+
+      return leaderboard.slice(0, 5).map((item, index) => `
+        <div class="mb-2 flex items-center justify-between gap-3 rounded-2xl border border-slate-800 bg-slate-900/70 px-3 py-2">
+          <div class="flex min-w-0 items-center gap-3">
+            <div class="grid h-8 w-8 shrink-0 place-items-center rounded-xl bg-slate-950 text-sm font-black text-cyan-300">
+              ${getMedal(index + 1)}
+            </div>
+
+            <div class="min-w-0">
+              <p class="truncate text-sm font-bold text-white">
+                ${item.player_name}
+              </p>
+
+              <p class="text-[11px] text-slate-500">
+                ${formatDateTime(item.created_at)}
+              </p>
+            </div>
+          </div>
+
+          <p class="mono text-sm font-black text-cyan-300">
+            ${item.score}
+          </p>
+        </div>
+      `).join("");
+    }
+
+    function renderLeaderboard(leaderboard, currentEntryId) {
+      if (!leaderboard.length) {
+        return `
+          <div class="rounded-3xl border border-slate-800 bg-slate-950/70 p-5 text-center text-sm text-slate-400">
+            Belum ada ranking.
+          </div>
+        `;
+      }
+
+      const topThree = leaderboard.slice(0, 3);
+      const rest = leaderboard.slice(3);
+      const podiumOrder = getPodiumOrder(topThree);
+
+      return `
+        <div class="w-full">
+          <div class="mb-5 flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <p class="mono text-[10px] font-black uppercase tracking-[0.26em] text-slate-500">
+                Global Leaderboard
+              </p>
+
+              <h3 class="mt-1 text-xl font-black text-white">
+                Ranking Latihan Machine Learning
+              </h3>
+            </div>
+          </div>
+
+          <div class="mb-5 grid items-end gap-3 md:grid-cols-3">
+            ${podiumOrder.map((item) => {
+              const rank = leaderboard.findIndex((entry) => entry.id === item.id) + 1;
+              const style = getPodiumClass(rank);
+              const isCurrent = item.id === currentEntryId;
+
+              return `
+                <div class="flex ${style.height} flex-col justify-between rounded-[1.5rem] border ${style.border} ${style.bg} p-4 text-center ${isCurrent ? "ring-4 ring-cyan-400/20" : ""}">
+                  <div>
+                    <div class="mx-auto mb-3 grid h-14 w-14 place-items-center rounded-2xl ${style.icon} text-3xl">
+                      ${getMedal(rank)}
+                    </div>
+
+                    <p class="mono text-xs font-black uppercase tracking-widest ${style.text}">
+                      Rank ${rank}
+                    </p>
+
+                    <p class="mt-2 truncate text-lg font-black text-white">
+                      ${item.player_name}
+                    </p>
+                  </div>
+
+                  <div>
+                    <p class="mono text-4xl font-black ${style.score}">
+                      ${item.score}
+                    </p>
+
+                    <p class="text-xs font-semibold text-slate-400">
+                      ${item.percentage}% • ${formatDateTime(item.created_at)}
+                    </p>
+                  </div>
+                </div>
+              `;
+            }).join("")}
+          </div>
+
+          ${
+            rest.length > 0
+              ? `
+                <div class="space-y-2">
+                  ${rest.map((item, index) => {
+                    const rank = index + 4;
+                    const isCurrent = item.id === currentEntryId;
+
+                    return `
+                      <div class="flex items-center justify-between gap-3 rounded-2xl border ${
+                        isCurrent
+                          ? "border-cyan-400/40 bg-cyan-400/10"
+                          : "border-slate-800 bg-slate-950/60"
+                      } px-4 py-3">
+                        <div class="flex min-w-0 items-center gap-3">
+                          <div class="mono grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-slate-900 font-black text-slate-300">
+                            #${rank}
+                          </div>
+
+                          <div class="min-w-0">
+                            <p class="truncate font-bold text-white">
+                              ${item.player_name}
+                            </p>
+
+                            <p class="text-xs text-slate-500">
+                              ${formatDateTime(item.created_at)}
+                            </p>
+                          </div>
+                        </div>
+
+                        <div class="text-right">
+                          <p class="mono text-xl font-black text-cyan-300">
+                            ${item.score}
+                          </p>
+
+                          <p class="text-xs text-slate-500">
+                            ${item.percentage}%
+                          </p>
+                        </div>
+                      </div>
+                    `;
+                  }).join("")}
+                </div>
+              `
+              : `
+                <div class="rounded-2xl border border-slate-800 bg-slate-950/60 p-4 text-center text-sm text-slate-500">
+                  Belum ada peserta di rank 4 dan seterusnya.
+                </div>
+              `
+          }
+        </div>
+      `;
+    }
+
+    async function renderMenu() {
+      statsHeader.classList.add("hidden");
+
+      const leaderboard = await getLeaderboard();
+
+      container.innerHTML = `
+        <section class="fade-in w-full max-w-5xl">
+          <div class="glass relative overflow-hidden rounded-[2rem] p-8 md:p-12">
+            <div class="absolute right-0 top-0 h-40 w-40 rounded-full bg-cyan-400/10 blur-3xl"></div>
+            <div class="absolute bottom-0 left-0 h-44 w-44 rounded-full bg-violet-500/10 blur-3xl"></div>
+
+            <div class="relative grid gap-8 lg:grid-cols-[1fr_380px] lg:items-start">
+              <div>
+                <div class="mx-auto mb-6 grid h-20 w-20 place-items-center rounded-3xl bg-cyan-400/10 text-cyan-300 border border-cyan-400/20 lg:mx-0">
+                  <i class="fa-solid fa-microscope text-4xl"></i>
+                </div>
+
+                <h2 class="text-3xl font-black tracking-tight text-white md:text-5xl mb-4">
+                  Ujian Teori <span class="gradient-text">Machine Learning</span>
+                </h2>
+
+                <p class="max-w-xl text-sm md:text-base leading-7 text-slate-300 mb-6">
+                  Sistem akan merotasi 10 soal acak dari bank soal Machine Learning.
+                  Setelah selesai, skor kamu akan masuk ke leaderboard global dan bisa dilihat semua pengguna.
+                  <br><br>
+                  <b>Perhatikan distraktor:</b> opsi jawaban dibuat lebih seimbang, jadi tidak bisa ditebak hanya dari panjang jawaban.
+                </p>
+
+                <label class="block max-w-md text-left">
+                  <span class="mb-2 block text-sm font-bold text-slate-200">
+                    Nama Peserta
+                  </span>
+
+                  <input
+                    id="player-name"
+                    type="text"
+                    maxlength="40"
+                    class="w-full rounded-2xl border border-slate-700 bg-slate-950/80 px-4 py-3 text-sm font-semibold text-white outline-none transition focus:border-cyan-400 focus:ring-4 focus:ring-cyan-400/10"
+                  />
+                </label>
+
+                <button
+                  onclick="initGame()"
+                  class="btn-game mt-5 inline-flex items-center gap-3 rounded-2xl bg-cyan-600 hover:bg-cyan-500 px-8 py-4 font-black text-white shadow-lg shadow-cyan-900/40 text-lg"
+                >
+                  <i class="fa-solid fa-play"></i>
+                  Mulai Kuis Teori
+                </button>
+              </div>
+
+              <div class="rounded-[1.75rem] border border-slate-800 bg-slate-950/60 p-5">
+                <div class="mb-4 flex items-center justify-between gap-3">
+                  <div>
+                    <p class="mono text-[10px] font-black uppercase tracking-[0.24em] text-slate-500">
+                      Global Rank
+                    </p>
+
+                    <h3 class="mt-1 font-black text-white">
+                      Leaderboard Terakhir
+                    </h3>
+                  </div>
+
+                  <div class="grid h-10 w-10 place-items-center rounded-2xl bg-cyan-400/10 text-cyan-300">
+                    <i class="fa-solid fa-ranking-star"></i>
+                  </div>
+                </div>
+
+                ${renderMiniLeaderboard(leaderboard)}
+              </div>
+            </div>
+          </div>
+        </section>
+      `;
+    }
+
+    function initGame() {
+      const nameInput = document.getElementById("player-name");
+      const playerName = nameInput && nameInput.value ? nameInput.value.trim() : "";
+
+      if (!playerName) {
+        alert("Isi nama peserta dulu supaya skor bisa masuk leaderboard.");
+        if (nameInput) nameInput.focus();
+        return;
+      }
+
+      state.playerName = playerName;
+      state.score = 0;
+      state.currentIndex = 0;
+      scoreDisplay.innerText = "0";
+
+      const tempQuestions = shuffleArray(quizData).slice(0, 10);
+
+      state.shuffledData = tempQuestions.map((q) => {
+        let opts = q.options.map((opt, idx) => ({
+          text: opt,
+          isCorrect: idx === q.correctIndex
+        }));
+
+        opts = shuffleArray(opts);
+
+        return {
+          question: q.question,
+          options: opts,
+          explanation: q.explanation
+        };
+      });
+
+      statsHeader.classList.remove("hidden");
+      renderQuestion();
+    }
+
+    function renderQuestion() {
+      if (state.currentIndex >= state.shuffledData.length) {
+        endGame();
+        return;
+      }
+
+      const q = state.shuffledData[state.currentIndex];
+
+      container.innerHTML = `
+        <section class="fade-in w-full max-w-3xl">
+          <div class="mb-4 flex items-end justify-between">
+            <p class="text-xs font-black uppercase tracking-[0.24em] text-cyan-300">
+              <i class="fa-solid fa-book-open mr-2"></i> Kuis Konseptual
+            </p>
+
+            <div class="mono rounded-full border border-slate-700 bg-slate-900/70 px-4 py-1 text-xs font-bold text-slate-300">
+              Soal ${state.currentIndex + 1} dari ${state.shuffledData.length}
+            </div>
+          </div>
+
+          <div class="glass rounded-[1.75rem] p-6 md:p-8 mb-6 relative">
+            <h3 class="text-lg md:text-xl font-semibold leading-relaxed text-white mb-6">
+              ${q.question}
+            </h3>
+
+            <div class="grid gap-3" id="options-container">
+              ${q.options.map((opt, i) => `
+                <button
+                  id="opt-${i}"
+                  onclick="handleAnswer(${i})"
+                  class="btn-game w-full flex items-start gap-4 rounded-2xl border border-slate-700 bg-slate-900/50 p-4 text-left text-slate-300 hover:bg-slate-800 transition-colors"
+                >
+                  <span class="mono grid h-8 w-8 shrink-0 place-items-center rounded-lg border border-slate-700 bg-slate-950 font-black text-cyan-400">
+                    ${String.fromCharCode(65 + i)}
+                  </span>
+
+                  <span class="text-sm leading-6 md:text-base mt-0.5">
+                    ${opt.text}
+                  </span>
+                </button>
+              `).join("")}
+            </div>
+          </div>
+
+          <div id="explanation-box" class="hidden fade-in glass rounded-[1.5rem] p-6 mb-6 border-l-4 border-l-cyan-400 bg-cyan-950/20">
+            <p class="text-sm md:text-base leading-7 text-slate-200">
+              ${q.explanation}
+            </p>
+          </div>
+
+          <div class="flex justify-end">
+            <button id="next-btn" onclick="nextQuestion()" class="hidden fade-in btn-game rounded-xl bg-white text-slate-900 px-8 py-3 font-bold shadow-lg hover:bg-slate-200">
+              Lanjut ke Soal Berikutnya <i class="fa-solid fa-arrow-right ml-2"></i>
+            </button>
+          </div>
+        </section>
+      `;
+    }
+
+    function handleAnswer(selectedIndex) {
+      const q = state.shuffledData[state.currentIndex];
+      const isCorrect = q.options[selectedIndex].isCorrect;
+
+      const containerDiv = document.getElementById("options-container");
+      const buttons = containerDiv.querySelectorAll("button");
+
+      buttons.forEach((btn) => {
+        btn.disabled = true;
+      });
+
+      if (isCorrect) {
+        state.score += 10;
+        scoreDisplay.innerText = state.score;
+      }
+
+      q.options.forEach((opt, idx) => {
+        const btn = document.getElementById("opt-" + idx);
+
+        if (opt.isCorrect) {
+          btn.classList.add("opt-correct");
+        } else if (idx === selectedIndex && !isCorrect) {
+          btn.classList.add("opt-wrong");
+        } else {
+          btn.classList.add("opt-dim");
+        }
+      });
+
+      document.getElementById("explanation-box").classList.remove("hidden");
+      document.getElementById("next-btn").classList.remove("hidden");
+    }
+
+    function nextQuestion() {
+      state.currentIndex += 1;
+      renderQuestion();
+    }
+
+    async function endGame() {
+      statsHeader.classList.add("hidden");
+
+      const maxScore = state.shuffledData.length * 10;
+
+      const result = await saveLeaderboardEntry({
+        name: state.playerName,
+        score: state.score,
+        maxScore
+      });
+
+      const entry = result.entry;
+      const leaderboard = result.leaderboard;
+
+      let finalMessage = "Evaluasi selesai. Seluruh jebakan konseptual dari materi telah dibongkar.";
+
+      if (state.score < 50) {
+        finalMessage = "Banyak konsep yang masih keliru akibat jebakan opsi. Kaji ulang pembahasan dan coba lagi.";
+      } else if (state.score >= 80) {
+        finalMessage = "Penguasaan teori analitik kamu sangat tajam. Kamu tidak mudah terkecoh oleh opsi yang tampak ilmiah.";
+      }
+
+      container.innerHTML = `
+        <section class="fade-in w-full max-w-6xl">
+          <div class="glass overflow-hidden rounded-[2rem] p-6 md:p-8">
+            <div class="grid gap-7 lg:grid-cols-[0.78fr_1.22fr] lg:items-start">
+              <div class="text-center lg:text-left">
+                <div class="mx-auto mb-6 grid h-24 w-24 place-items-center rounded-full bg-emerald-400/10 text-emerald-400 border border-emerald-400/30 lg:mx-0">
+                  <i class="fa-solid fa-flag-checkered text-5xl"></i>
+                </div>
+
+                <h2 class="text-3xl font-black text-white mb-2">
+                  Sesi Latihan Selesai!
+                </h2>
+
+                <p class="text-sm leading-7 text-slate-300 mb-6">
+                  ${finalMessage}
+                </p>
+
+                <div class="rounded-3xl border border-slate-800 bg-slate-950/80 p-5 shadow-inner mb-4">
+                  <p class="mono text-[10px] font-black uppercase tracking-[0.28em] text-slate-500 mb-2">
+                    Skor ${state.playerName}
+                  </p>
+
+                  <p class="mono text-6xl font-black text-cyan-400">
+                    ${state.score}<span class="text-2xl text-slate-600">/${maxScore}</span>
+                  </p>
+                </div>
+
+                <button
+                  onclick="renderMenu()"
+                  class="btn-game w-full rounded-2xl bg-slate-800 hover:bg-slate-700 border border-slate-600 px-5 py-4 font-black text-white shadow-lg"
+                >
+                  <i class="fa-solid fa-rotate-left mr-2"></i>
+                  Simulasi Baru
+                </button>
+              </div>
+
+              <div>
+                ${renderLeaderboard(leaderboard, entry ? entry.id : null)}
+              </div>
+            </div>
+          </div>
+        </section>
+      `;
+    }
+
+    renderMenu();
+  </script>
+</body>
+</html>

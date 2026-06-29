@@ -1,0 +1,845 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Metlit Survival Kit — Mind Map + Kuis Interaktif</title>
+<style>
+:root{
+  --bg:#081120; --bg2:#0f1730; --panel:rgba(15,23,42,.8); --panel-solid:#101a33; --stroke:rgba(255,255,255,.12);
+  --text:#ecfeff; --muted:#a9bad7; --brand:#22d3ee; --brand2:#8b5cf6; --brand3:#60a5fa;
+  --good:#22c55e; --bad:#ef4444; --warn:#f59e0b; --radius:22px; --shadow:0 22px 70px rgba(0,0,0,.35);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+html,body{max-width:100%;overflow-x:hidden}
+body,.card,.node,.flip,.summary-box,.quiz-box,.detail,.coverage-chip{
+  -webkit-user-select:none; user-select:none; -webkit-touch-callout:none;
+}
+img,svg{user-drag:none;-webkit-user-drag:none}
+::selection{background:transparent;color:inherit}
+body{
+  margin:0; font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+  background:
+    radial-gradient(circle at 12% 8%,rgba(34,211,238,.15),transparent 22%),
+    radial-gradient(circle at 80% 7%,rgba(139,92,246,.15),transparent 24%),
+    radial-gradient(circle at 50% 55%,rgba(96,165,250,.08),transparent 36%),
+    linear-gradient(180deg,#060a14 0%, var(--bg) 40%, #070b16 100%);
+  color:var(--text); min-height:100vh; line-height:1.55;
+}
+a{color:var(--brand)}
+.card{
+  background:linear-gradient(180deg,rgba(255,255,255,.07),rgba(255,255,255,.035));
+  border:1px solid var(--stroke); border-radius:var(--radius); box-shadow:var(--shadow); backdrop-filter: blur(14px);
+}
+.hero{max-width:1240px; margin:0 auto; padding:30px 18px 14px; display:grid; grid-template-columns:1.2fr .8fr; gap:18px; align-items:stretch}
+.hero-main{padding:30px; position:relative; overflow:hidden}
+.hero-main::after{content:''; position:absolute; inset:auto -8% -20% auto; width:260px; height:260px; border-radius:50%; background:radial-gradient(circle,rgba(34,211,238,.22),transparent 65%); filter:blur(8px); pointer-events:none}
+.badge{display:inline-flex; gap:8px; align-items:center; padding:8px 13px; border-radius:999px; background:rgba(34,211,238,.12); border:1px solid rgba(34,211,238,.26); color:#c6fbff; font-size:13px; font-weight:800}
+h1{font-size:clamp(34px,5.5vw,64px); line-height:.96; letter-spacing:-.045em; margin:14px 0 12px}
+.lead{font-size:18px; color:var(--muted); max-width:740px; margin:0}
+.actions{display:flex; gap:10px; flex-wrap:wrap; margin-top:22px}
+button,.btn{
+  appearance:none; border:none; cursor:pointer; text-decoration:none; font-weight:800; color:#06111d;
+  background:linear-gradient(135deg,var(--brand),var(--brand3)); padding:12px 16px; border-radius:14px;
+  box-shadow:0 12px 28px rgba(34,211,238,.16); transition:.2s transform,.2s filter,.2s box-shadow;
+}
+button:hover,.btn:hover{transform:translateY(-1px); filter:brightness(1.06)}
+button.secondary,.btn.secondary{background:rgba(255,255,255,.08); color:var(--text); border:1px solid rgba(255,255,255,.13); box-shadow:none}
+.hero-side{padding:22px; display:flex; flex-direction:column; gap:14px}
+.timer,.coverage-box,.focus-note,.cram,.detail,.quiz-box,.quiz-side,.summary-box{box-shadow:0 18px 50px rgba(0,0,0,.27)}
+.timer{background:rgba(15,23,42,.66); border:1px solid rgba(255,255,255,.1); border-radius:18px; padding:18px}
+.timer .time{font-size:46px; font-weight:900; letter-spacing:-.05em; margin:2px 0}
+small,.muted{color:var(--muted)}
+.section{max-width:1240px; margin:0 auto; padding:18px}
+.section-title{display:flex; align-items:flex-end; justify-content:space-between; gap:12px; margin:16px 0 12px}
+.section-title h2{font-size:30px; letter-spacing:-.03em; margin:0}
+.section-title p{margin:0; color:var(--muted)}
+.grid{display:grid; gap:14px}
+.grid.three{grid-template-columns:repeat(3,1fr)}
+.grid.two{grid-template-columns:repeat(2,1fr)}
+.coverage-box{padding:18px}
+.coverage-head{display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:12px}
+.coverage-head h3,.cram h3{margin:0}
+.coverage-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:10px}
+.coverage-chip{padding:12px 14px; border-radius:16px; background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.08)}
+.coverage-chip b{display:block; font-size:14px; margin-bottom:4px}
+.coverage-chip span{font-size:13px; color:#d7e7ff}
+.chip-ok{display:inline-flex; align-items:center; gap:7px; padding:8px 11px; border-radius:999px; font-size:12px; font-weight:800; background:rgba(34,197,94,.12); border:1px solid rgba(34,197,94,.28); color:#d9ffe2}
+.cram{padding:18px}
+.checklist{display:grid; gap:10px}
+.checklist label{display:flex; gap:10px; align-items:flex-start; padding:12px; border-radius:14px; background:rgba(255,255,255,.045); border:1px solid rgba(255,255,255,.09); color:#dbeafe}
+.checklist input{margin-top:5px; accent-color:var(--brand)}
+.pillrow{display:flex; gap:8px; flex-wrap:wrap}
+.pill{padding:8px 10px; border-radius:999px; background:rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.1); color:var(--muted); font-size:13px; font-weight:700}
+.mind-wrap{display:grid; grid-template-columns:minmax(0,1fr) 360px; gap:16px; align-items:stretch}
+.mindmap{position:relative; min-height:880px; padding:18px; overflow:hidden; isolation:isolate; background:
+  radial-gradient(circle at center,rgba(34,211,238,.09),transparent 25%),
+  linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.02));
+}
+.mindmap::before{content:''; position:absolute; inset:12px; border-radius:28px; border:1px solid rgba(255,255,255,.06); pointer-events:none}
+#mapSvg{position:absolute; inset:0; width:100%; height:100%; pointer-events:none; opacity:.92; overflow:visible}
+.map-group path{fill:none; stroke-width:3; stroke-linecap:round; stroke-linejoin:round; opacity:.42; filter:drop-shadow(0 0 0 rgba(0,0,0,0)); transition:stroke-width .22s ease, opacity .22s ease, filter .22s ease}
+.map-group circle{opacity:.88; transition:r .22s ease, filter .22s ease, opacity .22s ease}
+.map-group.active path,.map-group.locked path{stroke-width:5.2; opacity:.96; filter:drop-shadow(0 0 8px currentColor)}
+.map-group.active circle,.map-group.locked circle{r:7.5; filter:drop-shadow(0 0 10px currentColor); opacity:1}
+.node{
+  position:absolute; width:205px; min-height:92px; padding:14px 14px 11px; border-radius:20px; transform:translate(-50%,-50%);
+  border:1px solid rgba(255,255,255,.14); background:rgba(9,16,38,.92); box-shadow:0 14px 35px rgba(0,0,0,.26);
+  cursor:pointer; transition:transform .18s ease, border-color .18s ease, box-shadow .18s ease; z-index:2;
+}
+.node .emoji{font-size:24px; line-height:1}
+.node .ntitle{font-size:15px; font-weight:900; line-height:1.15; margin-top:6px}
+.node .mini{font-size:11px; color:var(--muted); margin-top:5px}
+.node:hover,.node.active,.node.locked{transform:translate(-50%,-50%) scale(1.045); border-color:rgba(255,255,255,.34); box-shadow:0 22px 46px rgba(0,0,0,.38)}
+.center-node{
+  position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); width:225px; min-height:124px; border-radius:28px;
+  display:grid; place-items:center; text-align:center; padding:18px; z-index:3;
+  background:linear-gradient(135deg,rgba(34,211,238,.23),rgba(139,92,246,.23)); border:1px solid rgba(255,255,255,.2);
+  box-shadow:0 22px 58px rgba(34,211,238,.14), inset 0 1px 0 rgba(255,255,255,.08);
+}
+.center-node strong{font-size:clamp(24px,2.1vw,30px); line-height:1.05; letter-spacing:-.03em}
+.center-node span{display:block; font-size:15px; margin-top:8px; color:#d9f7ff}
+.detail{padding:20px}
+.detail .chip{display:inline-flex; padding:6px 10px; border-radius:999px; font-size:12px; font-weight:900; background:rgba(255,255,255,.08); color:#e0f2fe}
+.detail h3{font-size:26px; line-height:1.1; margin:14px 0 8px}
+.detail p{color:var(--muted)}
+.detail ul{padding-left:20px; margin:0}
+.detail li{margin:7px 0}
+.remember{margin-top:14px; padding:14px; border-radius:16px; background:rgba(245,158,11,.12); border:1px solid rgba(245,158,11,.25); color:#ffedd5}
+.flashcards{display:grid; grid-template-columns:repeat(4,1fr); gap:12px}
+.flip{min-height:132px; perspective:900px; cursor:pointer}
+.flip-inner{position:relative; width:100%; min-height:132px; height:100%; transition:transform .52s; transform-style:preserve-3d}
+.flip.flipped .flip-inner{transform:rotateY(180deg)}
+.face{position:absolute; inset:0; backface-visibility:hidden; border-radius:18px; border:1px solid rgba(255,255,255,.1); display:flex; flex-direction:column; justify-content:center; padding:16px; background:linear-gradient(180deg,rgba(255,255,255,.07),rgba(255,255,255,.035))}
+.face.front strong{font-size:20px; line-height:1.15}
+.face.front span{color:var(--muted); font-size:13px; margin-top:8px}
+.face.back{transform:rotateY(180deg); color:#dbeafe}
+.quiz-wrap{display:grid; grid-template-columns:minmax(0,1fr) 320px; gap:16px}
+.quiz-box{padding:22px}
+.progress{height:11px; background:rgba(255,255,255,.08); border-radius:999px; overflow:hidden}
+.progress>div{height:100%; width:0%; background:linear-gradient(90deg,var(--brand),var(--brand2)); transition:.2s width}
+.q-meta{display:flex; justify-content:space-between; gap:12px; color:var(--muted); margin:12px 0}
+.q-title{font-size:23px; font-weight:900; line-height:1.28; margin:14px 0}
+.options{display:grid; gap:10px}
+.option{width:100%; text-align:left; background:rgba(255,255,255,.055); color:var(--text); box-shadow:none; border:1px solid rgba(255,255,255,.1); font-weight:760; padding:14px 15px}
+.option.correct{background:rgba(34,197,94,.18); border-color:rgba(34,197,94,.48)}
+.option.wrong{background:rgba(239,68,68,.18); border-color:rgba(239,68,68,.48)}
+.explain{display:none; margin-top:14px; padding:14px; border-radius:16px; background:rgba(255,255,255,.06); color:#dbeafe; border:1px solid rgba(255,255,255,.1)}
+.explain.show{display:block}
+.quiz-side{padding:18px}
+.score{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin:12px 0}
+.stat{padding:14px; border-radius:16px; background:rgba(255,255,255,.055); border:1px solid rgba(255,255,255,.09)}
+.stat b{display:block; font-size:28px}
+.review-list{max-height:290px; overflow:auto; padding-right:4px}
+.review-item{padding:10px; margin:8px 0; border-radius:12px; background:rgba(255,255,255,.055); border-left:4px solid var(--warn); color:#e2e8f0; font-size:13px}
+.summary-box{padding:18px}
+.summary-box details{background:rgba(255,255,255,.045); border:1px solid rgba(255,255,255,.09); border-radius:16px; padding:12px 14px; margin:10px 0}
+.summary-box summary{cursor:pointer; font-weight:900}
+.summary-box p,.summary-box li{color:#dbeafe}
+.footer{max-width:1240px; margin:0 auto; padding:18px 18px 36px; color:var(--muted); font-size:13px}
+.kbd{font-family:ui-monospace,SFMono-Regular,Menlo,monospace; padding:2px 6px; border-radius:7px; background:rgba(255,255,255,.1); color:#e0f2fe}
+.focus-note{padding:14px 16px; border-radius:16px; background:rgba(34,211,238,.09); border:1px solid rgba(34,211,238,.22); color:#dffcff; font-size:13px}
+.focus-note b{color:#fff}
+body.focus-mode{background:radial-gradient(circle at 50% 0%,rgba(34,211,238,.16),transparent 34%),linear-gradient(180deg,#050816 0%,#090f1f 100%)}
+body.focus-mode::after{content:'MODE FOKUS AKTIF'; position:fixed; right:14px; bottom:14px; z-index:50; padding:9px 12px; border-radius:999px; background:rgba(15,23,42,.86); border:1px solid rgba(34,211,238,.35); color:#b9f7ff; font-size:12px; font-weight:900; box-shadow:0 12px 30px rgba(0,0,0,.28); pointer-events:none}
+.option:focus-visible,button:focus-visible,.btn:focus-visible,.node:focus-visible{outline:3px solid rgba(34,211,238,.45); outline-offset:3px}
+@media (max-width:1060px){.hero{grid-template-columns:1fr}.mind-wrap,.quiz-wrap{grid-template-columns:1fr}.flashcards{grid-template-columns:repeat(3,1fr)}}
+@media (max-width:980px){
+  .grid.three,.grid.two,.coverage-grid{grid-template-columns:1fr 1fr}
+  .mindmap{min-height:auto; display:grid; grid-template-columns:1fr 1fr; gap:12px; padding:12px}
+  #mapSvg,.center-node{display:none}
+  .node{position:static; width:auto; transform:none !important; min-height:auto}
+}
+@media (max-width:760px){
+  .hero{padding-top:18px}.hero-main{padding:22px}.hero-side{padding:18px}.lead{font-size:16px}
+  button,.btn{min-height:44px}.hero-main .actions .btn,.hero-main .actions button{flex:1 1 180px; text-align:center}
+  .flashcards{grid-template-columns:1fr 1fr}.q-title{font-size:20px}.quiz-side{order:-1}.review-list{max-height:180px}
+}
+@media (max-width:620px){
+  .section{padding:12px}.grid.three,.grid.two,.coverage-grid,.flashcards,.mindmap{grid-template-columns:1fr}
+  .section-title{flex-direction:column; align-items:flex-start}.score{grid-template-columns:1fr}.timer .time{font-size:36px}
+}
+@media print{body{background:#fff;color:#111}.card{background:#fff;box-shadow:none;border:1px solid #ddd}.actions,.quiz-wrap,.timer{display:none}}
+
+.essay-grid{display:grid;grid-template-columns:1fr;gap:14px}
+.essay-card{padding:18px}
+.answer-formula{display:grid;gap:10px;margin-top:12px}
+.answer-step{padding:12px 14px;border-radius:15px;background:rgba(255,255,255,.052);border:1px solid rgba(255,255,255,.085);color:#dbeafe}
+.answer-step b{color:#fff}
+.essay-bank details{background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.09);border-radius:16px;padding:12px 14px;margin:10px 0}
+.essay-bank summary{cursor:pointer;font-weight:900;line-height:1.35}
+.essay-bank ul{margin:10px 0 0;padding-left:20px;color:#dbeafe}
+.essay-bank li{margin:6px 0}
+.essay-badge{display:inline-flex;margin:0 8px 0 0;padding:4px 8px;border-radius:999px;background:rgba(34,211,238,.12);border:1px solid rgba(34,211,238,.22);color:#b9f7ff;font-size:11px;font-weight:900}
+.essay-select{width:100%;border-radius:14px;border:1px solid rgba(255,255,255,.13);background:rgba(2,6,23,.48);color:var(--text);padding:12px;font:inherit;outline:none;margin-bottom:10px}.essay-select option{background:#101a33;color:#fff}
+.practice-area{width:100%;min-height:170px;resize:vertical;border-radius:16px;border:1px solid rgba(255,255,255,.13);background:rgba(2,6,23,.45);color:var(--text);padding:14px;font:inherit;outline:none;-webkit-user-select:text;user-select:text}
+.practice-area:focus{border-color:rgba(34,211,238,.45);box-shadow:0 0 0 3px rgba(34,211,238,.12)}
+.rubric{display:grid;gap:9px;margin-top:12px}
+.rubric label{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border-radius:14px;background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.08);color:#dbeafe;font-size:14px}
+.rubric input{margin-top:4px;accent-color:var(--brand)}
+
+
+
+.essay-result{margin-top:12px;padding:14px;border-radius:16px;background:rgba(255,255,255,.052);border:1px solid rgba(255,255,255,.09);color:#dbeafe}
+.essay-score{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px;border-radius:15px;margin-bottom:10px;border:1px solid rgba(255,255,255,.1)}
+.essay-score b{display:block;font-size:18px}
+.essay-score span{display:block;color:var(--muted);font-size:13px;margin-top:2px}
+.essay-score.good{background:rgba(34,197,94,.13);border-color:rgba(34,197,94,.32)}
+.essay-score.mid{background:rgba(245,158,11,.13);border-color:rgba(245,158,11,.32)}
+.essay-score.low{background:rgba(239,68,68,.13);border-color:rgba(239,68,68,.32)}
+.score-ring{min-width:64px;height:64px;border-radius:50%;display:grid;place-items:center;font-weight:900;background:rgba(2,6,23,.38);border:1px solid rgba(255,255,255,.14)}
+.keyword-report{margin-top:10px;font-size:13px;color:#dbeafe}
+.keyword-list{display:flex;flex-wrap:wrap;gap:7px;margin-top:8px}
+.keyword-list span{padding:5px 8px;border-radius:999px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.055)}
+.keyword-list .found{color:#dcfce7;border-color:rgba(34,197,94,.32);background:rgba(34,197,94,.11)}
+.keyword-list .miss{color:#fee2e2;border-color:rgba(239,68,68,.3);background:rgba(239,68,68,.1)}
+.essay-key-preview{margin-top:12px;padding:14px;border-radius:16px;background:rgba(34,211,238,.08);border:1px solid rgba(34,211,238,.2);color:#dffcff}
+.essay-key-preview ul{margin:8px 0 0;padding-left:20px}
+.essay-bank details summary::after{content:'  • buka untuk kunci ringkas';color:var(--muted);font-weight:600;font-size:12px}
+
+
+.learn-card{padding:18px;overflow:hidden}
+.learn-top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
+.learn-stage{position:relative;min-height:360px}
+.learn-slide{display:none;animation:fadeSlide .25s ease}
+.learn-slide.active{display:block}
+.learn-slide h3{font-size:26px;line-height:1.1;margin:0 0 10px;letter-spacing:-.02em}
+.learn-slide p{color:var(--muted);margin:0 0 12px}
+.learn-points{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:12px}
+.learn-point{padding:13px 14px;border-radius:16px;background:rgba(255,255,255,.052);border:1px solid rgba(255,255,255,.085);color:#dbeafe}
+.learn-point b{color:#fff}
+.learn-controls{display:flex;gap:8px;align-items:center;justify-content:space-between;margin-top:14px;flex-wrap:wrap}
+.learn-dots{display:flex;gap:6px;flex-wrap:wrap}
+.learn-dot{width:9px;height:9px;border-radius:50%;background:rgba(255,255,255,.22);cursor:pointer;border:0;padding:0;box-shadow:none}
+.learn-dot.active{background:var(--brand);transform:scale(1.25)}
+.learn-tag{display:inline-flex;padding:6px 10px;border-radius:999px;background:rgba(34,211,238,.11);border:1px solid rgba(34,211,238,.24);color:#c8fbff;font-size:12px;font-weight:900;margin-bottom:10px}
+@keyframes fadeSlide{from{opacity:.55;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@media (max-width:760px){.learn-points{grid-template-columns:1fr}.learn-stage{min-height:auto}.learn-top{align-items:flex-start;flex-direction:column}}
+
+
+.essay-focus{max-width:980px;margin:0 auto}
+.essay-main{padding:18px}
+.formula-strip{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
+.formula-strip span{padding:7px 10px;border-radius:999px;background:rgba(255,255,255,.055);border:1px solid rgba(255,255,255,.08);color:#dbeafe;font-size:13px}
+.formula-strip span:first-child{background:rgba(34,211,238,.11);border-color:rgba(34,211,238,.24);color:#dffcff}
+.essay-topline{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center}
+.essay-mini-nav{display:flex;gap:8px}
+.essay-mini-nav button{min-width:46px;padding:12px 14px}
+.essay-question{font-size:16px;margin:14px 0 10px}
+.essay-controls{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+@media (max-width:760px){.essay-topline{grid-template-columns:1fr}.essay-mini-nav button{flex:1}.formula-strip span{font-size:12px}}
+
+</style>
+</head>
+<body>
+<header class="hero">
+  <div class="card hero-main">
+    <span class="badge">⚡ Mode kuis dadakan • Metlit 2026 • versi dipoles</span>
+    <h1>Metlit Survival Kit</h1>
+    <p class="lead">Versi ini sudah dipoles lagi untuk kuis esai: mind map tetap rapi, bank soal pilihan ganda tetap ada, dan sekarang ditambah mode esai dengan kerangka jawaban.</p>
+    <div class="actions">
+      <a class="btn" href="#mindmap">Buka Mind Map</a>
+      <a class="btn secondary" href="#materi">Materi Lengkap</a>
+      <a class="btn secondary" href="#essay">Mode Esai</a>
+      <button class="secondary" onclick="toggleFocusMode()" id="focusBtn">Mode Fokus</button>
+      <button class="secondary" onclick="window.print()">Print ringkasan</button>
+    </div>
+  </div>
+  <aside class="card hero-side">
+    <div class="timer">
+      <small>Timer belajar kilat</small>
+      <div class="time" id="timerText">25:00</div>
+      <div class="actions" style="margin-top:10px">
+        <button onclick="startTimer(25)">25m</button>
+        <button class="secondary" onclick="startTimer(15)">15m</button>
+        <button class="secondary" onclick="pauseTimer()" id="pauseBtn">Start</button>
+      </div>
+    </div>
+    <div class="focus-note"><b>Focus Shield:</b> tombol timer sudah toggle <b>Start ↔ Pause</b>, halaman dibuat minim distraksi, fullscreen saat fokus aktif, dan proteksi anti-copy tetap dinyalakan.</div>
+    <div class="pillrow">
+      <span class="pill">🎯 80 PG</span><span class="pill">✍️ 27 esai</span>
+      <span class="pill">🧠 10 cabang map</span>
+      <span class="pill">📚 6 pertemuan</span>
+      <span class="pill">📱 responsif</span>
+    </div>
+  </aside>
+</header>
+
+<section class="section">
+  <div class="grid two">
+    <div class="card coverage-box">
+      <div class="coverage-head">
+        <div>
+          <h3>Cakupan materi</h3>
+          <p class="muted" style="margin:4px 0 0">Semua poin inti dari 6 pertemuan sudah dimasukkan ke ringkasan, mind map, dan bank soal.</p>
+        </div>
+        <span class="chip-ok">✅ Sudah diperluas</span>
+      </div>
+      <div class="coverage-grid" id="coverageGrid"></div>
+    </div>
+    <div class="card cram">
+      <h3>Rute 15 menit</h3>
+      <div class="checklist">
+        <label><input type="checkbox"> 5 menit: definisi, tujuan, tahapan, kuanti-kuali, deduktif-induktif.</label>
+        <label><input type="checkbox"> 5 menit: masalah, RQ, teori, literature review, 3C+2S.</label>
+        <label><input type="checkbox"> 5 menit: ICP, desain penelitian, analisis kualitatif, coding.</label>
+      </div>
+      <div class="remember" style="margin-top:14px"><b>Kalimat andalan:</b> masalah penelitian muncul ketika <b>realitas tidak sesuai ekspektasi</b>, lalu diselesaikan melalui <b>metode ilmiah</b> agar menghasilkan <b>output</b> dan <b>kontribusi pengetahuan</b>.</div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="mindmap">
+  <div class="section-title">
+    <div>
+      <h2>Mind Map Interaktif</h2>
+      <p>Klik cabang untuk buka ringkasan. Di desktop, cabangnya sekarang memanjang dari pusat dan ikut menyala saat node di-hover.</p>
+    </div>
+    <div class="pillrow"><span class="pill">Cabang animatif</span><span class="pill">Hover node + garis</span><span class="pill">Auto fit frame</span></div>
+  </div>
+  <div class="mind-wrap">
+    <div class="card mindmap" id="mindmapCanvas">
+      <svg id="mapSvg" viewBox="0 0 1000 860" preserveAspectRatio="none"></svg>
+      <div class="center-node"><div><strong>Metodologi<br>Penelitian</strong><span>Mind Map Interaktif</span></div></div>
+    </div>
+    <aside class="card detail" id="nodeDetail">
+      <span class="chip">Pilih cabang</span>
+      <h3>Mulai dari sini</h3>
+      <p>Klik salah satu cabang untuk melihat ringkasan super padat. Kalau waktumu mepet, baca dulu bagian <b>ingat cepat</b> dari tiap cabang.</p>
+      <div class="remember">Prioritas hafalan tertinggi: definisi & tujuan, kuanti vs kuali, masalah = gap, literature review, ICP, desain penelitian, dan coding kualitatif.</div>
+    </aside>
+  </div>
+</section>
+
+<section class="section" id="flashcards">
+  <div class="section-title"><div><h2>Flashcard Cepat</h2><p>Klik kartu untuk melihat jawabannya.</p></div></div>
+  <div class="flashcards" id="flashcardsBox"></div>
+</section>
+
+
+
+<section class="section" id="materi">
+  <div class="section-title">
+    <div>
+      <h2>Materi Lengkap Versi Simple</h2>
+      <p>Ringkasan inti 6 pertemuan, dibuat singkat supaya gampang dipakai jawab esai.</p>
+    </div>
+    <div class="pillrow"><span class="pill">Swipe/klik next</span><span class="pill">Bahasa sederhana</span><span class="pill">Keyword esai</span></div>
+  </div>
+  <div class="card learn-card">
+    <div class="learn-top">
+      <div><span class="learn-tag" id="learnTag">Materi</span><h3 id="learnTitle">Materi</h3></div>
+      <div class="pill" id="learnCount">1/10</div>
+    </div>
+    <div class="learn-stage" id="learnStage"></div>
+    <div class="learn-controls">
+      <div class="actions" style="margin:0"><button class="secondary" onclick="prevLearn()">Sebelumnya</button><button onclick="nextLearn()">Lanjut</button></div>
+      <div class="learn-dots" id="learnDots"></div>
+    </div>
+  </div>
+</section>
+
+
+<section class="section" id="essay">
+  <div class="section-title">
+    <div>
+      <h2>Mode Esai Dadakan</h2>
+      <p>Fokus utama: soal, kolom jawaban, lalu hasil cek otomatis setelah tombol ditekan.</p>
+    </div>
+    <div class="actions" style="margin:0">
+      <button onclick="previousEssay()">‹ Kembali</button>
+      <button onclick="nextEssay()">Lanjut ›</button>
+      <button class="secondary" onclick="randomEssay()">Acak Soal</button>
+      <a class="btn secondary" href="#essayBank">Bank Esai</a>
+    </div>
+  </div>
+
+  <div class="essay-focus">
+    <main class="card essay-card essay-main">
+      <div class="formula-strip">
+        <span><b>Pola aman:</b></span>
+        <span>1. Definisi</span>
+        <span>2. Fungsi</span>
+        <span>3. Hubungan</span>
+        <span>4. Contoh</span>
+        <span>5. Kesimpulan</span>
+      </div>
+
+      <div class="essay-topline">
+        <select class="essay-select" id="essaySelect" onchange="showEssayPrompt(Number(this.value), false)"></select>
+        <div class="essay-mini-nav">
+          <button class="secondary" onclick="previousEssay()">‹</button>
+          <button class="secondary" onclick="nextEssay()">›</button>
+        </div>
+      </div>
+
+      <p class="muted essay-question" id="essayPrompt">Klik “Acak Soal” atau pilih soal dari daftar.</p>
+      <textarea class="practice-area" id="essayAnswer" placeholder="Tulis jawaban latihan di sini. Target aman: 1–2 paragraf padat. Sebutkan istilah/kata kunci materi, lalu tutup dengan kesimpulan singkat."></textarea>
+
+      <div class="essay-controls">
+        <button onclick="checkEssayAnswer()">Cek Jawaban</button>
+        <button class="secondary" onclick="clearEssayAnswer()">Bersihkan</button>
+      </div>
+
+      <div class="essay-result" id="essayResult"><span class="muted">Tulis jawaban dulu, lalu klik <b>Cek Jawaban</b>. Persentase, kekurangan, dan kerangka ideal akan muncul setelah dicek.</span></div>
+    </main>
+  </div>
+
+  <div class="card summary-box essay-bank" id="essayBank" style="margin-top:16px">
+    <h3 style="margin-top:0">Bank Prediksi Esai + Kerangka Jawaban</h3>
+    <details><summary><span class="essay-badge">P1</span>Jelaskan pengertian penelitian dan mengapa penelitian harus sistematis.</summary><ul><li>Penelitian adalah proses mencari jawaban atas masalah dengan metode ilmiah.</li><li>Sistematis berarti ada urutan, aturan, prosedur, dan dasar ilmiah.</li><li>Tujuannya bukan sekadar menghasilkan produk, tetapi memberi solusi dan kontribusi pengetahuan.</li><li>Kesimpulan: penelitian yang baik harus dapat dipertanggungjawabkan, bukan sekadar opini.</li></ul></details><details><summary><span class="essay-badge">P1</span>Jelaskan dua tujuan dasar penelitian dan kaitannya dengan kontribusi pengetahuan.</summary><ul><li>Tujuan dasar pertama: menyelesaikan permasalahan.</li><li>Tujuan dasar kedua: menguji, mengembangkan, atau menemukan teori/metode.</li><li>Kontribusi pengetahuan muncul saat penelitian memberi pemahaman, model, metode, atau bukti baru.</li><li>Dalam RPL, aplikasi bisa menjadi output, tetapi kontribusi ilmiah tetap harus dijelaskan.</li></ul></details><details><summary><span class="essay-badge">P1</span>Uraikan tahapan penelitian dari awal sampai akhir.</summary><ul><li>Mulai dari identifikasi masalah, lalu perumusan masalah.</li><li>Setelah itu menyusun rancangan penelitian.</li><li>Kemudian pengumpulan data dan pengolahan/analisis data.</li><li>Terakhir menyimpulkan hasil sesuai data dan metode yang digunakan.</li></ul></details><details><summary><span class="essay-badge">P1</span>Mengapa peneliti tidak boleh salah dan tidak boleh bohong?</summary><ul><li>Salah hipotesis, analisis, atau pengujian membuat hasil penelitian tidak valid.</li><li>Bohong data, pengolahan, atau teori merusak integritas ilmiah.</li><li>Penelitian harus dapat dipertanggungjawabkan oleh komunitas ilmiah.</li><li>Kesimpulan: etika peneliti menentukan kepercayaan terhadap hasil penelitian.</li></ul></details><details><summary><span class="essay-badge">P2</span>Bandingkan penelitian kuantitatif dan kualitatif.</summary><ul><li>Kuantitatif memakai data numerik, variabel, instrumen terstandar, dan analisis statistik.</li><li>Kualitatif memakai data kata/narasi, memahami makna dalam konteks, dan analisis non-statistik.</li><li>Kuantitatif biasanya konfirmasi dan deduktif; kualitatif biasanya eksplorasi dan induktif.</li><li>Keduanya dipilih sesuai masalah, tujuan, jenis data, dan pertanyaan penelitian.</li></ul></details><details><summary><span class="essay-badge">P2</span>Jelaskan mixed methods dan kapan pendekatan ini tepat digunakan.</summary><ul><li>Mixed methods menggabungkan data kuantitatif dan kualitatif.</li><li>Pendekatan ini tepat saat satu jenis data belum cukup menjawab masalah.</li><li>Data angka dapat menjelaskan pola, sedangkan data narasi menjelaskan alasan/konteks.</li><li>Kesimpulan: mixed methods memperkuat pemahaman karena mengintegrasikan dua bentuk data.</li></ul></details><details><summary><span class="essay-badge">P2</span>Jelaskan perbedaan logika deduktif dan induktif.</summary><ul><li>Deduktif bergerak dari teori umum menuju hipotesis khusus, lalu diuji dengan data.</li><li>Induktif bergerak dari pengamatan/kasus khusus menuju konsep atau teori umum.</li><li>Deduktif lebih dekat dengan kuantitatif; induktif lebih dekat dengan kualitatif.</li><li>Contoh: menguji teori penerimaan teknologi = deduktif; membangun tema dari wawancara = induktif.</li></ul></details><details><summary><span class="essay-badge">P2</span>Jelaskan ciri-ciri logika deduktif dan induktif.</summary><ul><li>Deduktif: analitis, tautologis, apriori, dan argumen dapat dinilai sahih/tidak.</li><li>Induktif: sintetis, general, a posteriori, dan kesimpulannya probabilistik.</li><li>Deduktif menekankan konsistensi dari premis ke kesimpulan.</li><li>Induktif menekankan pola dari data empiris.</li></ul></details><details><summary><span class="essay-badge">P3</span>Jelaskan konsep masalah penelitian sebagai realitas tidak sama dengan ekspektasi.</summary><ul><li>Masalah penelitian muncul ketika kondisi nyata berbeda dari kondisi yang diharapkan.</li><li>Ekspektasi dapat berasal dari aturan, kebijakan, target, standar, atau teori.</li><li>Realitas harus didukung data, laporan, evaluasi, observasi, atau wawancara.</li><li>Dengan membandingkan keduanya, peneliti dapat merumuskan masalah yang jelas.</li></ul></details><details><summary><span class="essay-badge">P3</span>Bedakan masalah yang diamati dan masalah tersembunyi.</summary><ul><li>Masalah yang diamati adalah gejala yang terlihat dan didukung data/informasi.</li><li>Masalah tersembunyi adalah penyebab atau akar masalah di balik gejala tersebut.</li><li>Akar masalah tidak selalu langsung terlihat dan perlu dianalisis secara ilmiah.</li><li>Tools seperti fishbone, problem tree, mind map, dan logic analysis membantu menelusurinya.</li></ul></details><details><summary><span class="essay-badge">P3</span>Jelaskan syarat research question yang baik.</summary><ul><li>Research question harus relevan dengan masalah.</li><li>RQ harus jelas, konsisten dengan standar, dan berada pada tingkat kesulitan yang tepat.</li><li>RQ harus mampu menghasilkan kesimpulan yang jelas.</li><li>RQ sebaiknya tidak terlalu deskriptif; perlu mengarah pada analisis.</li></ul></details><details><summary><span class="essay-badge">P3</span>Mengapa teori diperlukan dalam penelitian?</summary><ul><li>Teori membantu menjelaskan fenomena dan hubungan antar konsep.</li><li>Teori dapat digunakan untuk menganalisis, memprediksi, membandingkan, dan menggeneralisasi.</li><li>Pertanyaan &#x27;mengapa&#x27; membutuhkan teori karena melampaui deskripsi.</li><li>Tanpa teori, penelitian mudah menjadi kumpulan fakta tanpa arah analisis.</li></ul></details><details><summary><span class="essay-badge">P4</span>Jelaskan pengertian literature review dan fungsinya dalam penelitian.</summary><ul><li>Literature review adalah proses meninjau dan menganalisis literatur akademik.</li><li>Fungsinya untuk mengetahui state of the art dari topik.</li><li>Literature review juga membantu menemukan research gap dan membangun justifikasi riset.</li><li>Hasilnya mendukung proposal, kerangka teori, metodologi, dan related works.</li></ul></details><details><summary><span class="essay-badge">P4</span>Jelaskan desk research dan perbedaannya dengan pengumpulan data primer.</summary><ul><li>Desk research memakai data sekunder seperti literatur, laporan, dan basis data.</li><li>Tidak ada pengumpulan data primer langsung dari responden/lapangan.</li><li>Cocok untuk studi eksploratif dan pendahuluan.</li><li>Data primer sebaliknya diperoleh langsung, misalnya melalui wawancara, observasi, atau kuesioner.</li></ul></details><details><summary><span class="essay-badge">P4</span>Jelaskan sumber literatur yang layak dan yang perlu dihindari.</summary><ul><li>Sumber layak: jurnal bereputasi, prosiding ilmiah, dan buku akademik.</li><li>Sumber yang perlu hati-hati: blog, Wikipedia, media populer, YouTube nonresmi, dan konten AI tanpa verifikasi.</li><li>Sumber harus kredibel agar argumen penelitian kuat.</li><li>Kesimpulan: kualitas sumber menentukan kualitas justifikasi riset.</li></ul></details><details><summary><span class="essay-badge">P4</span>Jelaskan metode 3C + 2S dalam literature review.</summary><ul><li>Compare: membandingkan pendekatan antar studi.</li><li>Contrast: membedakan kelebihan dan kekurangan.</li><li>Criticize: mengevaluasi secara kritis.</li><li>Synthesize: menghubungkan antar studi; Summarize: menyimpulkan kontribusi utama.</li></ul></details><details><summary><span class="essay-badge">P5</span>Jelaskan perbedaan kerangka teoretis dan kerangka metodologis.</summary><ul><li>Kerangka teoretis berisi konsep, model, atau teori yang mendasari penelitian.</li><li>Kerangka metodologis berisi pendekatan, metode, dan teknik analisis.</li><li>Kerangka teoretis menjawab dasar berpikir penelitian.</li><li>Kerangka metodologis menjawab cara penelitian dilakukan.</li></ul></details><details><summary><span class="essay-badge">P5</span>Jelaskan tahapan analisis kualitatif.</summary><ul><li>Tahap pertama adalah selection and reduction: memilih data yang relevan.</li><li>Tahap kedua create pattern: mencari pola atau hubungan sebab-akibat.</li><li>Tahap ketiga create conclusions: menafsirkan temuan menjadi kesimpulan verbal.</li><li>Dalam kualitatif, yang penting bukan menghitung kata, tetapi memahami makna dan konteks.</li></ul></details><details><summary><span class="essay-badge">P5</span>Jelaskan open coding, axial coding, dan selective coding.</summary><ul><li>Open coding memberi label deskriptif pada segmen data.</li><li>Axial coding menghubungkan kode-kode dan menemukan makna yang lebih kompleks.</li><li>Selective coding mengelompokkan kode menjadi tema atau konstruk inti.</li><li>Ketiganya membantu mengorganisasi data kualitatif agar bisa dianalisis.</li></ul></details><details><summary><span class="essay-badge">P5</span>Jelaskan struktur Idea Concept Paper.</summary><ul><li>Struktur ICP mencakup topik penelitian, latar belakang, penelitian terkait/referensi, rumusan masalah, isi pokok bahasan, dan hasil yang diharapkan.</li><li>Topik harus singkat, spesifik, jelas, serta menggambarkan ruang lingkup dan luaran.</li><li>Latar belakang memuat masalah umum, masalah khusus, penelitian terkait, dan rencana penelitian.</li><li>Rumusan masalah berisi pertanyaan yang ingin dijawab melalui penelitian.</li></ul></details><details><summary><span class="essay-badge">P6</span>Jelaskan klasifikasi penelitian berdasarkan data, waktu, metode, dan tujuan.</summary><ul><li>Berdasarkan data: primer, sekunder, kuantitatif, kualitatif.</li><li>Berdasarkan waktu: cross-sectional dan longitudinal.</li><li>Berdasarkan metode: kuantitatif dan kualitatif beserta turunannya.</li><li>Berdasarkan tujuan: basic, applied, evaluation, R&amp;D, dan action research.</li></ul></details><details><summary><span class="essay-badge">P6</span>Bandingkan cross-sectional dan longitudinal.</summary><ul><li>Cross-sectional mengambil data pada satu titik waktu.</li><li>Longitudinal mengambil data berulang dalam periode waktu tertentu.</li><li>Cross-sectional cocok untuk menggambarkan kondisi saat ini.</li><li>Longitudinal cocok untuk melihat perubahan atau perkembangan dari waktu ke waktu.</li></ul></details><details><summary><span class="essay-badge">P6</span>Bandingkan experimental, quasi-experimental, causal-comparative, dan correlational research.</summary><ul><li>Experimental memanipulasi faktor dan mengontrol faktor lain untuk melihat sebab-akibat.</li><li>Quasi-experimental mirip eksperimen, tetapi tidak sepenuhnya eksperimen nyata.</li><li>Causal-comparative mencari kemungkinan sebab-akibat dari kondisi yang sudah terjadi tanpa manipulasi variabel.</li><li>Correlational mengukur derajat hubungan antar variabel tanpa mengontrol variabel seperti eksperimen.</li></ul></details><details><summary><span class="essay-badge">P6</span>Jelaskan survey, action research, ethnographic research, dan case study.</summary><ul><li>Survey digunakan untuk mengetahui status/kondisi saat ini dari suatu fenomena pada sampel.</li><li>Action research bersifat kolaboratif untuk memperbaiki praktik melalui refleksi tindakan.</li><li>Ethnographic research melibatkan penelitian lapangan dan memahami konteks kelompok/organisasi.</li><li>Case study menginvestigasi fenomena tertentu dalam batas kasus yang jelas secara holistik.</li></ul></details>
+  <details><summary><span class="essay-badge">P4</span>Jelaskan kapan literature review digunakan dalam penelitian.</summary><ul><li>Literature review digunakan saat menyusun proposal riset.</li><li>Literature review membantu menentukan research question, mengembangkan kerangka teoritis dan metodologi, serta mengisi related works.</li><li>Intinya, literature review dipakai untuk memberi dasar ilmiah dan arah penelitian.</li></ul></details><details><summary><span class="essay-badge">P4</span>Jelaskan kesalahan umum dalam literature review.</summary><ul><li>Kesalahan umum literature review adalah hanya membuat ringkasan tanpa analisis.</li><li>Kesalahan lain adalah memakai sumber tidak terpercaya seperti blog, Wikipedia, media populer, YouTube nonresmi, atau konten AI tanpa verifikasi.</li><li>Literature review juga salah jika tidak menghubungkan literatur dengan research question.</li></ul></details><details><summary><span class="essay-badge">P4</span>Jelaskan hasil dari literature review yang baik.</summary><ul><li>Literature review yang baik menemukan gap penelitian dan menentukan arah metodologi.</li><li>Selain itu, literature review menjustifikasi novelty dan kontribusi penelitian.</li><li>Literature review juga mendukung pernyataan dalam proposal agar tidak hanya berupa opini.</li></ul></details>
+  </div>
+</section>
+</section>
+
+<section class="section" id="quiz">
+  <div class="section-title">
+    <div>
+      <h2>Kuis Interaktif</h2>
+      <p>Bank soal dibuat lebih menipu: opsi diacak dan pilihan jawabannya dibuat mirip, jadi harus benar-benar dibaca.</p>
+    </div>
+    <div class="actions" style="margin:0">
+      <button onclick="shuffleQuiz()">Acak soal</button>
+      <button class="secondary" onclick="resetQuiz()">Reset</button>
+    </div>
+  </div>
+  <div class="quiz-wrap">
+    <main class="card quiz-box">
+      <div class="progress"><div id="progressBar"></div></div>
+      <div class="q-meta"><span id="qNum">Soal 1</span><span id="qTotal"></span></div>
+      <div class="q-title" id="questionText"></div>
+      <div class="options" id="optionsBox"></div>
+      <div class="explain" id="explainBox"></div>
+      <div class="actions">
+        <button id="nextBtn" onclick="nextQuestion()" style="display:none">Soal berikutnya</button>
+        <button class="secondary" onclick="jumpWrong()" id="wrongBtn" style="display:none">Ulangi yang salah</button>
+      </div>
+    </main>
+    <aside class="card quiz-side">
+      <h3 style="margin:0">Skor berjalan</h3>
+      <div class="score">
+        <div class="stat"><small>Benar</small><b id="rightStat">0</b></div>
+        <div class="stat"><small>Salah</small><b id="wrongStat">0</b></div>
+      </div>
+      <p id="scoreMsg" class="muted">Target aman: minimal 80% sebelum kuis.</p>
+      <div class="remember" style="margin-top:10px"><b id="quizCoverageText"></b></div>
+      <h4>Review salah</h4>
+      <div class="review-list" id="reviewList"><p class="muted">Belum ada jawaban salah.</p></div>
+    </aside>
+  </div>
+</section>
+
+<section class="section">
+  <div class="section-title"><div><h2>Ringkasan 6 Pertemuan</h2><p>Buka-tutup kalau mau baca versi super padat.</p></div></div>
+  <div class="card summary-box" id="summaryBox"></div>
+</section>
+
+<script>
+const learnData = [{"tag": "P1", "title": "Penelitian: Inti Paling Dasar", "intro": "Penelitian bukan sekadar membuat laporan atau aplikasi. Intinya adalah mencari jawaban atas masalah secara sistematis dengan metode ilmiah.", "points": [["Definisi", "Proses mencari jawaban/pengetahuan baru dengan prosedur ilmiah."], ["Tujuan", "Menyelesaikan masalah serta menguji, mengembangkan, atau menemukan teori/metode."], ["Tahapan", "Identifikasi masalah → rumusan masalah → rancangan → data → analisis → simpulan."], ["Etika", "Tidak boleh salah analisis/pengujian dan tidak boleh bohong data/pengolahan/teori."]]}, {"tag": "P2", "title": "Kuantitatif, Kualitatif, Mixed", "intro": "Pilih pendekatan sesuai jenis data dan tujuan penelitian.", "points": [["Kuantitatif", "Data angka, variabel, kuesioner, statistik, tujuan konfirmasi."], ["Kualitatif", "Data kata/narasi, memahami makna dan konteks, tujuan eksplorasi."], ["Mixed", "Menggabungkan data kuantitatif dan kualitatif lalu mengintegrasikannya."], ["Keyword esai", "Angka = kuanti. Makna/konteks = kuali. Gabungan = mixed."]]}, {"tag": "P2", "title": "Deduktif vs Induktif", "intro": "Ini sering jadi pembeda kuantitatif dan kualitatif.", "points": [["Deduktif", "Dari teori umum → konsep → hipotesis khusus → diuji → simpulan."], ["Induktif", "Dari pengamatan/kasus khusus → pola → konsep atau teori umum."], ["Ciri deduktif", "Analitis, tautologis, apriori, argumen bisa dinilai sahih/tidak."], ["Ciri induktif", "Sintetis, general, a posteriori, kesimpulan bersifat probabilistik."]]}, {"tag": "P3", "title": "Masalah, Akar Masalah, RQ", "intro": "Masalah penelitian harus punya gap yang jelas, bukan sekadar asumsi.", "points": [["Masalah", "Realitas tidak sesuai ekspektasi."], ["Ekspektasi", "Berasal dari peraturan, kebijakan, target, standar, atau teori."], ["Realitas", "Dibuktikan dengan laporan, evaluasi, observasi, atau wawancara."], ["RQ baik", "Relevan, jelas, bisa dijawab, menghasilkan simpulan, tidak terlalu deskriptif."]]}, {"tag": "P4", "title": "Literature Review Itu Apa?", "intro": "Literature review adalah proses meninjau dan menganalisis literatur akademik.", "points": [["State of the art", "Mengetahui posisi perkembangan terbaru dari topik penelitian."], ["Research gap", "Menemukan celah yang belum dijawab penelitian sebelumnya."], ["Justifikasi riset", "Menjelaskan kenapa penelitianmu penting dan layak dilakukan."], ["Bukan rangkuman saja", "Literatur harus dibandingkan, dikritisi, dan dihubungkan dengan RQ."]]}, {"tag": "P4", "title": "Desk Research", "intro": "Desk research adalah riset awal berbasis data sekunder.", "points": [["Data sekunder", "Literatur, laporan, dokumen, basis data, atau sumber yang sudah tersedia."], ["Tanpa data primer", "Tidak langsung wawancara/observasi/kuesioner ke responden."], ["Kapan cocok", "Untuk studi eksploratif dan pendahuluan."], ["Bedanya", "Data primer berasal langsung dari sumber pertama."]]}, {"tag": "P4", "title": "Kapan Literature Review Digunakan?", "intro": "Literature review dipakai sejak awal menyusun penelitian.", "points": [["Proposal riset", "Memberi dasar ilmiah untuk latar belakang dan arah penelitian."], ["Research question", "Membantu menentukan pertanyaan penelitian yang tepat."], ["Kerangka", "Mengembangkan kerangka teoritis dan metodologis."], ["Related works", "Mengisi bagian penelitian terkait dalam paper/proposal."]]}, {"tag": "P4", "title": "Sumber Literatur Ilmiah", "intro": "Tidak semua sumber layak dipakai dalam penelitian.", "points": [["Eligible", "Jurnal bereputasi, prosiding ilmiah, buku akademik."], ["Contoh indeks", "Scopus, Sinta, IEEE, ACM."], ["Hati-hati", "Blog, Wikipedia, media populer, YouTube nonresmi."], ["AI", "Konten AI harus diverifikasi, jangan langsung dijadikan rujukan."]]}, {"tag": "P4", "title": "Metode 3C + 2S", "intro": "Ini cara cepat membuat literature review tidak cuma jadi rangkuman.", "points": [["Compare", "Bandingkan pendekatan antar studi."], ["Contrast", "Bedakan kelebihan dan kekurangan."], ["Criticize", "Evaluasi secara kritis."], ["Synthesize + Summarize", "Hubungkan antar studi, lalu simpulkan kontribusi utama."]]}, {"tag": "P4", "title": "Hasil & Kesalahan Literature Review", "intro": "Bagian ini penting untuk jawaban esai tentang studi literatur.", "points": [["Hasil baik", "Menemukan gap, menentukan arah metodologi, menjustifikasi novelty/kontribusi."], ["Mendukung proposal", "Pernyataan dalam proposal jadi punya dasar ilmiah."], ["Kesalahan 1", "Hanya membuat ringkasan tanpa analisis."], ["Kesalahan 2", "Memakai sumber tidak terpercaya atau tidak menghubungkan literatur dengan RQ."]]}, {"tag": "P5", "title": "Analisis Kualitatif & Coding", "intro": "Kualitatif fokus ke makna, pola, dan konteks, bukan sekadar menghitung kata.", "points": [["Data", "Wawancara mendalam, FGD, observasi langsung, dokumen tertulis."], ["Sampling", "Purposive sampling: memilih narasumber yang relevan/ahli."], ["Tahap analisis", "Selection & reduction → create pattern → create conclusions."], ["Coding", "Open coding, axial coding, selective coding."]]}, {"tag": "P5", "title": "Idea Concept Paper", "intro": "ICP adalah peta awal ide penelitian agar tidak melebar.", "points": [["Struktur", "Topik, latar belakang, penelitian terkait, rumusan masalah, isi pokok bahasan, hasil yang diharapkan."], ["Topik", "Singkat, spesifik, jelas, menggambarkan ruang lingkup dan luaran."], ["Latar belakang", "Memuat masalah umum, masalah khusus, data, referensi, dan rencana penelitian."], ["Rumusan masalah", "Berisi pertanyaan yang ingin dijawab melalui penelitian."]]}, {"tag": "P6", "title": "Desain Penelitian", "intro": "Desain penelitian membantu menentukan cara penelitian dilakukan.", "points": [["Berdasarkan data", "Primer, sekunder, kuantitatif, kualitatif."], ["Berdasarkan waktu", "Cross-sectional = satu titik waktu; longitudinal = berulang."], ["Berdasarkan tujuan", "Basic, applied, evaluation, R&D, action research."], ["Contoh metode", "Experimental, quasi-experimental, causal-comparative, correlational, survey, ethnographic, case study."]]}];
+let activeLearn = 0;
+function renderLearn(){
+  const stage = document.getElementById('learnStage');
+  const title = document.getElementById('learnTitle');
+  const tag = document.getElementById('learnTag');
+  const count = document.getElementById('learnCount');
+  const dots = document.getElementById('learnDots');
+  if(!stage) return;
+  const item = learnData[activeLearn];
+  title.textContent = item.title;
+  tag.textContent = item.tag;
+  count.textContent = `${activeLearn+1}/${learnData.length}`;
+  stage.innerHTML = `<div class="learn-slide active"><p>${item.intro}</p><div class="learn-points">${item.points.map(p=>`<div class="learn-point"><b>${p[0]}</b><br>${p[1]}</div>`).join('')}</div></div>`;
+  dots.innerHTML = learnData.map((_,i)=>`<button class="learn-dot ${i===activeLearn?'active':''}" onclick="goLearn(${i})" aria-label="Materi ${i+1}"></button>`).join('');
+}
+function nextLearn(){ activeLearn = (activeLearn + 1) % learnData.length; renderLearn(); }
+function prevLearn(){ activeLearn = (activeLearn - 1 + learnData.length) % learnData.length; renderLearn(); }
+function goLearn(i){ activeLearn = i; renderLearn(); }
+
+const mindNodes = [{"id": "definisi", "emoji": "🔎", "title": "Definisi & Tujuan", "angle": -90, "summary": "Penelitian adalah proses sistematis untuk mencari jawaban dengan metode ilmiah. Tujuan utamanya bukan sekadar membuat produk, tetapi menyelesaikan masalah dan memberi kontribusi ke pengetahuan.", "must": ["Kata kunci penelitian: mencari sesuatu, menyelesaikan masalah, sistematis, terencana, metode ilmiah, diakui komunitas ilmiah.", "Tujuan dasar penelitian: menyelesaikan permasalahan serta menguji, mengembangkan, dan menemukan teori atau metode.", "Dalam konteks RPL, membangun software/sistem bukan tujuan utama penelitian; itu bisa menjadi output, tetapi kontribusi pengetahuan tetap wajib jelas.", "Kontribusi masyarakat masuk ke manfaat penelitian, bukan langsung ke tujuan penelitian."], "ingat": "Masalah → metode ilmiah → output/kontribusi. Itu inti jawaban paling aman kalau ditanya definisi penelitian."}, {"id": "tahapan", "emoji": "🧭", "title": "Tahapan Penelitian", "angle": -138, "summary": "Alur penelitian bergerak dari masalah sampai simpulan. Tahapan ini sering muncul sebagai soal hafalan atau soal urutan.", "must": ["Identifikasi masalah", "Perumusan masalah", "Rancangan penelitian", "Pengumpulan data", "Pengolahan/analisis data", "Penyimpulan hasil"], "ingat": "I–R–R–P–P–S = Identifikasi, Rumuskan, Rancang, Pengumpulan, Pengolahan, Simpulkan."}, {"id": "logika", "emoji": "🧠", "title": "Deduktif vs Induktif", "angle": 180, "summary": "Deduktif bergerak dari teori umum menuju hipotesis khusus lalu diuji. Induktif bergerak dari data atau kasus khusus menuju konsep atau teori yang lebih umum.", "must": ["Deduktif: teori umum → konsep → hipotesis khusus → uji → kesimpulan.", "Induktif: pengamatan/kasus khusus → sintesis → konsep/teori umum.", "Ciri deduktif: analitis, tautologis, apriori, kesahihan argumen dapat diuji.", "Ciri induktif: sintetis, general, a posteriori, kesimpulan bersifat probabilistik."], "ingat": "Deduktif turun dari teori. Induktif naik dari data."}, {"id": "jenis", "emoji": "🧪", "title": "Jenis Metode", "angle": 138, "summary": "Jenis metode bisa dibaca dari pendekatan penelitian. Pada materi ini yang paling penting adalah membedakan karakter pendekatan dan contoh desainnya.", "must": ["Kuantitatif: descriptive, correlational, causal-comparative, experimental.", "Kualitatif: narrative, ethnographic, case study.", "Mixed methods menggabungkan data kuantitatif dan kualitatif.", "Contoh lain yang dibahas: survey, action research, historical research, ethnographic research, case study research."], "ingat": "Kalau pertanyaan menyinggung angka/statistik → kuantitatif. Kalau makna, konteks, narasi → kualitatif."}, {"id": "literatur", "emoji": "📚", "title": "Studi Literatur", "angle": 118, "summary": "Literature review dipakai untuk mengetahui state of the art, menemukan research gap, dan membangun justifikasi riset.", "must": ["Desk research memakai data sekunder: literatur, laporan, dan basis data tanpa mengumpulkan data primer langsung.", "Literature review dipakai saat menyusun proposal, menentukan research question, mengembangkan kerangka teoritis & metodologi, dan mengisi related works.", "Sumber eligible: jurnal bereputasi, prosiding ilmiah, buku akademik. Non-eligible/hati-hati: blog, Wikipedia, media populer, YouTube nonresmi, konten AI tanpa verifikasi.", "Metode 3C+2S: Compare, Contrast, Criticize, Synthesize, Summarize.", "Hasil literature review yang baik: menemukan gap, menentukan arah metodologi, menjustifikasi novelty/kontribusi, mendukung proposal."], "ingat": "Lit review yang baik bukan cuma ringkasan, tapi analisis yang nyambung ke research question."}, {"id": "pendekatan", "emoji": "⚖️", "title": "Kuantitatif, Kualitatif, Mixed", "angle": -45, "summary": "Tiga pendekatan besar penelitian punya perbedaan kuat pada jenis data, tujuan, instrumen, logika, dan teknik analisis.", "must": ["Kuantitatif: data numerik, kuesioner, konfirmasi, statistik, cenderung deduktif.", "Kualitatif: data kata/narasi, peneliti sebagai instrumen, eksplorasi, non-statistik, cenderung induktif.", "Mixed methods mengumpulkan dan mengintegrasikan data kuantitatif dan kualitatif.", "Data kualitatif = nonnumerik atau belum dikuantifikasi; data kuantitatif = angka dan pengukuran yang terstandardisasi."], "ingat": "Angka = kuanti. Makna/konteks = kuali. Dua-duanya = mixed."}, {"id": "masalah", "emoji": "🚩", "title": "Masalah & RQ", "angle": 15, "summary": "Masalah penelitian muncul saat realitas tidak sama dengan ekspektasi. Dari situ dirumuskan research question yang jelas, relevan, dan bisa dijawab.", "must": ["Masalah = REALITAS ≠ EKSPEKTASI.", "Ekspektasi diambil dari aturan/kebijakan/target; realitas diambil dari laporan, evaluasi, observasi, atau wawancara.", "Masalah yang diamati = gejala; masalah tersembunyi = akar masalah/penyebab.", "Tools analisis masalah: fishbone, mind map, problem tree, logic analysis.", "RQ yang baik: relevan, konsisten dengan standar, menghasilkan simpulan yang jelas, levelnya tepat, dan tidak terlalu deskriptif.", "Kata tanya 5W1H membantu menyusun RQ."], "ingat": "Jangan loncat ke solusi. Tunjukkan gap dulu, baru pertanyaan penelitiannya."}, {"id": "analisis", "emoji": "💬", "title": "Analisis Kualitatif", "angle": 45, "summary": "Analisis kualitatif fokus pada makna, konteks, tema, dan pola. Kualitas analisis ditentukan oleh pemilihan data relevan, penafsiran yang tepat, dan coding yang rapi.", "must": ["Pengumpulan data kualitatif: in-depth interview, FGD, direct observation, written documents.", "Sampling kualitatif cenderung purposive sampling; kuantitatif cenderung random sampling.", "Jenis analisis umum: summarising, categorising, structuring.", "Tahapan analisis: selection & reduction → create pattern → create conclusions.", "Coding: open coding (descriptive), axial coding (hubungan antarkode), selective coding (tema/construct).", "Triangulasi bisa memakai narasumber, dokumen, dan teori untuk memperkuat kualitas hasil."], "ingat": "Kualitatif tidak menghitung kata. Yang dicari adalah makna dan konteksnya."}, {"id": "desain", "emoji": "🏗️", "title": "Desain Penelitian", "angle": 78, "summary": "Desain penelitian mengelompokkan riset berdasarkan data, waktu, metode, dan tujuan. Bagian ini penting karena sering dijadikan soal contoh kasus.", "must": ["Berdasarkan data: primer, sekunder, kuantitatif, kualitatif.", "Berdasarkan waktu: cross-sectional (satu titik waktu) dan longitudinal (berulang dalam periode waktu).", "Berdasarkan tujuan: basic research, applied research, evaluation research, R&D, action research.", "Contoh metode yang dibahas: experimental, quasi-experimental, causal-comparative, correlational, survey, action research, historical research, ethnographic research, case study research."], "ingat": "Kalau pertanyaannya pakai contoh kasus, identifikasi dulu: datanya apa, waktunya bagaimana, tujuannya apa."}, {"id": "icp", "emoji": "🧩", "title": "Idea Concept Paper", "angle": 90, "summary": "Idea Concept Paper (ICP) membantu menyusun ide penelitian secara ringkas tapi terarah. Di materi ini strukturnya dibahas cukup jelas.", "must": ["Struktur ICP: topik penelitian, latar belakang, penelitian terkait/referensi, rumusan masalah, isi pokok bahasan, hasil yang diharapkan.", "Topik penelitian harus singkat, spesifik, jelas, dan menggambarkan ruang lingkup serta luaran penelitian.", "Latar belakang dapat memakai data laporan, data paparan, transkrip wawancara, paper utama yang memuat celah riset, analisis celah, atau teknik Ishikawa.", "Penelitian terkait/referensi bisa ditopang dengan literature review, 3C+2S, atau coding; format sitasi mengikuti APA.", "Rumusan masalah dapat dibantu dengan 5W+1H dan membayangkan jawaban yang diharapkan.", "Isi pokok bahasan memuat kerangka teoretis/metodologis; hasil yang diharapkan memuat kondisi/jawaban yang ditargetkan."], "ingat": "ICP = peta ide awal penelitian: topik → alasan → referensi → pertanyaan → rencana → hasil yang diharapkan."}];
+const quickCards = [["Masalah penelitian", "Realitas tidak sesuai ekspektasi."], ["Kuantitatif", "Data angka, statistik, konfirmasi, biasanya deduktif."], ["Kualitatif", "Data kata/narasi, eksplorasi, biasanya induktif."], ["Mixed methods", "Menggabungkan data kuantitatif dan kualitatif."], ["Desk research", "Riset berbasis data sekunder tanpa pengumpulan data primer langsung."], ["State of the art", "Posisi perkembangan pengetahuan terkini pada topik tertentu."], ["Research gap", "Celah pada penelitian sebelumnya yang jadi alasan penelitian baru."], ["3C + 2S", "Compare, Contrast, Criticize, Synthesize, Summarize."], ["Output", "Hasil langsung penelitian, misalnya aplikasi, evaluasi, analisis."], ["Outcome", "Dampak penelitian bagi organisasi atau komunitas."], ["Cross-sectional", "Pengambilan data pada satu titik waktu."], ["Longitudinal", "Pengambilan data berulang dalam periode waktu tertentu."], ["Open coding", "Memberi label deskriptif pada segmen data."], ["Axial coding", "Menghubungkan dan menafsirkan hubungan antarkode."], ["Selective coding", "Mengelompokkan kode ke tema atau konstruk inti."], ["Purposive sampling", "Memilih responden karena punya sifat/keahlian yang relevan."], ["Fishbone", "Alat untuk mencari akar masalah berdasarkan kategori penyebab."], ["RQ yang baik", "Jelas, relevan, bisa dijawab, dan tidak terlalu deskriptif."], ["Basic research", "Penelitian yang fokus mengembangkan teori."], ["Applied research", "Penelitian untuk menyelesaikan masalah nyata."]];
+const summarySections = [["Pertemuan 1 — Definisi, tujuan, tahapan, etika", ["Penelitian adalah proses sistematis dengan metode ilmiah untuk mencari jawaban atas masalah.", "Tujuan dasarnya: menyelesaikan masalah serta menguji, mengembangkan, atau menemukan teori/metode.", "Tahapan penelitian: identifikasi masalah → rumusan masalah → rancangan penelitian → pengumpulan data → pengolahan data → simpulan.", "Peneliti yang baik tidak salah dalam hipotesis/analisis/pengujian dan tidak boleh bohong terhadap data, pengolahan, atau teori."]], ["Pertemuan 2 — Pendekatan, logika, dan topik penelitian", ["Kuantitatif memakai angka, statistik, dan variabel; kualitatif memakai narasi, konteks, dan makna; mixed menggabungkan keduanya.", "Deduktif bergerak dari teori umum ke hipotesis khusus; induktif bergerak dari pengamatan khusus ke teori umum.", "Topik penelitian yang baik harus menarik, feasible, relevan, punya akses data, dan sesuai dengan teori maupun tujuan karier."]], ["Pertemuan 3 — Mengidentifikasi masalah & research question", ["Masalah penelitian lahir dari gap realitas dan ekspektasi.", "Bedakan masalah yang diamati (gejala) dengan masalah tersembunyi (akar masalah).", "Tools yang dibahas: fishbone, mind map, problem tree, logic analysis.", "RQ harus relevan, jelas, bisa menghasilkan simpulan, levelnya tepat, dan tidak terlalu deskriptif."]], ["Pertemuan 4 — Studi literatur", ["Literature review bertujuan mengetahui state of the art, research gap, dan justifikasi riset.", "Desk research menggunakan data sekunder tanpa mengumpulkan data primer langsung.", "Sumber ilmiah yang layak: jurnal, prosiding, buku akademik; hindari sumber tidak kredibel tanpa verifikasi.", "Metode 3C+2S membantu analisis literatur: compare, contrast, criticize, synthesize, summarize."]], ["Pertemuan 5 — Analisis kualitatif & Idea Concept Paper", ["Analisis kualitatif umum: summarising, categorising, structuring.", "Tahapan analisis: selection & reduction → create pattern → create conclusions.", "Coding: open, axial, selective.", "Struktur ICP: topik, latar belakang, penelitian terkait, rumusan masalah, isi pokok bahasan, hasil yang diharapkan."]], ["Pertemuan 6 — Desain penelitian & contoh metode", ["Klasifikasi berdasarkan data, waktu, metode, dan tujuan.", "Waktu: cross-sectional vs longitudinal.", "Tujuan: basic, applied, evaluation, R&D, action research.", "Contoh desain: experimental, quasi-experimental, causal-comparative, correlational, survey, historical, ethnographic, case study."]]];
+const quizData = [{"q": "Penelitian pada dasarnya adalah…", "c": ["Proses sistematis mencari jawaban dengan metode ilmiah", "Proses mengumpulkan data secara cepat tanpa prosedur tetap", "Kegiatan membuat solusi praktis tanpa dasar teori", "Aktivitas merangkum pendapat ahli tanpa analisis masalah"], "a": 0, "e": "Materi mendefinisikan penelitian sebagai proses sistematis untuk mencari jawaban menggunakan metode ilmiah."}, {"q": "Tujuan dasar penelitian yang benar adalah…", "c": ["Menyelesaikan masalah dan menguji/mengembangkan/menemukan teori atau metode", "Menyelesaikan masalah dan langsung membuat produk siap jual", "Mengumpulkan data dan menuliskan laporan akhir", "Membuktikan pendapat peneliti dengan contoh sebanyak mungkin"], "a": 0, "e": "Dua tujuan dasar yang ditekankan di slide adalah menyelesaikan masalah dan mengembangkan pengetahuan/teori/metode."}, {"q": "Dalam konteks RPL, membangun software atau sistem…", "c": ["Bisa menjadi output, tetapi bukan tujuan utama penelitian", "Menjadi tujuan utama selama aplikasi selesai dibuat", "Menjadi bukti penelitian walau tanpa kontribusi pengetahuan", "Harus selalu lebih penting daripada teori dan metode"], "a": 0, "e": "Slide poin praktis menjelaskan bahwa software bukan tujuan utama; kontribusi pengetahuan tetap wajib."}, {"q": "Berikut yang termasuk kata kunci penelitian adalah…", "c": ["Sistematis, terencana, dan menggunakan metode ilmiah", "Sistematis, populer, dan mudah dipublikasikan", "Terencana, cepat selesai, dan menghasilkan aplikasi", "Ilmiah, teknis, dan mengikuti tren industri"], "a": 0, "e": "Penelitian harus sistematis, terencana, dan menggunakan metode ilmiah."}, {"q": "Urutan tahapan penelitian yang paling tepat adalah…", "c": ["Identifikasi masalah → rumusan masalah → rancangan penelitian → pengumpulan data → pengolahan data → simpulan", "Identifikasi masalah → pengumpulan data → rumusan masalah → rancangan penelitian → simpulan", "Rumusan masalah → identifikasi masalah → pengolahan data → rancangan penelitian → simpulan", "Rancangan penelitian → rumusan masalah → identifikasi masalah → pengumpulan data → simpulan"], "a": 0, "e": "Urutan enam tahap ini ditampilkan jelas pada slide tahapan penelitian."}, {"q": "Peneliti yang baik tidak boleh…", "c": ["Bohong data, bohong pengolahan, dan bohong teori", "Salah memilih judul, salah desain poster, dan salah format cover", "Menggunakan teori lama, membaca jurnal, dan membuat hipotesis", "Mengubah rumusan masalah, mengganti metode, dan menambah data"], "a": 0, "e": "Etika peneliti yang baik menekankan kejujuran pada data, pengolahan, dan teori."}, {"q": "Kuantitatif menurut Creswell berfokus pada…", "c": ["Menguji teori objektif dengan menelaah hubungan antar variabel", "Mengeksplorasi makna sosial tanpa struktur variabel", "Membangun tema dari wawancara mendalam", "Menafsirkan pengalaman partisipan dalam konteksnya"], "a": 0, "e": "Definisi kuantitatif pada slide menekankan pengujian teori objektif dan hubungan antar variabel."}, {"q": "Kualitatif menurut Creswell berfokus pada…", "c": ["Memahami makna yang diberikan individu/kelompok terhadap masalah sosial/manusia", "Menguji hubungan antar variabel dengan data numerik", "Membuktikan hipotesis melalui pengukuran terstandar", "Menghasilkan koefisien statistik untuk prediksi"], "a": 0, "e": "Kualitatif bertujuan mengeksplorasi dan memahami makna."}, {"q": "Mixed methods adalah pendekatan yang…", "c": ["Mengumpulkan data kuantitatif dan kualitatif lalu mengintegrasikannya", "Mengubah data kualitatif menjadi angka tanpa analisis makna", "Memakai dua teori berbeda tetapi hanya satu jenis data", "Menggabungkan survei dan eksperimen yang sama-sama kuantitatif"], "a": 0, "e": "Mixed methods menggabungkan kedua bentuk data dan desain yang sesuai."}, {"q": "Pada tabel perbedaan kuantitatif dan kualitatif, instrumen penelitian kuantitatif yang ditonjolkan adalah…", "c": ["Kuesioner", "Pedoman wawancara terbuka", "Peneliti sebagai instrumen utama", "Catatan observasi lapangan"], "a": 0, "e": "Pada slide perbedaan, instrumen kuantitatif dicontohkan sebagai kuesioner."}, {"q": "Tujuan penelitian kualitatif dalam tabel perbandingan adalah…", "c": ["Eksplorasi", "Konfirmasi", "Prediksi statistik", "Pengujian hipotesis"], "a": 0, "e": "Dalam tabel, tujuan penelitian kualitatif adalah eksplorasi."}, {"q": "Logika deduktif bergerak dari…", "c": ["Teori umum ke hipotesis khusus", "Kasus khusus ke teori umum", "Data lapangan ke tema penelitian", "Wawancara ke konsep konseptual"], "a": 0, "e": "Deduktif dimulai dari teori umum lalu diturunkan menjadi konsep dan hipotesis."}, {"q": "Logika induktif bergerak dari…", "c": ["Pengamatan khusus ke konsep/teori umum", "Teori umum ke hipotesis khusus", "Variabel baku ke instrumen survei", "Hipotesis ke uji statistik"], "a": 0, "e": "Induktif disusun dari observasi atau kasus khusus menjadi generalisasi/teori."}, {"q": "Salah satu ciri logika deduktif adalah…", "c": ["Apriori", "A posteriori", "Probabilistik", "Sintetis"], "a": 0, "e": "Ciri deduktif pada slide: analitis, tautologis, apriori."}, {"q": "Salah satu ciri logika induktif adalah…", "c": ["Kesimpulan bersifat probabilistik", "Kesimpulan tersirat dalam premis", "Kesimpulan ditarik tanpa observasi empiris", "Argumen hanya dinilai sahih/tidak"], "a": 0, "e": "Induktif tidak memberi kepastian mutlak; ada aspek probabilitas."}, {"q": "Penelitian terapan bertujuan…", "c": ["Menciptakan alternatif untuk pengambilan keputusan", "Mengembangkan teori murni tanpa kebutuhan praktis", "Menguji logika deduktif dalam kondisi laboratorium", "Menyusun ringkasan pustaka tanpa masalah organisasi"], "a": 0, "e": "Slide penelitian terapan menyebut tujuan menciptakan alternatif pengambilan keputusan."}, {"q": "Jika penelitian ditujukan untuk pembuatan kebijakan atau evaluasi dalam organisasi, istilah yang digunakan adalah…", "c": ["Penelitian kebijakan", "Penelitian dasar", "Penelitian historis", "Penelitian etnografis"], "a": 0, "e": "Itu disebut penelitian kebijakan."}, {"q": "Dalam pembuatan kebijakan, langkah pertama adalah…", "c": ["Penelitian kebijakan", "Perancangan kebijakan", "Finalisasi kebijakan", "Evaluasi implementasi kebijakan"], "a": 0, "e": "Tahapan kebijakan pada slide dimulai dari penelitian kebijakan."}, {"q": "Atribut topik penelitian yang baik mencakup unsur “mampu”, artinya topik harus…", "c": ["Feasible diselesaikan dengan waktu, kemampuan, dana, dan akses data yang ada", "Memiliki judul menarik walau akses data belum tersedia", "Mengandung teori besar walau terlalu sulit diselesaikan", "Relevan dengan tren walau tidak sesuai standar institusi"], "a": 0, "e": "Bagian “mampu” menekankan ketertarikan, keterampilan, waktu, relevansi, sumber daya, dan akses data."}, {"q": "Masalah penelitian didefinisikan sebagai…", "c": ["Realitas tidak sama dengan ekspektasi", "Tujuan tidak sama dengan manfaat", "Data primer tidak sama dengan data sekunder", "Teori tidak sama dengan metode"], "a": 0, "e": "Formula yang paling ditekankan: REALITAS ≠ EKSPEKTASI."}, {"q": "Ekspektasi dalam perumusan masalah biasanya mengacu pada…", "c": ["Peraturan, kebijakan, target, atau standar", "Hasil observasi, wawancara, dan laporan lapangan", "Opini responden yang paling sering muncul", "Kesimpulan peneliti setelah analisis data"], "a": 0, "e": "Ekspektasi harus punya dasar, biasanya regulasi, target, atau kebijakan."}, {"q": "Realitas dalam perumusan masalah biasanya mengacu pada…", "c": ["Dokumen laporan/evaluasi atau hasil observasi/wawancara", "Peraturan resmi yang menjadi kondisi ideal", "Target organisasi yang belum diverifikasi", "Kerangka teori yang digunakan dalam bab dua"], "a": 0, "e": "Realitas harus berbasis data, misalnya laporan, evaluasi, observasi, atau wawancara."}, {"q": "Masalah yang diamati adalah…", "c": ["Gejala yang terlihat dan didukung data/informasi", "Penyebab utama yang sudah terbukti final", "Solusi yang dipilih setelah analisis", "Kontribusi teori yang diharapkan"], "a": 0, "e": "Masalah yang diamati baru gejala; belum tentu akar masalah."}, {"q": "Masalah tersembunyi adalah…", "c": ["Penyebab atau akar masalah", "Gejala yang tampak di permukaan", "Target yang tidak tercapai", "Rumusan masalah berbentuk pertanyaan"], "a": 0, "e": "Slide menyebut masalah tersembunyi sebagai penyebab/akar masalah."}, {"q": "Berikut yang termasuk kakas analisis masalah adalah…", "c": ["Fishbone", "PICO", "3C+2S", "Cross-sectional"], "a": 0, "e": "Fishbone termasuk alat analisis akar masalah yang dibahas di slide."}, {"q": "Selain fishbone, kakas analisis masalah yang juga dibahas adalah…", "c": ["Problem tree", "APA style", "Purposive sampling", "Correlation coefficient"], "a": 0, "e": "Slide memperlihatkan mind map, problem tree, dan logic analysis sebagai alat lain."}, {"q": "RQ yang baik seharusnya…", "c": ["Relevan dengan masalah dan mampu menghasilkan kesimpulan yang jelas", "Menggunakan istilah ilmiah walau tidak berkaitan dengan masalah", "Bersifat sangat umum agar bisa menjawab banyak hal", "Cukup deskriptif supaya mudah dijawab"], "a": 0, "e": "Pada slide, RQ harus relevan, jelas, dan tidak terlalu deskriptif."}, {"q": "Kata tanya yang umum dipakai untuk membantu menyusun research question adalah…", "c": ["5W1H", "3C+2S", "PICO only", "SMART goal"], "a": 0, "e": "Slide menampilkan kata tanya 5W1H: what, who, when, where, why, how."}, {"q": "Mengapa teori dibutuhkan dalam penelitian?", "c": ["Untuk menjelaskan fenomena, menganalisis hubungan, memprediksi, membandingkan, dan menggeneralisasi", "Untuk mengganti kebutuhan data primer dan data sekunder", "Untuk membuat hasil penelitian selalu kuantitatif", "Untuk memastikan rumusan masalah menjadi lebih panjang"], "a": 0, "e": "Slide “Mengapa butuh teori?” memuat fungsi-fungsi tersebut."}, {"q": "Output penelitian adalah…", "c": ["Hasil langsung dari penelitian", "Dampak lanjutan terhadap organisasi/komunitas", "Manfaat sosial yang tidak langsung diukur", "Alasan penelitian dilakukan"], "a": 0, "e": "Output adalah hasil langsung penelitian, misalnya aplikasi, evaluasi, analisis, dan sebagainya."}, {"q": "Outcome penelitian adalah…", "c": ["Dampak terhadap organisasi atau komunitas", "Produk langsung penelitian", "Instrumen pengumpulan data", "Tahap analisis data"], "a": 0, "e": "Outcome merujuk pada dampak yang dihasilkan setelah output digunakan."}, {"q": "Literature review adalah proses…", "c": ["Meninjau dan menganalisis literatur akademik", "Mengumpulkan data primer dari responden", "Membuat daftar pustaka tanpa pembahasan", "Menyalin ringkasan penelitian terdahulu"], "a": 0, "e": "Definisi literature review pada slide menekankan kegiatan meninjau dan menganalisis literatur akademik."}, {"q": "Tujuan utama literature review berikut yang benar adalah…", "c": ["Mengetahui state of the art, mengidentifikasi gap, dan membangun justifikasi riset", "Mengumpulkan seluruh jurnal agar daftar pustaka terlihat banyak", "Mengganti kebutuhan metodologi dengan ringkasan teori", "Menentukan hasil penelitian sebelum data dikumpulkan"], "a": 0, "e": "Tiga tujuan utama itulah yang tampil pada slide."}, {"q": "Desk research berarti…", "c": ["Menggunakan data sekunder tanpa pengumpulan data primer langsung", "Mengumpulkan data primer melalui wawancara lapangan", "Melakukan eksperimen laboratorium dengan kontrol variabel", "Menguji hipotesis menggunakan data survei baru"], "a": 0, "e": "Desk research cocok untuk studi eksploratif dan pendahuluan berbasis data sekunder."}, {"q": "Kapan literature review digunakan?", "c": ["Saat menyusun proposal, menentukan RQ, mengembangkan kerangka, dan menulis related works", "Hanya setelah analisis data selesai dilakukan", "Hanya ketika penelitian tidak memiliki data primer", "Hanya untuk mengganti bagian metodologi"], "a": 0, "e": "Slide menuliskan empat konteks penggunaan tersebut."}, {"q": "Yang termasuk sumber literatur ilmiah eligible adalah…", "c": ["Jurnal bereputasi, prosiding ilmiah, buku akademik", "Blog akademik, Wikipedia, dan ringkasan AI", "Media populer, komentar pakar, dan video bebas", "Catatan kelas, opini pribadi, dan artikel viral"], "a": 0, "e": "Sumber eligible yang disebutkan: jurnal, prosiding, buku akademik."}, {"q": "Yang termasuk contoh sumber non-eligible/hati-hati adalah…", "c": ["Blog, Wikipedia, media populer", "Scopus, Sinta, IEEE, ACM", "Prosiding ilmiah dan buku akademik", "Jurnal nasional bereputasi"], "a": 0, "e": "Slide menempatkan blog, Wikipedia, dan media populer di kategori yang harus hati-hati."}, {"q": "Dalam metode 3C + 2S, “Contrast” berarti…", "c": ["Membedakan kelebihan dan kekurangan", "Membandingkan pendekatan antar studi", "Menghubungkan temuan antar studi", "Menyimpulkan kontribusi utama"], "a": 0, "e": "Contrast = membedakan; Compare = membandingkan."}, {"q": "Dalam metode 3C + 2S, “Synthesize” berarti…", "c": ["Menghubungkan antar studi", "Membandingkan pendekatan antar studi", "Mengevaluasi kelemahan studi secara kritis", "Meringkas kontribusi utama"], "a": 0, "e": "Synthesize menekankan hubungan dan penggabungan wawasan antar penelitian."}, {"q": "Kerangka teoretis berisi…", "c": ["Konsep, model, atau teori yang mendasari penelitian", "Pendekatan, metode, dan teknik analisis", "Data, instrumen, dan responden lapangan", "Jadwal penelitian dan pembagian tugas"], "a": 0, "e": "Slide membedakan kerangka teoretis dari metodologis."}, {"q": "Kerangka metodologis berisi…", "c": ["Pendekatan, metode, dan teknik analisis", "Konsep, model, dan teori utama", "State of the art dan research gap", "Topik, judul, dan kata kunci"], "a": 0, "e": "Kerangka metodologis menjelaskan bagaimana penelitian dilakukan."}, {"q": "Kesalahan umum dalam literature review adalah…", "c": ["Hanya membuat ringkasan tanpa analisis", "Membandingkan dan mengkritisi literatur", "Menghubungkan literatur dengan RQ", "Menentukan gap dan novelty penelitian"], "a": 0, "e": "Slide “Kesalahan umum” menyebut hanya merangkum tanpa analisis sebagai kekeliruan."}, {"q": "Pada contoh PICO(C), huruf P merujuk pada…", "c": ["Population", "Problem", "Process", "Prediction"], "a": 0, "e": "Slide contoh PICO(C) menjelaskan P = Population."}, {"q": "Dalam contoh PICO(C) pada materi, “teknologi” ditempatkan sebagai…", "c": ["Intervention", "Population", "Comparison", "Output"], "a": 0, "e": "Pada contoh tersebut, teknologi berperan sebagai Intervention."}, {"q": "Data kualitatif adalah…", "c": ["Data nonnumerik atau yang belum dikuantifikasi", "Data numerik yang sudah terstandardisasi", "Data hasil pengukuran instrumen statistik", "Data sekunder dari jurnal dan laporan"], "a": 0, "e": "Definisi ini tertulis pada slide “Apa itu data kualitatif?”."}, {"q": "Penelitian kuantitatif berfokus pada…", "c": ["Pengukuran", "Pemaknaan konteks", "Penggalian pengalaman", "Penyusunan tema"], "a": 0, "e": "Slide menyebut kuantitatif berfokus pada pengukuran."}, {"q": "Dalam kualitatif, konsep biasanya berbentuk…", "c": ["Tema, motif, generalisasi, dan taksonomi", "Variabel yang terukur dan terstandardisasi", "Koefisien, tabel, dan grafik statistik", "Hipotesis numerik dan indikator baku"], "a": 0, "e": "Perbandingan lanjutan kualitatif vs kuantitatif menyebut konsep kualitatif berbentuk tema/motif/generalization."}, {"q": "Dalam kuantitatif, prosedur penelitian cenderung…", "c": ["Standar dan sering direplikasi", "Khusus pada konteks dan jarang direplikasi", "Fleksibel mengikuti narasumber tanpa instrumen", "Berbasis tema, motif, dan taksonomi"], "a": 0, "e": "Pada tabel lanjutan, prosedur kuantitatif disebut standar dan replikasi lebih sering."}, {"q": "Pengumpulan data kualitatif yang dibahas mencakup…", "c": ["In-depth interview, FGD, observasi langsung, dan dokumen tertulis", "Kuesioner tertutup, eksperimen, dan uji statistik", "Sampling acak, korelasi, dan regresi", "Data numerik, tabel, dan grafik"], "a": 0, "e": "Empat bentuk pengumpulan data ini tertulis pada slide dimensi analisis kualitatif."}, {"q": "Sampling yang lazim untuk penelitian kualitatif adalah…", "c": ["Purposive sampling", "Random sampling", "Systematic sampling", "Cluster sampling"], "a": 0, "e": "Slide sampling membedakan random (kuantitatif) dan purposive (kualitatif)."}, {"q": "Dalam memilih narasumber, faktor kritis yang ditekankan adalah…", "c": ["Keahlian/domain expertise, level expertise, dan variety of expertise", "Jumlah responden, ukuran sampel, dan margin error", "Usia, jabatan formal, dan lama bekerja saja", "Ketersediaan waktu, lokasi, dan kesediaan diwawancarai"], "a": 0, "e": "Slide responden/narasumber menekankan expertise sebagai faktor utama."}, {"q": "Jenis analisis kualitatif secara umum meliputi…", "c": ["Summarising, categorising, structuring", "Sampling, measuring, testing", "Comparing, correlating, predicting", "Experimenting, controlling, manipulating"], "a": 0, "e": "Tiga bentuk analisis umum pada slide adalah summarising, categorising, structuring."}, {"q": "Tahap pertama analisis kualitatif adalah…", "c": ["Selection and reduction", "Create pattern", "Create conclusions", "Triangulation"], "a": 0, "e": "Tahapan yang disebutkan adalah selection & reduction → create pattern → create conclusions."}, {"q": "Pada tahap create pattern dalam analisis kualitatif, peneliti sebaiknya…", "c": ["Mencari hubungan/pola dan fokus pada makna serta konteks", "Menghitung frekuensi kata tanpa menafsirkan makna", "Membuang data yang berbeda dari dugaan awal", "Langsung membuat rekomendasi akhir"], "a": 0, "e": "Slide menjelaskan create pattern berfokus pada hubungan, makna, dan konteks."}, {"q": "Open coding adalah…", "c": ["Pemberian label deskriptif pada segmen data", "Penghubungan kode untuk menemukan relasi", "Pengelompokan kode menjadi tema inti", "Pengujian kode dengan statistik"], "a": 0, "e": "Open coding bersifat descriptive coding pada segmen teks."}, {"q": "Axial coding adalah…", "c": ["Mengidentifikasi hubungan antarkode dan makna yang lebih kompleks", "Memberi label awal pada segmen data", "Mengubah tema menjadi variabel numerik", "Menyusun daftar kutipan tanpa analisis"], "a": 0, "e": "Axial coding menautkan kode-kode terbuka dan menafsirkan hubungan di antaranya."}, {"q": "Selective coding adalah…", "c": ["Mengelompokkan kode menjadi tema atau konstruk inti", "Memberi label deskriptif pertama pada data", "Mencari hubungan antar kode terbuka", "Membuang kode yang jarang muncul"], "a": 0, "e": "Selective coding menghasilkan tema/construct yang lebih besar."}, {"q": "Struktur ICP yang benar mencakup…", "c": ["Topik, latar belakang, penelitian terkait, rumusan masalah, isi pokok bahasan, hasil yang diharapkan", "Judul, abstrak, metode, hasil, diskusi, daftar pustaka", "Masalah, tujuan, manfaat, batasan, jadwal, lampiran", "Teori, metode, instrumen, populasi, sampel, analisis"], "a": 0, "e": "Enam komponen utama ICP ini dijelaskan satu per satu pada materi."}, {"q": "Topik penelitian dalam ICP sebaiknya…", "c": ["Singkat, spesifik, jelas, dan menggambarkan ruang lingkup serta luaran", "Luas, umum, dan mencakup banyak bidang sekaligus", "Menarik, populer, dan mengikuti tren teknologi terbaru", "Panjang, lengkap, dan menjelaskan seluruh metode"], "a": 0, "e": "Slide struktur ICP menekankan topik yang singkat, spesifik, dan jelas."}, {"q": "Latar belakang penelitian dapat ditopang oleh…", "c": ["Data laporan, data paparan, transkrip wawancara, paper utama, analisis celah, teknik Ishikawa", "Judul penelitian, daftar isi, jadwal, dan biodata peneliti", "Hasil akhir, kesimpulan, saran, dan lampiran", "Kuesioner final, populasi, sampel, dan uji statistik"], "a": 0, "e": "Bagian tools untuk latar belakang memuat daftar sumber tersebut."}, {"q": "Pada bagian penelitian terkait/referensi dalam ICP, aturan penulisan referensi yang disebut adalah…", "c": ["APA", "IEEE citation style", "Chicago notes", "MLA"], "a": 0, "e": "Materi menyebut standar American Psychological Association (APA)."}, {"q": "Rumusan masalah dalam ICP dapat dibantu dengan tools…", "c": ["5W+1H dan membayangkan jawaban", "3C+2S dan daftar pustaka", "Fishbone dan coding terbuka", "Cross-sectional dan longitudinal"], "a": 0, "e": "Slide rumusan masalah pada ICP menampilkan 5W+1H dan bayangkan jawaban."}, {"q": "Isi pokok bahasan dalam ICP berkaitan dengan…", "c": ["Tahapan penelitian, metodologi, atau rancangan penelitian", "Daftar pustaka dan format sitasi", "Latar belakang dan data awal", "Biaya penelitian dan jadwal bimbingan"], "a": 0, "e": "Isi pokok bahasan menjelaskan rencana/tahapan/metodologi penelitian."}, {"q": "Berdasarkan waktu, penelitian dibedakan menjadi…", "c": ["Cross-sectional dan longitudinal", "Primer dan sekunder", "Experimental dan correlational", "Basic dan applied"], "a": 0, "e": "Klasifikasi berdasarkan waktu hanya dua pada slide: cross-sectional dan longitudinal."}, {"q": "Cross-sectional berarti…", "c": ["Pengambilan data pada satu titik waktu", "Pengambilan data berulang dalam periode waktu tertentu", "Pengambilan data dari sumber pertama", "Pengolahan data yang belum dikuantifikasi"], "a": 0, "e": "Cross-sectional = one point in time."}, {"q": "Longitudinal berarti…", "c": ["Pengambilan data berulang dalam periode waktu tertentu", "Pengambilan data pada satu titik waktu", "Penggunaan data sekunder tanpa data primer", "Pengambilan data dari beberapa kasus sekaligus"], "a": 0, "e": "Longitudinal menekankan pengamatan berulang dari waktu ke waktu."}, {"q": "Berdasarkan tujuan, basic research bertujuan…", "c": ["Mengembangkan teori", "Menyelesaikan masalah nyata", "Mengevaluasi program atau kebijakan", "Mengembangkan sistem/produk baru"], "a": 0, "e": "Pada slide desain penelitian, basic research diarahkan untuk pengembangan teori."}, {"q": "Berdasarkan tujuan, applied research bertujuan…", "c": ["Menyelesaikan masalah nyata", "Mengembangkan teori murni", "Mengevaluasi efektivitas kebijakan", "Membuat narasi sejarah"], "a": 0, "e": "Applied research diarahkan pada penyelesaian masalah nyata."}, {"q": "R&D dalam desain penelitian berarti…", "c": ["Menciptakan sistem/produk baru", "Mengembangkan teori konseptual", "Mengukur hubungan antar variabel", "Membandingkan kelompok yang sudah ada"], "a": 0, "e": "R&D berorientasi pada pengembangan produk atau sistem baru."}, {"q": "Experimental research memungkinkan peneliti…", "c": ["Menentukan sebab perilaku dengan memanipulasi faktor dan mengontrol faktor lain", "Mencari hubungan antar variabel tanpa kontrol", "Membandingkan kelompok yang sudah terjadi alami", "Menggambarkan status fenomena saat ini"], "a": 0, "e": "Definisi eksperimen di slide menekankan manipulasi faktor dan kontrol terhadap faktor lain."}, {"q": "Quasi-experimental research disebut…", "c": ["Hampir eksperimen tetapi tidak sepenuhnya eksperimen nyata", "Eksperimen penuh dengan manipulasi dan kontrol lengkap", "Penelitian korelasi tanpa perlakuan sama sekali", "Studi kasus mendalam pada satu organisasi"], "a": 0, "e": "Slide menyebut quasi-experimental sebagai almost but not quite real experiments."}, {"q": "Causal-comparative research berfokus pada…", "c": ["Menjelaskan kemungkinan sebab-akibat ketika variabel independen tidak dimanipulasi", "Mengukur hubungan antar dua variabel dengan koefisien korelasi", "Memanipulasi variabel dan mengontrol faktor lain", "Menggambarkan kondisi populasi pada satu waktu"], "a": 0, "e": "Causal-comparative mencari penyebab dari efek yang sudah terjadi tanpa manipulasi variabel independen."}, {"q": "Correlational research bertujuan…", "c": ["Menentukan derajat hubungan antar variabel", "Menentukan sebab-akibat dengan manipulasi faktor", "Mendalami fenomena dalam batas kasus tertentu", "Mengamati budaya organisasi secara kontekstual"], "a": 0, "e": "Ciri utamanya mengukur hubungan antar variabel, misalnya melalui koefisien korelasi."}, {"q": "Survey research umumnya dipakai untuk…", "c": ["Mengetahui status saat ini dari suatu fenomena pada sampel/populasi", "Menguji pengaruh perlakuan dengan kontrol ketat", "Membangun teori dari wawancara mendalam", "Mengkaji satu kasus secara holistik"], "a": 0, "e": "Slide survey menjelaskan fungsi untuk mengetahui present status dari fenomena tertentu."}, {"q": "Action research bersifat…", "c": ["Kolaboratif untuk memperbaiki praktik melalui refleksi tindakan", "Individual untuk menguji teori secara terkontrol", "Historis untuk merekonstruksi kejadian masa lalu", "Kuantitatif untuk mengukur hubungan antar variabel"], "a": 0, "e": "Action research disebut sebagai collective self-reflective enquiry dan harus kolaboratif."}, {"q": "Historical research menekankan…", "c": ["Pengumpulan, seleksi, organisasi, dan analisis informasi sejarah untuk menghasilkan narasi bermakna", "Pengamatan lapangan terhadap kelompok yang berinteraksi terstruktur", "Investigasi empiris terhadap kasus tertentu", "Pengukuran hubungan antar variabel"], "a": 0, "e": "Tahapan historical research pada slide berujung pada rekaman simpulan dalam narasi bermakna."}, {"q": "Ethnographic research biasanya…", "c": ["Melibatkan penelitian lapangan dan fokus pada konteks kelompok/organisasi", "Mengukur hubungan antar variabel dengan data angka", "Membandingkan kelompok setelah efek terjadi", "Menguji perlakuan pada kondisi terkontrol"], "a": 0, "e": "Etnografi membutuhkan field research dan contextualization."}, {"q": "Case study research adalah…", "c": ["Investigasi empiris pada fenomena tertentu dalam suatu kasus dengan batas yang jelas", "Penelitian lapangan pada budaya kelompok tanpa batas kasus", "Survei terhadap populasi untuk mengetahui status saat ini", "Eksperimen dengan manipulasi variabel bebas"], "a": 0, "e": "Case study menyelidiki suatu kasus/phenomenon secara holistik dan robust."}, {"q": "Case study yang baik sebaiknya…", "c": ["Holistik, robust, dan bila perlu memakai multiple cases untuk compare-contrast", "Selalu hanya satu kasus tanpa pembanding", "Menghindari data kuantitatif agar tetap kualitatif", "Berfokus pada populasi besar seperti survei"], "a": 0, "e": "Slide case study menyarankan multiple cases untuk perbandingan dan penggunaan data kuanti+kuali."}, {"q": "Triangulasi dalam analisis kualitatif dapat dilakukan melalui…", "c": ["Narasumber, dokumen, dan teori", "Populasi, sampel, dan hipotesis", "Variabel, indikator, dan instrumen", "Judul, rumusan masalah, dan manfaat"], "a": 0, "e": "Triangulasi memperkuat temuan dengan membandingkan beberapa sumber/landasan."}];
+
+
+
+const essayKeys = [{"tag": "P1", "q": "Jelaskan pengertian penelitian dan mengapa penelitian harus sistematis.", "ideal": ["Penelitian adalah proses mencari jawaban atas masalah dengan metode ilmiah.", "Sistematis berarti dilakukan dengan urutan, prosedur, aturan, dan dasar ilmiah.", "Tujuannya untuk menghasilkan solusi dan kontribusi pengetahuan, bukan sekadar opini."], "groups": [["penelitian", "research"], ["proses", "kegiatan"], ["mencari jawaban", "menjawab masalah", "mencari sesuatu"], ["masalah", "permasalahan"], ["sistematis", "terstruktur", "berurutan"], ["metode ilmiah", "ilmiah"], ["prosedur", "aturan", "tahapan"], ["kontribusi pengetahuan", "pengetahuan", "teori", "metode"]]}, {"tag": "P1", "q": "Jelaskan dua tujuan dasar penelitian dan kaitannya dengan kontribusi pengetahuan.", "ideal": ["Tujuan dasar penelitian adalah menyelesaikan masalah.", "Tujuan lainnya adalah menguji, mengembangkan, atau menemukan teori/metode.", "Kontribusi pengetahuan muncul ketika penelitian memberi pemahaman, model, metode, atau bukti baru."], "groups": [["tujuan", "tujuan dasar"], ["menyelesaikan masalah", "memecahkan masalah", "solusi"], ["menguji", "uji"], ["mengembangkan", "pengembangan"], ["menemukan", "menemukan teori"], ["teori", "metode"], ["kontribusi pengetahuan", "kontribusi ilmiah", "pengetahuan"], ["bukan hanya software", "bukan sekadar aplikasi", "output"]]}, {"tag": "P1", "q": "Uraikan tahapan penelitian dari awal sampai akhir.", "ideal": ["Tahap penelitian dimulai dari identifikasi masalah, perumusan masalah, dan rancangan penelitian.", "Setelah itu dilakukan pengumpulan data, pengolahan/analisis data, lalu penyimpulan hasil.", "Urutan ini penting agar penelitian berjalan sistematis."], "groups": [["identifikasi masalah"], ["perumusan masalah", "rumusan masalah"], ["rancangan penelitian", "desain penelitian"], ["pengumpulan data"], ["pengolahan data", "analisis data"], ["penyimpulan hasil", "simpulan", "kesimpulan"], ["sistematis", "urutan", "tahapan"]]}, {"tag": "P1", "q": "Mengapa peneliti tidak boleh salah dan tidak boleh bohong?", "ideal": ["Kesalahan hipotesis, analisis, atau pengujian membuat hasil penelitian tidak valid.", "Kebohongan data, pengolahan, atau teori merusak integritas ilmiah.", "Penelitian harus jujur dan dapat dipertanggungjawabkan."], "groups": [["tidak boleh salah", "salah"], ["hipotesis"], ["analisis"], ["pengujian", "uji"], ["tidak boleh bohong", "bohong", "jujur"], ["data"], ["pengolahan"], ["teori"], ["valid", "integritas", "dipertanggungjawabkan"]]}, {"tag": "P2", "q": "Bandingkan penelitian kuantitatif dan kualitatif.", "ideal": ["Kuantitatif memakai data numerik, variabel, instrumen terstandar, dan statistik.", "Kualitatif memakai data kata/narasi, memahami makna dan konteks, serta analisis non-statistik.", "Kuantitatif cenderung konfirmasi/deduktif, sedangkan kualitatif cenderung eksplorasi/induktif."], "groups": [["kuantitatif", "kuanti"], ["numerik", "angka"], ["variabel"], ["statistik"], ["kualitatif", "kuali"], ["kata", "narasi", "non numerik", "nonnumerik"], ["makna", "konteks"], ["deduktif", "konfirmasi"], ["induktif", "eksplorasi"]]}, {"tag": "P2", "q": "Jelaskan mixed methods dan kapan pendekatan ini tepat digunakan.", "ideal": ["Mixed methods menggabungkan data kuantitatif dan kualitatif.", "Digunakan ketika satu jenis data belum cukup menjawab masalah.", "Angka menjelaskan pola, sedangkan narasi menjelaskan alasan atau konteks."], "groups": [["mixed methods", "mixed", "metode campuran"], ["menggabungkan", "integrasi", "mengintegrasikan"], ["kuantitatif", "angka"], ["kualitatif", "narasi", "kata"], ["dua data", "dua pendekatan"], ["masalah", "rq", "research question"], ["pola"], ["konteks", "alasan", "makna"]]}, {"tag": "P2", "q": "Jelaskan perbedaan logika deduktif dan induktif.", "ideal": ["Deduktif bergerak dari teori umum ke hipotesis khusus lalu diuji.", "Induktif bergerak dari pengamatan atau kasus khusus ke konsep/teori umum.", "Deduktif dekat dengan kuantitatif, sedangkan induktif dekat dengan kualitatif."], "groups": [["deduktif"], ["teori umum", "umum"], ["hipotesis", "khusus"], ["menguji", "uji"], ["induktif"], ["pengamatan", "observasi", "kasus"], ["konsep", "teori"], ["kuantitatif", "kuanti"], ["kualitatif", "kuali"]]}, {"tag": "P2", "q": "Jelaskan ciri-ciri logika deduktif dan induktif.", "ideal": ["Deduktif berciri analitis, tautologis, apriori, dan sahih/tidaknya argumen dapat dinilai.", "Induktif berciri sintetis, general, a posteriori, dan kesimpulannya probabilistik.", "Deduktif menekankan premis, sedangkan induktif menekankan data empiris."], "groups": [["deduktif"], ["analitis"], ["tautologis"], ["apriori"], ["sahih", "valid"], ["induktif"], ["sintetis"], ["general", "generalisasi"], ["a posteriori", "posteriori"], ["probabilistik", "probabilitas"]]}, {"tag": "P3", "q": "Jelaskan konsep masalah penelitian sebagai realitas tidak sama dengan ekspektasi.", "ideal": ["Masalah penelitian muncul ketika realitas tidak sesuai ekspektasi.", "Ekspektasi berasal dari aturan, kebijakan, target, standar, atau teori.", "Realitas harus didukung data seperti laporan, evaluasi, observasi, atau wawancara."], "groups": [["masalah penelitian", "masalah"], ["realitas"], ["ekspektasi", "harapan"], ["tidak sama", "tidak sesuai", "gap", "kesenjangan"], ["aturan", "peraturan", "kebijakan", "standar", "target"], ["data", "laporan", "evaluasi"], ["observasi", "wawancara"], ["didukung", "bukti"]]}, {"tag": "P3", "q": "Bedakan masalah yang diamati dan masalah tersembunyi.", "ideal": ["Masalah yang diamati adalah gejala yang terlihat dan didukung data.", "Masalah tersembunyi adalah penyebab atau akar masalah.", "Akar masalah perlu dianalisis dengan fishbone, problem tree, mind map, atau logic analysis."], "groups": [["masalah diamati", "diamati"], ["gejala"], ["terlihat", "tampak"], ["data", "informasi"], ["masalah tersembunyi", "tersembunyi"], ["penyebab"], ["akar masalah"], ["fishbone", "problem tree", "mind map", "logic analysis"]]}, {"tag": "P3", "q": "Jelaskan syarat research question yang baik.", "ideal": ["Research question harus relevan dengan masalah.", "RQ harus jelas, konsisten dengan standar, dan berada pada tingkat kesulitan yang tepat.", "RQ harus menghasilkan kesimpulan yang jelas dan tidak terlalu deskriptif."], "groups": [["research question", "rq", "pertanyaan penelitian"], ["relevan"], ["masalah"], ["jelas"], ["standar"], ["kesimpulan"], ["tingkat", "level"], ["tidak terlalu deskriptif", "tidak deskriptif", "analisis"]]}, {"tag": "P3", "q": "Mengapa teori diperlukan dalam penelitian?", "ideal": ["Teori membantu menjelaskan fenomena dan hubungan antar konsep.", "Teori digunakan untuk menganalisis, memprediksi, membandingkan, dan menggeneralisasi.", "Pertanyaan mengapa membutuhkan teori karena melampaui deskripsi."], "groups": [["teori"], ["menjelaskan", "jelaskan"], ["fenomena"], ["hubungan"], ["menganalisis", "analisis"], ["memprediksi", "prediksi"], ["membandingkan", "banding"], ["menggeneralisasi", "generalisasi"], ["mengapa", "why"]]}, {"tag": "P4", "q": "Jelaskan pengertian literature review dan fungsinya dalam penelitian.", "ideal": ["Literature review adalah proses meninjau dan menganalisis literatur akademik.", "Fungsinya untuk mengetahui state of the art, menemukan research gap, dan membangun justifikasi riset.", "Literature review mendukung proposal, kerangka teori, metodologi, dan related works."], "groups": [["literature review", "studi literatur"], ["meninjau", "review"], ["menganalisis", "analisis"], ["literatur akademik", "literatur"], ["state of the art"], ["research gap", "gap"], ["justifikasi"], ["proposal", "related works", "kerangka", "metodologi"]]}, {"tag": "P4", "q": "Jelaskan desk research dan perbedaannya dengan pengumpulan data primer.", "ideal": ["Desk research memakai data sekunder seperti literatur, laporan, dan basis data.", "Desk research tidak mengumpulkan data primer langsung dari responden atau lapangan.", "Data primer diperoleh langsung melalui wawancara, observasi, atau kuesioner."], "groups": [["desk research"], ["data sekunder", "sekunder"], ["literatur"], ["laporan"], ["basis data", "database"], ["tanpa pengumpulan data primer", "tidak mengumpulkan data primer"], ["data primer", "primer"], ["wawancara", "observasi", "kuesioner"]]}, {"tag": "P4", "q": "Jelaskan sumber literatur yang layak dan yang perlu dihindari.", "ideal": ["Sumber layak mencakup jurnal bereputasi, prosiding ilmiah, dan buku akademik.", "Sumber yang perlu hati-hati adalah blog, Wikipedia, media populer, YouTube nonresmi, dan konten AI tanpa verifikasi.", "Kualitas sumber menentukan kekuatan justifikasi riset."], "groups": [["sumber literatur", "literatur"], ["jurnal bereputasi", "jurnal"], ["prosiding"], ["buku akademik", "buku"], ["blog"], ["wikipedia"], ["media populer"], ["youtube"], ["ai", "konten ai"], ["verifikasi", "kredibel", "terpercaya"]]}, {"tag": "P4", "q": "Jelaskan metode 3C + 2S dalam literature review.", "ideal": ["Compare berarti membandingkan pendekatan antar studi.", "Contrast berarti membedakan kelebihan dan kekurangan.", "Criticize berarti mengevaluasi secara kritis.", "Synthesize berarti menghubungkan antar studi, sedangkan Summarize berarti menyimpulkan kontribusi utama."], "groups": [["3c", "2s", "3c + 2s"], ["compare", "membandingkan"], ["contrast", "membedakan"], ["criticize", "kritik", "evaluasi kritis"], ["synthesize", "menghubungkan", "sintesis"], ["summarize", "menyimpulkan", "ringkas"], ["kelebihan", "kekurangan"], ["kontribusi utama", "kontribusi"]]}, {"tag": "P5", "q": "Jelaskan perbedaan kerangka teoretis dan kerangka metodologis.", "ideal": ["Kerangka teoretis berisi konsep, model, atau teori yang mendasari penelitian.", "Kerangka metodologis berisi pendekatan, metode, dan teknik analisis.", "Kerangka teoretis menjawab dasar berpikir, sedangkan metodologis menjawab cara penelitian dilakukan."], "groups": [["kerangka teoretis", "teoretis", "teoritis"], ["konsep"], ["model"], ["teori"], ["mendasari"], ["kerangka metodologis", "metodologis"], ["pendekatan"], ["metode"], ["teknik analisis", "analisis"]]}, {"tag": "P5", "q": "Jelaskan tahapan analisis kualitatif.", "ideal": ["Tahap pertama adalah selection and reduction untuk memilih data relevan.", "Tahap kedua create pattern untuk mencari pola atau hubungan.", "Tahap ketiga create conclusions untuk menafsirkan temuan menjadi kesimpulan.", "Dalam kualitatif yang penting adalah makna dan konteks."], "groups": [["analisis kualitatif", "kualitatif"], ["selection and reduction", "selection", "reduction", "reduksi"], ["data relevan", "relevan"], ["create pattern", "pola"], ["hubungan", "sebab akibat"], ["create conclusions", "kesimpulan"], ["menafsirkan", "interpretasi"], ["makna", "konteks"]]}, {"tag": "P5", "q": "Jelaskan open coding, axial coding, dan selective coding.", "ideal": ["Open coding memberi label deskriptif pada segmen data.", "Axial coding menghubungkan kode dan menemukan makna yang lebih kompleks.", "Selective coding mengelompokkan kode menjadi tema atau konstruk inti."], "groups": [["open coding"], ["label", "kode"], ["deskriptif"], ["segmen data", "teks"], ["axial coding"], ["hubungan", "menghubungkan"], ["selective coding"], ["tema", "konstruk"], ["makna"]]}, {"tag": "P5", "q": "Jelaskan struktur Idea Concept Paper.", "ideal": ["Struktur ICP mencakup topik penelitian, latar belakang, penelitian terkait/referensi, rumusan masalah, isi pokok bahasan, dan hasil yang diharapkan.", "Topik harus singkat, spesifik, jelas, serta menggambarkan ruang lingkup dan luaran.", "Rumusan masalah berisi pertanyaan yang ingin dijawab melalui penelitian."], "groups": [["idea concept paper", "icp"], ["topik penelitian", "topik"], ["latar belakang"], ["penelitian terkait", "referensi"], ["rumusan masalah"], ["isi pokok bahasan"], ["hasil yang diharapkan"], ["singkat", "spesifik", "jelas"], ["ruang lingkup", "luaran"]]}, {"tag": "P6", "q": "Jelaskan klasifikasi penelitian berdasarkan data, waktu, metode, dan tujuan.", "ideal": ["Berdasarkan data: primer, sekunder, kuantitatif, dan kualitatif.", "Berdasarkan waktu: cross-sectional dan longitudinal.", "Berdasarkan metode: kuantitatif dan kualitatif beserta turunannya.", "Berdasarkan tujuan: basic, applied, evaluation, R&D, dan action research."], "groups": [["klasifikasi", "kategori"], ["data"], ["primer"], ["sekunder"], ["kuantitatif"], ["kualitatif"], ["waktu"], ["cross-sectional", "cross sectional"], ["longitudinal"], ["tujuan"], ["basic", "applied", "evaluation", "r&d", "action research"]]}, {"tag": "P6", "q": "Bandingkan cross-sectional dan longitudinal.", "ideal": ["Cross-sectional mengambil data pada satu titik waktu.", "Longitudinal mengambil data berulang dalam periode waktu tertentu.", "Cross-sectional menggambarkan kondisi saat ini, sedangkan longitudinal melihat perubahan dari waktu ke waktu."], "groups": [["cross-sectional", "cross sectional"], ["satu titik waktu", "satu waktu"], ["longitudinal"], ["berulang"], ["periode waktu", "jangka waktu"], ["kondisi saat ini", "status saat ini"], ["perubahan", "perkembangan"], ["waktu"]]}, {"tag": "P6", "q": "Bandingkan experimental, quasi-experimental, causal-comparative, dan correlational research.", "ideal": ["Experimental memanipulasi faktor dan mengontrol faktor lain untuk melihat sebab-akibat.", "Quasi-experimental mirip eksperimen tetapi tidak sepenuhnya eksperimen nyata.", "Causal-comparative mencari sebab-akibat dari kondisi yang sudah terjadi tanpa manipulasi variabel.", "Correlational mengukur derajat hubungan antar variabel tanpa kontrol seperti eksperimen."], "groups": [["experimental", "eksperimen"], ["memanipulasi", "manipulasi"], ["kontrol", "mengontrol"], ["sebab akibat", "kausal"], ["quasi-experimental", "quasi", "kuasi"], ["tidak sepenuhnya", "hampir eksperimen"], ["causal-comparative", "causal comparative"], ["sudah terjadi"], ["correlational", "korelasi"], ["hubungan antar variabel", "hubungan"]]}, {"tag": "P6", "q": "Jelaskan survey, action research, ethnographic research, dan case study.", "ideal": ["Survey mengetahui status atau kondisi saat ini dari fenomena pada sampel.", "Action research bersifat kolaboratif untuk memperbaiki praktik melalui refleksi tindakan.", "Ethnographic research memahami konteks kelompok/organisasi melalui penelitian lapangan.", "Case study menginvestigasi fenomena tertentu dalam batas kasus yang jelas secara holistik."], "groups": [["survey"], ["status saat ini", "kondisi saat ini"], ["sampel"], ["action research"], ["kolaboratif"], ["memperbaiki praktik", "perbaikan"], ["refleksi tindakan", "tindakan"], ["ethnographic", "etnografi"], ["lapangan", "field"], ["konteks", "kelompok", "organisasi"], ["case study", "studi kasus"], ["batas kasus", "holistik"]]}, {"tag": "P4", "q": "Jelaskan kapan literature review digunakan dalam penelitian.", "ideal": ["Literature review digunakan saat menyusun proposal riset.", "Literature review membantu menentukan research question, mengembangkan kerangka teoritis dan metodologi, serta mengisi related works.", "Intinya, literature review dipakai untuk memberi dasar ilmiah dan arah penelitian."], "groups": [["literature review", "studi literatur"], ["proposal", "proposal riset"], ["research question", "rq", "pertanyaan penelitian"], ["kerangka teoritis", "teoritis"], ["metodologi", "kerangka metodologis"], ["related works"], ["dasar ilmiah", "justifikasi"], ["arah penelitian"]]}, {"tag": "P4", "q": "Jelaskan kesalahan umum dalam literature review.", "ideal": ["Kesalahan umum literature review adalah hanya membuat ringkasan tanpa analisis.", "Kesalahan lain adalah memakai sumber tidak terpercaya seperti blog, Wikipedia, media populer, YouTube nonresmi, atau konten AI tanpa verifikasi.", "Literature review juga salah jika tidak menghubungkan literatur dengan research question."], "groups": [["kesalahan umum"], ["ringkasan", "meringkas"], ["tanpa analisis", "analisis"], ["sumber tidak terpercaya", "tidak terpercaya"], ["blog"], ["wikipedia"], ["media populer"], ["youtube"], ["konten ai", "ai tanpa verifikasi"], ["research question", "rq", "pertanyaan penelitian"]]}, {"tag": "P4", "q": "Jelaskan hasil dari literature review yang baik.", "ideal": ["Literature review yang baik menemukan gap penelitian dan menentukan arah metodologi.", "Selain itu, literature review menjustifikasi novelty dan kontribusi penelitian.", "Literature review juga mendukung pernyataan dalam proposal agar tidak hanya berupa opini."], "groups": [["hasil literature review", "literature review yang baik"], ["gap penelitian", "research gap"], ["arah metodologi", "metodologi"], ["novelty", "kebaruan"], ["kontribusi"], ["mendukung pernyataan", "pernyataan"], ["proposal"], ["bukan opini", "opini"]]}];
+let activeEssayIndex = 0;
+const essayPrompts = essayKeys.map(x=>x.q);
+
+function normalizeEssayText(text){
+  return (text || '')
+    .toLowerCase()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+    .replace(/[^a-z0-9\s+&-]/g,' ')
+    .replace(/\s+/g,' ')
+    .trim();
+}
+function termMatched(answer, term){
+  const t = normalizeEssayText(term);
+  if(!t) return false;
+  return answer.includes(t);
+}
+function groupMatched(answer, group){
+  return group.some(term=>termMatched(answer, term));
+}
+function initEssaySelect(){
+  const select = document.getElementById('essaySelect');
+  if(!select) return;
+  select.innerHTML = essayKeys.map((item, idx)=>`<option value="${idx}">${item.tag} — ${item.q}</option>`).join('');
+  showEssayPrompt(0, false);
+}
+
+function previousEssay(){
+  const nextIndex = (activeEssayIndex - 1 + essayKeys.length) % essayKeys.length;
+  showEssayPrompt(nextIndex, true);
+}
+function nextEssay(){
+  const nextIndex = (activeEssayIndex + 1) % essayKeys.length;
+  showEssayPrompt(nextIndex, true);
+}
+function randomEssay(){
+  activeEssayIndex = Math.floor(Math.random()*essayKeys.length);
+  showEssayPrompt(activeEssayIndex, true);
+}
+function showEssayPrompt(index, scroll=true){
+  activeEssayIndex = index;
+  const item = essayKeys[index];
+  const selectEl = document.getElementById('essaySelect');
+  if(selectEl) selectEl.value = String(index);
+  const promptEl = document.getElementById('essayPrompt');
+  if(promptEl) promptEl.innerHTML = `<b>Soal latihan:</b> <span class="essay-badge">${item.tag}</span>${item.q}`;
+  const answerEl = document.getElementById('essayAnswer');
+  if(answerEl) answerEl.value = '';
+  const resultEl = document.getElementById('essayResult');
+  if(resultEl) resultEl.innerHTML = '<span class="muted">Tulis jawaban dulu, lalu klik <b>Cek Jawaban</b>.</span>';
+  const essay = document.getElementById('essay');
+  if(scroll && essay) essay.scrollIntoView({behavior:'smooth', block:'start'});
+}
+function clearEssayAnswer(){
+  const answerEl = document.getElementById('essayAnswer');
+  if(answerEl) answerEl.value = '';
+  const resultEl = document.getElementById('essayResult');
+  if(resultEl) resultEl.innerHTML = '<span class="muted">Jawaban dibersihkan. Tulis ulang, lalu klik <b>Cek Jawaban</b>.</span>';
+}
+function checkEssayAnswer(){
+  const item = essayKeys[activeEssayIndex];
+  const raw = (document.getElementById('essayAnswer')?.value || '').trim();
+  const ans = normalizeEssayText(raw);
+  const resultEl = document.getElementById('essayResult');
+  if(!raw){
+    resultEl.innerHTML = '<b>Belum bisa dinilai.</b><br>Tulis jawaban dulu di kolom jawaban.';
+    return;
+  }
+
+  const totalGroups = item.groups.length;
+  const matched = item.groups.map((g,idx)=>({idx, ok:groupMatched(ans,g), terms:g}));
+  const hit = matched.filter(x=>x.ok).length;
+  const wordCount = ans ? ans.split(' ').filter(Boolean).length : 0;
+
+  let percent = Math.round((hit / totalGroups) * 100);
+
+  // Penalti kalau terlalu pendek: esai butuh penjelasan, bukan hanya daftar istilah.
+  if(wordCount < 12) percent = Math.min(percent, 42);
+  else if(wordCount < 25) percent = Math.min(percent, 65);
+  else if(wordCount < 40) percent = Math.min(percent, 82);
+
+  // Bonus kalau hampir semua kata kunci masuk dan jawaban cukup panjang.
+  if(wordCount >= 50 && hit >= Math.ceil(totalGroups * 0.85)) percent = Math.min(100, percent + 4);
+  if(hit === totalGroups && wordCount >= 42) percent = 100;
+
+  const missingAll = matched.filter(x=>!x.ok).map(x=>x.terms.slice(0,3).join(' / '));
+  const missing = missingAll.slice(0,5);
+  let status = 'Perlu diperbaiki';
+  let emoji = '⚠️';
+  if(percent >= 95){ status = 'Jawaban sangat kuat'; emoji = '✅'; }
+  else if(percent >= 85){ status = 'Jawaban sudah benar'; emoji = '🟢'; }
+  else if(percent >= 70){ status = 'Jawaban mendekati benar'; emoji = '🟡'; }
+  else if(percent >= 50){ status = 'Jawaban sebagian benar'; emoji = '🟠'; }
+  else { status = 'Kemungkinan masih salah/kurang tepat'; emoji = '🔴'; }
+
+  let feedback = '';
+  if(percent === 100){
+    feedback = 'Semua kata kunci inti dari materi sudah masuk. Jawaban sudah aman; tinggal rapikan bahasa agar lebih runtut.';
+  } else if(percent >= 85){
+    feedback = `Jawaban sudah mirip dengan materi. Yang kurang hanya detail kecil: <b>${missing.join(', ') || 'contoh atau penutup'}</b>.`;
+  } else if(percent >= 70){
+    feedback = `Inti jawaban sudah ada, tetapi belum lengkap. Seharusnya tambahkan: <b>${missing.join(', ')}</b>.`;
+  } else if(percent >= 50){
+    feedback = `Jawaban masih terlalu umum. Beberapa konsep cocok, tapi kata kunci materi yang belum masuk adalah: <b>${missing.join(', ')}</b>.`;
+  } else {
+    feedback = `Jawaban belum cukup sesuai materi. Fokus ulang pada kata kunci: <b>${missing.join(', ')}</b>. Pakai pola: definisi → fungsi/perbedaan → contoh → kesimpulan.`;
+  }
+
+  const foundHtml = matched.filter(x=>x.ok).map(x=>`<span class="found">✓ ${x.terms[0]}</span>`).join('');
+  const missHtml = matched.filter(x=>!x.ok).map(x=>`<span class="miss">× ${x.terms[0]}</span>`).join('');
+
+  resultEl.innerHTML = `
+    <div class="essay-score ${percent>=85?'good':percent>=70?'mid':'low'}">
+      <div>
+        <b>${emoji} ${percent}% jawaban Anda benar</b>
+        <span>${status} • ${hit}/${totalGroups} kata kunci utama terdeteksi</span>
+      </div>
+      <div class="score-ring">${percent}%</div>
+    </div>
+    <p>${feedback}</p>
+    <div class="keyword-report">
+      <b>Kata kunci yang sudah masuk:</b>
+      <div class="keyword-list">${foundHtml || '<span class="miss">Belum ada kata kunci utama yang terdeteksi</span>'}</div>
+    </div>
+    <div class="keyword-report">
+      <b>Yang masih kurang:</b>
+      <div class="keyword-list">${missHtml || '<span class="found">Semua kata kunci utama masuk</span>'}</div>
+    </div>
+    <div class="essay-key-preview" style="display:block;margin-top:12px">
+      <b>Penjelasan singkat:</b>
+      <ul>${item.ideal.map(x=>`<li>${x}</li>`).join('')}</ul>
+    </div>
+  `;
+}
+const nodeColors = ['#6366f1','#06b6d4','#f97316','#22c55e','#8b5cf6','#34d399','#ef4444','#fb7185','#3b82f6','#f59e0b'];
+const coverageItems = [
+  ['Pertemuan 1','Definisi, tujuan, tahapan, etika peneliti'],
+  ['Pertemuan 2','Kuantitatif, kualitatif, mixed, deduktif-induktif'],
+  ['Pertemuan 3','Masalah, gap, akar masalah, RQ, teori'],
+  ['Pertemuan 4','Studi literatur, desk research, sumber ilmiah, 3C+2S'],
+  ['Pertemuan 5','Analisis kualitatif, coding, kerangka, ICP'],
+  ['Pertemuan 6','Desain penelitian, klasifikasi, contoh metode']
+];
+
+let order = quizData.map((_,i)=>i);
+let current = 0, answered = false, right = 0, wrong = 0, wrongQuestions = [];
+let currentChoiceOrder = [];
+let lockedNodeId = null;
+let timerInterval = null, remaining = 25*60, lastTimerMinutes = 25, wakeLock = null;
+const pathGroups = new Map();
+const nodeEls = new Map();
+
+function renderCoverage(){
+  document.getElementById('coverageGrid').innerHTML = coverageItems.map(([t,d])=>`<div class="coverage-chip"><b>${t}</b><span>${d}</span></div>`).join('');
+  document.getElementById('quizCoverageText').textContent = `${quizData.length} soal PG + ${essayPrompts.length} prediksi esai • mencakup 6 pertemuan dan 10 topik inti.`;
+}
+
+function renderSummary(){
+  const box = document.getElementById('summaryBox');
+  box.innerHTML = summarySections.map((sec,idx)=>{
+    const [title, items] = sec;
+    return `<details ${idx===0?'open':''}><summary>${title}</summary><ul>${items.map(i=>`<li>${i}</li>`).join('')}</ul></details>`;
+  }).join('');
+}
+
+function renderFlashcards(){
+  const box = document.getElementById('flashcardsBox');
+  box.innerHTML = quickCards.map(([front,back])=>`<div class="flip" onclick="this.classList.toggle('flipped')"><div class="flip-inner"><div class="face front"><strong>${front}</strong><span>Klik lihat jawaban</span></div><div class="face back">${back}</div></div></div>`).join('');
+}
+
+function animatePath(path, delay){
+  const len = path.getTotalLength();
+  path.style.strokeDasharray = len;
+  path.style.strokeDashoffset = len;
+  path.getBoundingClientRect();
+  path.style.transition = `stroke-dashoffset .8s cubic-bezier(.22,.9,.32,1) ${delay}ms, stroke-width .22s ease, opacity .22s ease, filter .22s ease`;
+  requestAnimationFrame(()=>{ path.style.strokeDashoffset = '0'; });
+}
+
+function renderMindMap(){
+  const canvas = document.getElementById('mindmapCanvas');
+  const svg = document.getElementById('mapSvg');
+  Array.from(canvas.querySelectorAll('.node')).forEach(n=>n.remove());
+  svg.innerHTML = '';
+  pathGroups.clear(); nodeEls.clear();
+
+  const rect = canvas.getBoundingClientRect();
+  const width = Math.max(rect.width, 320);
+  const height = Math.max(rect.height, 760);
+  const cx = width * 0.50, cy = height * 0.50;
+
+  // Layout dibuat presisi seperti versi awal: rapi, simetris, dan tidak saling tumpuk.
+  // x/y berupa persen dari frame map.
+  const fixedLayout = {
+    definisi:   [50, 14],
+    tahapan:    [22, 24],
+    pendekatan: [78, 24],
+    logika:     [18, 50],
+    masalah:    [82, 50],
+    jenis:      [25, 68],
+    analisis:   [75, 68],
+    literatur:  [22, 82],
+    desain:     [78, 82],
+    icp:        [50, 88]
+  };
+
+  mindNodes.forEach((node,idx)=>{
+    const [px,py] = fixedLayout[node.id] || [50,50];
+    const nx = width * px / 100;
+    const ny = height * py / 100;
+    const color = nodeColors[idx % nodeColors.length];
+    node._color = color;
+    node._pos = {x:nx,y:ny};
+
+    // Garis tidak terlalu bebas/organik; cukup melengkung tipis agar tetap clean.
+    const dx = nx - cx, dy = ny - cy;
+    const curve = Math.min(90, Math.max(34, Math.abs(dx) * 0.18 + Math.abs(dy) * 0.08));
+    const c1x = cx + dx * 0.34;
+    const c1y = cy + dy * 0.12;
+    const c2x = cx + dx * 0.72;
+    const c2y = cy + dy * 0.88;
+    const d = `M ${cx} ${cy} C ${c1x} ${c1y}, ${c2x} ${c2y}, ${nx} ${ny}`;
+
+    const g = document.createElementNS('http://www.w3.org/2000/svg','g');
+    g.setAttribute('class','map-group');
+    g.dataset.id = node.id;
+    g.style.color = color;
+
+    const path = document.createElementNS('http://www.w3.org/2000/svg','path');
+    path.setAttribute('d', d);
+    path.setAttribute('stroke', color);
+
+    const dot = document.createElementNS('http://www.w3.org/2000/svg','circle');
+    dot.setAttribute('cx', nx);
+    dot.setAttribute('cy', ny);
+    dot.setAttribute('r', 4.2);
+    dot.setAttribute('fill', color);
+
+    g.appendChild(path);
+    g.appendChild(dot);
+    svg.appendChild(g);
+    pathGroups.set(node.id, g);
+    requestAnimationFrame(()=>animatePath(path, idx * 32));
+
+    const el = document.createElement('div');
+    el.className = 'node';
+    el.style.left = `${nx}px`;
+    el.style.top = `${ny}px`;
+    el.style.borderTop = `5px solid ${color}`;
+    el.innerHTML = `<div class="emoji">${node.emoji}</div><div class="ntitle">${node.title}</div><div class="mini">klik untuk ringkasan</div>`;
+    el.dataset.id = node.id;
+    const activate = ()=>setHoverState(node.id,true);
+    const deactivate = ()=>setHoverState(node.id,false);
+    el.addEventListener('mouseenter', activate);
+    el.addEventListener('mouseleave', deactivate);
+    el.addEventListener('focus', activate);
+    el.addEventListener('blur', deactivate);
+    el.addEventListener('click', ()=>showNode(node.id));
+    canvas.appendChild(el);
+    nodeEls.set(node.id, el);
+  });
+
+  if(lockedNodeId) applyLockedState(lockedNodeId);
+}
+function setHoverState(id, on){
+  const g = pathGroups.get(id), node = nodeEls.get(id);
+  if(g && (!lockedNodeId || lockedNodeId!==id || on)) g.classList.toggle('active', on);
+  if(node && (!lockedNodeId || lockedNodeId!==id || on)) node.classList.toggle('active', on);
+}
+function applyLockedState(id){
+  pathGroups.forEach((g,key)=>g.classList.toggle('locked', key===id));
+  nodeEls.forEach((el,key)=>el.classList.toggle('locked', key===id));
+}
+
+function showNode(id){
+  lockedNodeId = id;
+  applyLockedState(id);
+  const n = mindNodes.find(x=>x.id===id);
+  document.getElementById('nodeDetail').innerHTML = `
+    <span class="chip" style="background:${n._color}22;border:1px solid ${n._color}66;color:#fff">${n.emoji} Cabang mind map</span>
+    <h3>${n.title}</h3>
+    <p>${n.summary}</p>
+    <ul>${n.must.map(m=>`<li>${m}</li>`).join('')}</ul>
+    <div class="remember"><b>Ingat cepat:</b> ${n.ingat}</div>
+  `;
+}
+
+function renderQuestion(){
+  answered = false;
+  const q = quizData[order[current]];
+  document.getElementById('qNum').textContent = `Soal ${current+1}`;
+  document.getElementById('qTotal').textContent = `${current+1}/${order.length}`;
+  document.getElementById('questionText').textContent = q.q;
+  document.getElementById('progressBar').style.width = `${(current/order.length)*100}%`;
+  document.getElementById('explainBox').classList.remove('show');
+  document.getElementById('explainBox').innerHTML = '';
+  document.getElementById('nextBtn').style.display = 'none';
+
+  // Opsi diacak setiap soal supaya jawaban tidak selalu A dan tidak bisa ditebak pola.
+  currentChoiceOrder = q.c.map((choice, idx)=>({choice, idx})).sort(()=>Math.random()-.5);
+
+  const box = document.getElementById('optionsBox');
+  box.innerHTML = currentChoiceOrder.map((item,i)=>`<button class="option" onclick="answer(${item.idx})">${String.fromCharCode(65+i)}. ${item.choice}</button>`).join('');
+}
+function answer(i){
+  if(answered) return;
+  answered = true;
+  const q = quizData[order[current]];
+  const opts = document.querySelectorAll('.option');
+  opts.forEach((btn,idx)=>{
+    const originalIdx = currentChoiceOrder[idx]?.idx;
+    if(originalIdx===q.a) btn.classList.add('correct');
+    if(originalIdx===i && i!==q.a) btn.classList.add('wrong');
+  });
+  if(i===q.a) right++; else { wrong++; wrongQuestions.push(order[current]); addReview(q); }
+  updateStats();
+  const explain = document.getElementById('explainBox');
+  explain.innerHTML = `<b>${i===q.a ? 'Benar ✅' : 'Belum tepat ❌'}</b><br>${q.e}`;
+  explain.classList.add('show');
+  document.getElementById('nextBtn').style.display = 'inline-block';
+  if(wrongQuestions.length) document.getElementById('wrongBtn').style.display = 'inline-block';
+  if(current === order.length-1){ document.getElementById('nextBtn').textContent = 'Lihat hasil'; document.getElementById('progressBar').style.width = '100%'; }
+  else document.getElementById('nextBtn').textContent = 'Soal berikutnya';
+}
+function nextQuestion(){
+  if(current < order.length-1){ current++; renderQuestion(); }
+  else {
+    const pct = Math.round((right/(right+wrong))*100 || 0);
+    document.getElementById('questionText').innerHTML = `Selesai! Skor kamu ${pct}%`;
+    document.getElementById('optionsBox').innerHTML = `<p class="muted">Benar ${right}, salah ${wrong}. ${pct>=80?'Aman, tinggal review yang salah.':'Ulangi yang salah dulu, terutama konsep inti dan soal contoh kasus.'}</p>`;
+    document.getElementById('explainBox').classList.remove('show');
+    document.getElementById('nextBtn').style.display = 'none';
+  }
+}
+function updateStats(){
+  document.getElementById('rightStat').textContent = right;
+  document.getElementById('wrongStat').textContent = wrong;
+  const total = right+wrong; const pct = total ? Math.round(right/total*100) : 0;
+  document.getElementById('scoreMsg').textContent = total ? `Akurasi sementara: ${pct}%. Target aman: 80%+.` : 'Target aman: minimal 80% sebelum kuis.';
+}
+function addReview(q){
+  const list = document.getElementById('reviewList'); if(wrong===1) list.innerHTML = '';
+  const div = document.createElement('div'); div.className = 'review-item'; div.innerHTML = `<b>${q.q}</b><br>Jawaban benar: ${q.c[q.a]}`; list.prepend(div);
+}
+function shuffleQuiz(){
+  order = quizData.map((_,i)=>i).sort(()=>Math.random()-.5); current = 0; right = 0; wrong = 0; wrongQuestions = [];
+  document.getElementById('reviewList').innerHTML = '<p class="muted">Belum ada jawaban salah.</p>'; document.getElementById('wrongBtn').style.display = 'none'; updateStats(); renderQuestion();
+}
+function resetQuiz(){
+  order = quizData.map((_,i)=>i); current = 0; right = 0; wrong = 0; wrongQuestions = [];
+  document.getElementById('reviewList').innerHTML = '<p class="muted">Belum ada jawaban salah.</p>'; document.getElementById('wrongBtn').style.display = 'none'; updateStats(); renderQuestion();
+}
+function jumpWrong(){
+  if(!wrongQuestions.length) return;
+  order = [...new Set(wrongQuestions)]; current = 0; right = 0; wrong = 0; wrongQuestions = [];
+  document.getElementById('reviewList').innerHTML = '<p class="muted">Mode ulang soal salah.</p>'; document.getElementById('wrongBtn').style.display = 'none'; updateStats(); renderQuestion();
+}
+
+function syncTimerButton(){ const btn = document.getElementById('pauseBtn'); if(btn) btn.textContent = timerInterval ? 'Pause' : 'Start'; }
+function updateTimer(){ const m = String(Math.floor(remaining/60)).padStart(2,'0'); const s = String(remaining%60).padStart(2,'0'); document.getElementById('timerText').textContent = `${m}:${s}`; }
+function timerTick(){ remaining--; if(remaining<=0){ remaining = 0; updateTimer(); clearInterval(timerInterval); timerInterval = null; syncTimerButton(); alert('Waktu habis. Lanjut kuis cepat!'); return; } updateTimer(); }
+function startTimer(minutes){ if(typeof minutes === 'number'){ lastTimerMinutes = minutes; remaining = minutes*60; } clearInterval(timerInterval); updateTimer(); timerInterval = setInterval(timerTick,1000); syncTimerButton(); enterFocusMode(); }
+function pauseTimer(){ if(timerInterval){ clearInterval(timerInterval); timerInterval = null; } else { if(remaining<=0) remaining = lastTimerMinutes*60; clearInterval(timerInterval); timerInterval = setInterval(timerTick,1000); enterFocusMode(); } syncTimerButton(); updateTimer(); }
+async function enterFocusMode(){ document.body.classList.add('focus-mode'); const btn = document.getElementById('focusBtn'); if(btn) btn.textContent = 'Keluar Mode Fokus'; try{ if(document.documentElement.requestFullscreen && !document.fullscreenElement){ await document.documentElement.requestFullscreen({navigationUI:'hide'}); } }catch(e){} try{ if('wakeLock' in navigator && !wakeLock){ wakeLock = await navigator.wakeLock.request('screen'); } }catch(e){} }
+async function exitFocusMode(){ document.body.classList.remove('focus-mode'); const btn = document.getElementById('focusBtn'); if(btn) btn.textContent = 'Mode Fokus'; try{ if(document.fullscreenElement) await document.exitFullscreen(); }catch(e){} try{ if(wakeLock){ await wakeLock.release(); wakeLock = null; } }catch(e){} }
+function toggleFocusMode(){ if(document.body.classList.contains('focus-mode')) exitFocusMode(); else enterFocusMode(); }
+document.addEventListener('fullscreenchange',()=>{ if(!document.fullscreenElement){ document.body.classList.remove('focus-mode'); const btn = document.getElementById('focusBtn'); if(btn) btn.textContent = 'Mode Fokus'; } });
+document.addEventListener('visibilitychange',()=>{ if(wakeLock !== null && document.visibilityState === 'visible' && document.body.classList.contains('focus-mode')) enterFocusMode(); });
+function enableAntiCopy(){
+  const block = (e)=>{ if(e.target && ['TEXTAREA','INPUT','SELECT'].includes(e.target.tagName)) return true; e.preventDefault(); return false; };
+  ['copy','cut','paste','contextmenu','selectstart','dragstart'].forEach(evt=>document.addEventListener(evt, block, true));
+  document.addEventListener('keydown',(e)=>{ const k = (e.key || '').toLowerCase(); const ctrl = e.ctrlKey || e.metaKey; if(ctrl && ['s','u','p'].includes(k)){ e.preventDefault(); return false; } if(!(e.target && ['TEXTAREA','INPUT','SELECT'].includes(e.target.tagName)) && ctrl && ['a','c','x'].includes(k)){ e.preventDefault(); return false; } if(e.key === 'F12'){ e.preventDefault(); return false; } if(ctrl && e.shiftKey && ['i','j','c'].includes(k)){ e.preventDefault(); return false; } }, true);
+}
+
+renderCoverage(); renderSummary(); renderFlashcards(); renderLearn(); initEssaySelect(); renderQuestion(); updateTimer(); syncTimerButton(); enableAntiCopy();
+let resizeMindMapTimer=null; window.addEventListener('resize',()=>{ clearTimeout(resizeMindMapTimer); resizeMindMapTimer=setTimeout(renderMindMap,160); }); renderMindMap();
+</script>
+</body>
+</html>

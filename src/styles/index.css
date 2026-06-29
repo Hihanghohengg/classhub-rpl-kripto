@@ -1,0 +1,237 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+  font-size: 15px;
+
+  --page-bg: #f8fafc;
+  --surface-bg: #ffffff;
+  --surface-muted: #f1f5f9;
+  --border-soft: #e2e8f0;
+  --text-main: #0f172a;
+  --text-muted: #64748b;
+  --brand: #1e3a8a;
+  --brand-hover: #1d4ed8;
+}
+
+html[data-font-size='small'] {
+  font-size: 14px;
+}
+
+html[data-font-size='normal'] {
+  font-size: 15px;
+}
+
+html[data-font-size='large'] {
+  font-size: 16px;
+}
+
+.dark {
+  color-scheme: dark;
+
+  --page-bg: #020617;
+  --surface-bg: #0f172a;
+  --surface-muted: #111827;
+  --border-soft: #1e293b;
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+  --brand: #2563eb;
+  --brand-hover: #3b82f6;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: 'Poppins', Inter, ui-sans-serif, system-ui, -apple-system,
+    BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  background: var(--page-bg);
+  color: var(--text-main);
+}
+
+button,
+input,
+select,
+textarea {
+  font-family: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+button:disabled {
+  cursor: not-allowed;
+}
+
+::selection {
+  background: rgba(37, 99, 235, 0.18);
+}
+
+/* 
+  Fix cepat agar seluruh teks yang sebelumnya pakai font-black
+  tidak terlalu berat/bantet. Ini sengaja dibuat global supaya tidak
+  perlu revisi semua file halaman satu per satu.
+*/
+.font-black {
+  font-weight: 700 !important;
+}
+
+@layer base {
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply tracking-tight text-slate-950 dark:text-slate-50;
+  }
+
+  h1 {
+    @apply text-2xl font-bold;
+  }
+
+  h2 {
+    @apply text-xl font-bold;
+  }
+
+  h3 {
+    @apply text-base font-semibold;
+  }
+
+  p {
+    @apply leading-relaxed;
+  }
+
+  table {
+    @apply text-sm;
+  }
+
+  th {
+    @apply font-semibold;
+  }
+
+  td {
+    @apply font-normal;
+  }
+}
+
+@layer components {
+  .app-bg {
+    @apply bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-50;
+  }
+
+  .surface {
+    @apply border border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900;
+  }
+
+  .muted {
+    @apply text-slate-500 dark:text-slate-400;
+  }
+
+  .card {
+    @apply surface rounded-3xl shadow-sm;
+  }
+
+  .soft-panel {
+    @apply rounded-3xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900;
+  }
+
+  .soft-panel-muted {
+    @apply rounded-2xl border border-slate-100 bg-slate-50 dark:border-slate-800 dark:bg-slate-950;
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-2xl bg-blue-800 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-500/20 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-blue-600 dark:hover:bg-blue-500;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 rounded-2xl bg-slate-100 px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-200 focus:outline-none focus:ring-4 focus:ring-slate-400/20 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-slate-800 dark:text-slate-100 dark:hover:bg-slate-700;
+  }
+
+  .btn-danger {
+    @apply inline-flex items-center justify-center gap-2 rounded-2xl bg-red-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-red-700 focus:outline-none focus:ring-4 focus:ring-red-500/20 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-red-500 dark:hover:bg-red-400;
+  }
+
+  .input {
+    @apply w-full rounded-2xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm font-medium text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-blue-600 focus:ring-4 focus:ring-blue-600/15 disabled:bg-slate-50 disabled:text-slate-500 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-50 dark:placeholder:text-slate-500 dark:focus:border-blue-400 dark:focus:ring-blue-400/15 dark:disabled:bg-slate-900 dark:disabled:text-slate-500;
+  }
+
+  .label {
+    @apply text-sm font-semibold text-slate-700 dark:text-slate-200;
+  }
+
+  .page-title {
+    @apply text-xl font-bold tracking-tight text-slate-950 dark:text-white;
+  }
+
+  .page-subtitle {
+    @apply mt-1 text-sm font-normal leading-6 text-slate-500 dark:text-slate-400;
+  }
+
+  .section-title {
+    @apply text-base font-semibold tracking-tight text-slate-900 dark:text-white;
+  }
+
+  .table-head {
+    @apply text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400;
+  }
+
+  .badge {
+    @apply inline-flex items-center rounded-full px-2.5 py-1 text-[11px] font-semibold;
+  }
+
+  .badge-blue {
+    @apply bg-sky-100 text-sky-800 dark:bg-sky-950 dark:text-sky-200;
+  }
+
+  .badge-amber {
+    @apply bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-200;
+  }
+
+  .badge-green {
+    @apply bg-green-100 text-green-800 dark:bg-green-950 dark:text-green-200;
+  }
+
+  .badge-red {
+    @apply bg-red-100 text-red-800 dark:bg-red-950 dark:text-red-200;
+  }
+
+  .badge-purple {
+    @apply bg-violet-100 text-violet-800 dark:bg-violet-950 dark:text-violet-200;
+  }
+
+  .badge-pink {
+    @apply bg-pink-100 text-pink-800 dark:bg-pink-950 dark:text-pink-200;
+  }
+
+  .scrollbar-thin {
+    scrollbar-width: thin;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .shadow-soft {
+    box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+  }
+
+  .dark .shadow-soft {
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.28);
+  }
+}

@@ -1,0 +1,1066 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulator Operasi Sandi & Pernika - Level Akhir</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* ================= ANTI CHEAT & UI CORE ================= */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #020617; 
+            color: #f8fafc;
+            overflow-x: hidden;
+            touch-action: manipulation;
+            /* NON-SELECTABLE TEXT */
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+        
+        .morse-font { font-family: 'Share Tech Mono', monospace; }
+        .neon-text { text-shadow: 0 0 10px rgba(56, 189, 248, 0.7), 0 0 20px rgba(56, 189, 248, 0.5); }
+        .neon-text-green { text-shadow: 0 0 10px rgba(74, 222, 128, 0.7), 0 0 20px rgba(74, 222, 128, 0.5); }
+        .neon-text-red { text-shadow: 0 0 10px rgba(248, 113, 113, 0.7), 0 0 20px rgba(248, 113, 113, 0.5); }
+        
+        .grid-bg {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background-image: 
+                linear-gradient(rgba(14, 165, 233, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(14, 165, 233, 0.05) 1px, transparent 1px);
+            background-size: 30px 30px;
+            z-index: -2;
+        }
+        
+        .radar-sweep {
+            position: fixed;
+            top: 50%; left: 50%; width: 150vw; height: 150vw;
+            margin-top: -75vw; margin-left: -75vw;
+            background: conic-gradient(from 0deg, transparent 70%, rgba(16, 185, 129, 0.1) 100%);
+            border-radius: 50%;
+            animation: sweep 4s linear infinite;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        @keyframes sweep { 100% { transform: rotate(360deg); } }
+
+        .btn-game { transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1); }
+        .btn-game:active:not(:disabled) { transform: scale(0.95); }
+        .btn-game:disabled { opacity: 0.5; transform: none; cursor: not-allowed; }
+
+        .shake { animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both; }
+        @keyframes shake {
+            10%, 90% { transform: translate3d(-1px, 0, 0); }
+            20%, 80% { transform: translate3d(2px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+            40%, 60% { transform: translate3d(4px, 0, 0); }
+        }
+
+        .timer-bar { transition: width 0.1s linear, background-color 0.3s; }
+    </style>
+</head>
+<body class="flex flex-col h-screen" oncontextmenu="return false;" oncopy="return false;" oncut="return false;" onpaste="return false;">
+    <div class="grid-bg"></div>
+    <div class="radar-sweep"></div>
+
+    <header class="p-4 border-b border-slate-800 bg-slate-950/80 backdrop-blur-md flex justify-between items-center z-10 sticky top-0 shadow-lg">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-lg bg-sky-900/50 flex items-center justify-center border border-sky-500/30">
+                <i class="fa-solid fa-satellite-dish text-sky-400"></i>
+            </div>
+            <div>
+                <h1 class="text-lg font-bold text-sky-400 neon-text uppercase tracking-widest leading-none">Pusat Latihan Komando</h1>
+                <p class="text-[10px] text-slate-400 font-mono mt-1">KAPITA SELEKTA PERNIKA V4.0 (SECURE)</p>
+            </div>
+        </div>
+        <div id="stats-header" class="hidden flex space-x-3 text-sm font-mono">
+            <div class="bg-slate-900 px-3 py-1.5 rounded-lg border border-slate-700 flex items-center shadow-inner">
+                <i class="fa-solid fa-heart text-red-500 mr-2 animate-pulse"></i> <span id="lives-display" class="font-bold text-white">3</span>
+            </div>
+            <div class="bg-slate-900 px-3 py-1.5 rounded-lg border border-slate-700 flex items-center shadow-inner">
+                <i class="fa-solid fa-bolt text-yellow-400 mr-2"></i> <span id="score-display" class="font-bold text-white">0</span>
+            </div>
+        </div>
+    </header>
+
+    <main id="app-container" class="flex-1 flex flex-col items-center justify-center p-4 relative z-10 w-full max-w-4xl mx-auto overflow-y-auto">
+        <!-- Konten Dinamis -->
+    </main>
+
+    <script>
+        /* ================= DATABASE STUDI KASUS MEGA ================= */
+        // Format: [Skenario Kasus, Jawaban Benar, Distractor 1, Distractor 2, Distractor 3, Penjelasan Pembahasan]
+        const lessonDatabase = [
+            {
+                        "lesson": "1. Konsep & Arsitektur Pernika",
+                        "items": [
+                                    [
+                                                "Dalam esai UTS, definisi Pernika yang paling tepat adalah?",
+                                                "Operasi yang memanfaatkan teknologi elektronika dan spektrum elektromagnetik untuk memperoleh keunggulan informasi melalui deteksi, gangguan, dan perlindungan sinyal.",
+                                                "Operasi yang hanya membahas pemrograman web untuk komunikasi militer.",
+                                                "Teknik menyembunyikan pesan teks tanpa melibatkan spektrum elektromagnetik.",
+                                                "Metode menghitung panjang antena tanpa kaitan dengan operasi informasi.",
+                                                "Pernika/EW berpusat pada spektrum elektromagnetik: sinyal dapat dicari, dianalisis, diganggu, ditipu, dan dilindungi."
+                                    ],
+                                    [
+                                                "Tiga pilar utama Pernika yang harus selalu muncul dalam jawaban esai adalah?",
+                                                "Electronic Support untuk mencari/menganalisis sinyal, Electronic Attack untuk mengganggu/menipu sinyal, dan Electronic Protection untuk melindungi sinyal sendiri.",
+                                                "Encoding, Decoding, dan Routing karena semua Pernika adalah jaringan komputer.",
+                                                "Radar, Satelit, dan Drone karena hanya tiga perangkat itu yang masuk Pernika.",
+                                                "Morse, OTP, dan HT karena Pernika hanya membahas komunikasi darurat.",
+                                                "Hafalan inti: ES = cari sinyal, EA = ganggu/tipu sinyal, EP = lindungi sinyal."
+                                    ],
+                                    [
+                                                "Sebuah tim menggunakan SDR untuk mencari frekuensi aktif, kemudian memakai hasilnya untuk memahami pola komunikasi. Aktivitas ini masuk pilar apa?",
+                                                "Electronic Support (ES), karena fokusnya deteksi, scanning, intersepsi terbatas, dan analisis sinyal.",
+                                                "Electronic Attack (EA), karena semua penggunaan SDR otomatis menyerang lawan.",
+                                                "Electronic Protection (EP), karena SDR selalu mengenkripsi sinyal.",
+                                                "Kriptografi murni, karena tidak berkaitan dengan spektrum.",
+                                                "ES adalah tahap dukungan informasi: mencari, mendeteksi, mengidentifikasi, dan menganalisis sinyal."
+                                    ],
+                                    [
+                                                "Jika jammer dipakai dalam skenario laboratorium untuk menurunkan kualitas komunikasi target, pilar Pernika yang dominan adalah?",
+                                                "Electronic Attack (EA), karena jammer bertujuan mengganggu penggunaan spektrum oleh target.",
+                                                "Electronic Support (ES), karena jammer hanya membaca frekuensi.",
+                                                "Electronic Protection (EP), karena jammer melindungi isi pesan dengan sandi.",
+                                                "Open Source Intelligence, karena semua data diambil dari internet.",
+                                                "Jamming adalah contoh EA karena menyerang kanal/sinyal komunikasi."
+                                    ],
+                                    [
+                                                "Mengapa Pernika berkaitan erat dengan keunggulan informasi?",
+                                                "Karena komunikasi, radar, GPS, drone, satelit, dan sistem komando bergantung pada sinyal yang dapat dipantau, diganggu, atau dilindungi.",
+                                                "Karena Pernika hanya membahas penyimpanan data di database.",
+                                                "Karena semua perangkat elektronik tidak membutuhkan frekuensi.",
+                                                "Karena enkripsi selalu membuat sinyal tidak bisa dideteksi.",
+                                                "Spektrum adalah media aliran informasi nirkabel; menguasainya berarti memengaruhi akses informasi."
+                                    ]
+                        ]
+            },
+            {
+                        "lesson": "2. Spektrum, Gelombang, Frekuensi, dan Sinyal",
+                        "items": [
+                                    [
+                                                "Hubungan frekuensi dan panjang gelombang yang paling benar adalah?",
+                                                "Panjang gelombang berbanding terbalik dengan frekuensi, sesuai rumus λ = c/f.",
+                                                "Panjang gelombang selalu bertambah jika frekuensi bertambah.",
+                                                "Frekuensi tidak berhubungan dengan panjang gelombang.",
+                                                "Panjang gelombang hanya berlaku untuk suara, bukan gelombang elektromagnetik.",
+                                                "Jika frekuensi naik, panjang gelombang turun; jika frekuensi turun, panjang gelombang naik."
+                                    ],
+                                    [
+                                                "Dalam materi spektrum RF, rentang frekuensi radio secara umum adalah?",
+                                                "Sekitar 3 kHz sampai 300 GHz.",
+                                                "Sekitar 3 Hz sampai 300 Hz.",
+                                                "Hanya 88 MHz sampai 108 MHz.",
+                                                "Hanya 2,4 GHz sampai 5 GHz.",
+                                                "RF mencakup banyak pita, dari kHz sampai GHz, bukan hanya Wi-Fi atau FM."
+                                    ],
+                                    [
+                                                "Prinsip umum frekuensi rendah dan frekuensi tinggi dalam komunikasi adalah?",
+                                                "Frekuensi rendah cenderung lebih jauh jangkauannya, sedangkan frekuensi tinggi cenderung membawa data lebih besar tetapi jangkauannya lebih pendek.",
+                                                "Frekuensi tinggi selalu lebih jauh dan tidak terhalang apa pun.",
+                                                "Frekuensi rendah selalu membawa data lebih besar daripada frekuensi tinggi.",
+                                                "Semua frekuensi memiliki jangkauan dan kapasitas data yang sama.",
+                                                "Ini menjelaskan mengapa 2,4 GHz biasanya lebih jauh dari 5/6 GHz, tetapi 5/6 GHz bisa lebih cepat."
+                                    ],
+                                    [
+                                                "Pasangan contoh frekuensi yang paling relevan untuk catatan UTS adalah?",
+                                                "FM 88–108 MHz, HT UHF sekitar 400–520 MHz, Bluetooth/Wi-Fi 2,4 GHz, GPS sekitar 1,575 GHz.",
+                                                "FM 2,4 GHz, GPS 88 MHz, Bluetooth 461 MHz, HT 10 THz.",
+                                                "Semua perangkat radio selalu bekerja pada 1 MHz.",
+                                                "Infrared berada pada 88–108 MHz seperti radio FM.",
+                                                "Contoh frekuensi membantu menunjukkan bahwa setiap perangkat punya pita kerja yang bisa dianalisis dalam Pernika."
+                                    ],
+                                    [
+                                                "Sinyal dalam komunikasi radio dapat dipahami sebagai?",
+                                                "Informasi yang diubah menjadi bentuk fisik seperti arus listrik atau gelombang elektromagnetik agar bisa dikirim melalui frekuensi radio.",
+                                                "Benda fisik yang hanya bisa dilihat mata tanpa alat.",
+                                                "Kunci rahasia yang selalu sama dengan OTP.",
+                                                "Aplikasi software untuk mengganti driver SDR.",
+                                                "Sinyal adalah pembawa informasi; frekuensi menjadi jalur tempat sinyal itu dikirim."
+                                    ],
+                                    [
+                                                "Urutan spektrum elektromagnetik dari rendah ke tinggi yang paling tepat adalah?",
+                                                "Radio, microwave, infrared, cahaya tampak, ultraviolet, X-Ray, gamma.",
+                                                "Gamma, X-Ray, ultraviolet, radio, microwave, infrared, cahaya tampak.",
+                                                "Wi-Fi, HT, OTP, Morse, jammer, radar.",
+                                                "AM, FM, Morse, OTP, SDR, HT.",
+                                                "Urutan ini membantu membedakan RF dengan infrared dan cahaya tampak."
+                                    ]
+                        ]
+            },
+            {
+                        "lesson": "3. Scanning, Intersepsi HT, Spectrum Analyzer, dan SDR",
+                        "items": [
+                                    [
+                                                "Dalam praktikum HT, mengapa pengaturan 461 MHz tidak berhasil menerima komunikasi yang sebenarnya berada di 461,150 MHz?",
+                                                "Karena 461 MHz berarti 461,000 MHz, sehingga berbeda 150 kHz dari frekuensi aktual dan berada di luar kanal yang benar.",
+                                                "Karena semua HT otomatis berubah menjadi mode enkripsi saat disetel ke 461 MHz.",
+                                                "Karena 461 MHz adalah frekuensi infrared, bukan radio.",
+                                                "Karena spectrum analyzer hanya bisa membaca Wi-Fi.",
+                                                "461,150 MHz harus dibaca teliti; selisih 150 kHz sangat besar untuk komunikasi narrowband HT."
+                                    ],
+                                    [
+                                                "Mengapa komunikasi masih dapat terdengar pada 461,145–461,155 MHz?",
+                                                "Karena penerima HT memiliki bandwidth dan filter penerimaan sekitar ±5 kHz dari frekuensi pusat 461,150 MHz.",
+                                                "Karena sinyal otomatis dipindahkan oleh satelit ke frekuensi terdekat.",
+                                                "Karena semua frekuensi 461 MHz sampai 462 MHz adalah satu kanal yang sama.",
+                                                "Karena OTP memperlebar frekuensi penerima.",
+                                                "Receiver tidak hanya menerima satu titik matematis; ada toleransi filter/bandwidth."
+                                    ],
+                                    [
+                                                "Fungsi spectrum analyzer dalam praktikum HT adalah?",
+                                                "Melihat kekuatan sinyal terhadap frekuensi untuk menemukan puncak aktivitas dan menentukan frekuensi kerja komunikasi.",
+                                                "Mengubah plaintext menjadi ciphertext menggunakan kunci OTP.",
+                                                "Mengirim sinyal jammer secara otomatis ke semua kanal.",
+                                                "Mengganti driver RTL-SDR dari DVB-T ke WinUSB.",
+                                                "Spectrum analyzer bekerja di domain frekuensi: X = frekuensi, Y = amplitude/level sinyal."
+                                    ],
+                                    [
+                                                "Perbedaan utama spectrum analyzer dan SDR dalam konteks praktikum adalah?",
+                                                "Spectrum analyzer fokus sebagai alat ukur spektrum, sedangkan SDR adalah receiver radio berbasis software yang dapat menampilkan spektrum, waterfall, dan demodulasi.",
+                                                "Spectrum analyzer adalah enkripsi, SDR adalah sandi Morse.",
+                                                "Spectrum analyzer hanya untuk menulis laporan, SDR hanya untuk menghitung OTP.",
+                                                "Keduanya sama-sama tidak berhubungan dengan sinyal RF.",
+                                                "Keduanya mendukung ES, tetapi peran praktisnya berbeda."
+                                    ],
+                                    [
+                                                "Mengapa Zadig/WinUSB penting dalam praktikum RTL-SDR?",
+                                                "Karena driver bawaan perlu diganti ke WinUSB agar dongle terbaca sebagai perangkat SDR oleh software seperti SDR++.",
+                                                "Karena Zadig berfungsi sebagai antena UHF tambahan.",
+                                                "Karena WinUSB adalah algoritma OTP untuk pesan Morse.",
+                                                "Karena Zadig mengubah frekuensi HT menjadi Wi-Fi.",
+                                                "Tanpa driver yang sesuai, software SDR dapat gagal mendeteksi dongle."
+                                    ],
+                                    [
+                                                "Pada SDR, waterfall paling tepat dipahami sebagai?",
+                                                "Tampilan riwayat aktivitas sinyal terhadap waktu, sehingga sinyal aktif terlihat sebagai jejak yang bergerak.",
+                                                "Rumus menghitung panjang gelombang dari frekuensi.",
+                                                "Tabel kunci OTP untuk mengubah plaintext.",
+                                                "Jenis jamming yang menyapu semua frekuensi.",
+                                                "Spectrum menunjukkan sinyal terhadap frekuensi; waterfall menambahkan dimensi waktu."
+                                    ],
+                                    [
+                                                "Dalam scanning dan intersepsi praktikum, batas etis yang paling tepat adalah?",
+                                                "Hanya memantau komunikasi sendiri atau skenario laboratorium berizin, bukan komunikasi pihak lain tanpa izin.",
+                                                "Bebas memantau semua komunikasi radio selama bisa ditangkap SDR.",
+                                                "Intersepsi selalu legal jika dilakukan untuk latihan pribadi.",
+                                                "Semua komunikasi radio boleh direkam dan disebarkan.",
+                                                "Praktikum harus legal, terbatas, dan berizin agar tidak melanggar privasi atau aturan spektrum."
+                                    ]
+                        ]
+            },
+            {
+                        "lesson": "4. Proteksi Sinyal, Jamming, Spoofing, dan EP",
+                        "items": [
+                                    [
+                                                "Prinsip dasar jamming pada komunikasi radio adalah?",
+                                                "Memancarkan gangguan/interferensi sehingga SNR turun dan penerima sulit membedakan sinyal asli dari noise.",
+                                                "Mengubah huruf plaintext menjadi titik dan garis.",
+                                                "Memperbaiki driver SDR agar terbaca di laptop.",
+                                                "Membuat semua pesan otomatis terenkripsi.",
+                                                "Jamming menyerang media transmisi/sinyal, bukan langsung membaca isi pesan."
+                                    ],
+                                    [
+                                                "Perbedaan inti jamming dan spoofing adalah?",
+                                                "Jamming melemahkan atau memutus komunikasi, sedangkan spoofing menipu penerima dengan sinyal palsu yang tampak valid.",
+                                                "Jamming adalah enkripsi, spoofing adalah dekripsi.",
+                                                "Jamming hanya dipakai untuk Morse, spoofing hanya dipakai untuk OTP.",
+                                                "Keduanya sama persis dan tidak ada perbedaan konsep.",
+                                                "Jamming bersifat deny; spoofing bersifat deceive."
+                                    ],
+                                    [
+                                                "Contoh paling tepat dari GPS spoofing adalah?",
+                                                "Mengirim sinyal navigasi palsu agar penerima salah membaca posisi, waktu, atau arah.",
+                                                "Menambah noise acak sehingga seluruh spektrum menjadi putih.",
+                                                "Mengganti driver USB pada dongle SDR.",
+                                                "Mengubah sandi Morse menjadi alfabet.",
+                                                "Spoofing tidak sekadar mengganggu; ia membuat penerima percaya data palsu."
+                                    ],
+                                    [
+                                                "Teknik EP yang paling tepat untuk mengurangi efek spot jamming adalah?",
+                                                "Frequency hopping atau spread spectrum agar komunikasi tidak menetap pada satu frekuensi yang mudah dijam.",
+                                                "Menggunakan kunci OTP yang sama berkali-kali.",
+                                                "Mematikan semua filter receiver agar semua noise diterima.",
+                                                "Mengubah Morse menjadi plaintext tanpa enkripsi.",
+                                                "EP bertugas mempertahankan komunikasi: hopping, spread spectrum, antena directional, dan disiplin komunikasi."
+                                    ],
+                                    [
+                                                "Apa beda jamming dan enkripsi dalam satu kalimat?",
+                                                "Jamming membuat pesan sulit sampai, sedangkan enkripsi membuat isi pesan sulit dipahami pihak yang tidak berhak.",
+                                                "Jamming dan enkripsi sama-sama mengubah huruf menjadi Morse.",
+                                                "Enkripsi selalu mencegah jammer menurunkan SNR.",
+                                                "Jamming adalah cara resmi mendekripsi OTP.",
+                                                "Pesan terenkripsi tetap bisa gagal diterima jika kanalnya terkena jamming."
+                                    ],
+                                    [
+                                                "Indikasi teknis yang bisa mengarah pada jamming adalah?",
+                                                "Noise floor naik, SNR turun, komunikasi tiba-tiba hilang, receiver kehilangan lock, atau AGC naik tidak wajar.",
+                                                "Kunci OTP menjadi lebih panjang dari plaintext.",
+                                                "Tabel Morse berubah urutan alfabetnya.",
+                                                "Frekuensi berubah menjadi satuan meter.",
+                                                "Jamming biasanya tampak sebagai peningkatan gangguan atau energi asing pada kanal."
+                                    ],
+                                    [
+                                                "Apa risiko taktis barrage jamming jika tidak dikendalikan?",
+                                                "Dapat mengganggu komunikasi kawan sendiri karena gangguan disebar ke rentang frekuensi yang lebar.",
+                                                "Selalu membuat komunikasi kawan lebih jernih.",
+                                                "Otomatis mendekripsi pesan lawan.",
+                                                "Mengubah Wi-Fi menjadi infrared.",
+                                                "Barrage jamming luas dan boros; tanpa manajemen frekuensi bisa menyebabkan fratricide komunikasi."
+                                    ]
+                        ]
+            },
+            {
+                        "lesson": "5. Morse Berbasis HT dan Komunikasi Darurat",
+                        "items": [
+                                    [
+                                                "Dalam praktikum, peran Morse yang paling tepat adalah?",
+                                                "Sebagai kode pengiriman titik-garis untuk menyampaikan ciphertext, bukan sebagai pengaman utama isi pesan.",
+                                                "Sebagai algoritma enkripsi sempurna yang menggantikan OTP.",
+                                                "Sebagai driver agar RTL-SDR terbaca di SDR++.",
+                                                "Sebagai jammer untuk menurunkan SNR lawan.",
+                                                "Morse mengubah karakter menjadi titik/garis; kerahasiaan dijaga oleh OTP."
+                                    ],
+                                    [
+                                                "Titik dan garis dalam Morse secara konsep berarti?",
+                                                "Titik/dot/dit adalah sinyal pendek, sedangkan garis/dash/dah adalah sinyal panjang.",
+                                                "Titik adalah frekuensi UHF, garis adalah frekuensi VHF.",
+                                                "Titik adalah ciphertext, garis adalah plaintext.",
+                                                "Titik adalah receiver, garis adalah transmitter.",
+                                                "Timing titik dan garis penting agar pesan dapat dibaca benar."
+                                    ],
+                                    [
+                                                "Aturan hafalan metode vokal untuk Morse adalah?",
+                                                "O = garis, sedangkan A/I/U/E = titik.",
+                                                "O = titik, sedangkan A/I/U/E = garis.",
+                                                "Semua vokal selalu garis.",
+                                                "Semua vokal selalu diabaikan.",
+                                                "Metode ini membantu mengingat pola seperti AnO = .- dan BOnApArtE = -...."
+                                    ],
+                                    [
+                                                "Jika kata bantu huruf D adalah Do-mi-nan, maka kode Morse D adalah?",
+                                                "-..",
+                                                ".--",
+                                                "---",
+                                                "...",
+                                                "Do-mi-nan memiliki vokal O-I-A; O = garis, I/A = titik, sehingga D = -..."
+                                    ],
+                                    [
+                                                "Pola angka Morse 1 sampai 5 yang benar adalah?",
+                                                "Jumlah titik bertambah dari kiri sampai 5 menjadi semua titik.",
+                                                "Jumlah garis bertambah dari kiri sampai 5 menjadi semua garis.",
+                                                "Semua angka selalu sama dengan huruf E.",
+                                                "Angka tidak memiliki kode Morse.",
+                                                "1 = .----, 2 = ..---, 3 = ...--, 4 = ....-, 5 = ....."
+                                    ],
+                                    [
+                                                "Pola angka Morse 6 sampai 0 yang benar adalah?",
+                                                "Jumlah garis bertambah dari kiri sampai 0 menjadi semua garis.",
+                                                "Jumlah titik bertambah dari kiri seperti angka 1 sampai 5.",
+                                                "Semua angka 6 sampai 0 memakai satu simbol saja.",
+                                                "Angka 0 tidak ada dalam Morse.",
+                                                "6 = -...., 7 = --..., 8 = ---.., 9 = ----., 0 = -----"
+                                    ],
+                                    [
+                                                "Dalam prosedur Morse, mengapa jeda antar simbol/huruf/kata penting?",
+                                                "Karena penerima harus membedakan mana titik/garis dalam satu huruf, mana batas huruf, dan mana batas kata.",
+                                                "Karena jeda selalu menjadi kunci OTP.",
+                                                "Karena jeda mengubah frekuensi HT menjadi 5 GHz.",
+                                                "Karena tanpa jeda sinyal berubah menjadi satelit.",
+                                                "Timing dasar: dit 1 unit, dah 3 unit, jeda antar huruf 3 unit, antar kata 7 unit."
+                                    ]
+                        ]
+            },
+            {
+                        "lesson": "6. Enkripsi Sinyal dan OTP Morse",
+                        "items": [
+                                    [
+                                                "Dalam praktikum OTP Morse, urutan proses yang benar adalah?",
+                                                "Plaintext -> enkripsi OTP -> ciphertext -> Morse -> dikirim via HT -> diterima -> ciphertext -> dekripsi -> plaintext.",
+                                                "Morse -> plaintext -> jammer -> Wi-Fi -> radar.",
+                                                "Ciphertext -> plaintext tanpa kunci -> Morse -> OTP.",
+                                                "HT -> Zadig -> WinUSB -> plaintext -> radar.",
+                                                "OTP menjaga isi pesan; Morse menjadi bentuk pengiriman; HT menjadi media radio."
+                                    ],
+                                    [
+                                                "Rumus enkripsi OTP sesuai praktikum adalah?",
+                                                "C = P + K; jika hasil lebih dari 26 maka dikurangi 26.",
+                                                "P = C + K; jika hasil lebih dari 26 maka dikalikan 2.",
+                                                "C = P - K tanpa aturan penyesuaian.",
+                                                "K = C x P dan hasil selalu menjadi Morse.",
+                                                "Praktikum memakai A=1 sampai Z=26, bukan ASCII."
+                                    ],
+                                    [
+                                                "Rumus dekripsi OTP sesuai praktikum adalah?",
+                                                "P = C - K; jika hasil 0 atau negatif maka ditambah 26.",
+                                                "C = P + K dan hasil selalu dibiarkan apa adanya.",
+                                                "P = K - C lalu dikalikan frekuensi.",
+                                                "P = Morse - jammer.",
+                                                "Dekripsi membalik proses enkripsi agar ciphertext kembali menjadi plaintext."
+                                    ],
+                                    [
+                                                "Fungsi padding X dalam praktikum OTP adalah?",
+                                                "Melengkapi panjang pesan agar sesuai dengan panjang kunci atau format praktikum, bukan bagian utama isi pesan.",
+                                                "Menandai bahwa pesan terkena jamming.",
+                                                "Mengubah frekuensi HT menjadi UHF.",
+                                                "Mengganti semua huruf vokal menjadi garis.",
+                                                "Padding X perlu diperiksa saat dekripsi agar tidak dibaca sebagai isi utama."
+                                    ],
+                                    [
+                                                "Apa syarat ideal OTP agar kuat secara teori?",
+                                                "Kunci harus acak, rahasia, sepanjang pesan, dan hanya digunakan sekali.",
+                                                "Kunci boleh pendek dan dipakai ulang setiap hari.",
+                                                "Kunci harus berupa frekuensi Wi-Fi 2,4 GHz.",
+                                                "Kunci harus sama dengan tabel Morse.",
+                                                "Pemakaian ulang kunci OTP merusak keamanan karena pola dapat dianalisis."
+                                    ],
+                                    [
+                                                "Jika pesan sudah dienkripsi OTP lalu dikirim sebagai Morse, apa yang dilindungi oleh OTP?",
+                                                "Kerahasiaan isi pesan, sehingga pihak tanpa kunci tidak mudah memahami plaintext.",
+                                                "Kekuatan sinyal dari jamming.",
+                                                "Driver SDR agar terbaca di laptop.",
+                                                "Bandwidth filter HT agar menjadi ±5 kHz.",
+                                                "OTP melindungi makna pesan, bukan menjamin sinyal pasti sampai."
+                                    ]
+                        ]
+            },
+            {
+                        "lesson": "7. Operasi Terpadu, Perangkat Swakriya, Regulasi, dan Studi Kasus",
+                        "items": [
+                                    [
+                                                "Operasi Pernika terpadu dalam skenario praktikum paling tepat digambarkan sebagai?",
+                                                "ES mendeteksi sinyal, EA mengganggu/menipu sinyal pada skenario terkendali, dan EP melindungi komunikasi sendiri.",
+                                                "Semua perangkat langsung dipakai untuk menyerang tanpa analisis dan tanpa etika.",
+                                                "Hanya menghafal tabel Morse tanpa hubungan dengan sinyal RF.",
+                                                "Hanya membuat aplikasi web tanpa perangkat radio.",
+                                                "Operasi terpadu menggabungkan deteksi, aksi, dan perlindungan secara terkoordinasi."
+                                    ],
+                                    [
+                                                "Perangkat swakriya yang paling relevan untuk simulasi Pernika sesuai RPS adalah?",
+                                                "SDR/TinySA untuk analisis sinyal, LoRa/HT untuk komunikasi RF, ESP32 untuk kontrol, dan komponen jammer/proteksi pada skenario berizin.",
+                                                "Printer, scanner dokumen, dan mouse gaming.",
+                                                "Kamera selfie dan aplikasi edit foto.",
+                                                "Database SQL tanpa perangkat RF.",
+                                                "RPS menekankan perangkat keras modern untuk simulasi spektrum: SDR, TinySA, LoRa, ESP32, dan HT."
+                                    ],
+                                    [
+                                                "Mengapa etika dan regulasi penting dalam praktikum Pernika?",
+                                                "Karena spektrum radio diatur negara, intersepsi tanpa izin melanggar privasi/hukum, dan jammer bisa menimbulkan harmful interference.",
+                                                "Karena semua frekuensi bebas dipakai tanpa batas.",
+                                                "Karena jammer aman digunakan di ruang publik kapan saja.",
+                                                "Karena komunikasi pihak lain boleh direkam jika sinyalnya kuat.",
+                                                "Praktikum harus legal, terbatas, dan berizin."
+                                    ],
+                                    [
+                                                "Apa pelajaran utama dari kasus Rusia-Ukraina terkait Pernika?",
+                                                "Jamming dan spoofing terhadap GPS, datalink, drone, dan satcom menunjukkan bahwa EA dan EP selalu saling beradaptasi.",
+                                                "Drone tidak pernah menggunakan frekuensi radio atau GPS.",
+                                                "Pernika tidak relevan dalam konflik modern.",
+                                                "Semua jamming selalu berhasil permanen tanpa bisa dilawan.",
+                                                "Kasus ini cocok sebagai ilustrasi perang drone dan adaptasi proteksi sinyal."
+                                    ],
+                                    [
+                                                "Apa pelajaran dari kasus RQ-170 AS-Iran yang sering dibahas dalam konteks EW?",
+                                                "Sistem navigasi/komunikasi drone berisiko jika terkena jamming atau spoofing, sehingga perlu validasi silang seperti INS/GPS fusion dan anti-spoofing.",
+                                                "Morse dapat membuat drone otomatis mendarat.",
+                                                "Zadig dapat mengambil alih drone jarak jauh.",
+                                                "OTP selalu mencegah semua serangan RF.",
+                                                "Gunakan sebagai contoh risiko spoofing, dengan catatan detail teknisnya masih diperdebatkan."
+                                    ],
+                                    [
+                                                "Jika diminta menulis kesimpulan hubungan HT, SDR, jammer, Morse, dan OTP, jawaban terbaik adalah?",
+                                                "HT adalah media RF, SDR/spectrum analyzer mewakili ES, jammer/spoofing mewakili EA, OTP/enkripsi mewakili EP, dan Morse adalah bentuk pengiriman pesan.",
+                                                "Semua alat tersebut hanya dipakai untuk mengganti driver USB.",
+                                                "HT adalah enkripsi, SDR adalah jammer, Morse adalah GPS.",
+                                                "Tidak ada hubungan antar topik.",
+                                                "Ini adalah peta besar yang perlu muncul dalam jawaban esai."
+                                    ]
+                        ]
+            }
+];
+
+        const rawDatabase = lessonDatabase.flatMap(group => group.items);
+
+        function shuffleArray(arr) {
+            const copy = [...arr];
+            for (let i = copy.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [copy[i], copy[j]] = [copy[j], copy[i]];
+            }
+            return copy;
+        }
+
+        function buildBalancedQuiz() {
+            // Target: 7 pertemuan sebelum UTS. Diambil minimal 2 soal dari tiap pertemuan agar tidak ada materi yang hilang.
+            const selected = [];
+            const selectedKeys = new Set();
+            lessonDatabase.forEach(group => {
+                shuffleArray(group.items).slice(0, 2).forEach(item => { selected.push(item); selectedKeys.add(item[0]); });
+            });
+            const rest = shuffleArray(rawDatabase).filter(item => !selectedKeys.has(item[0]));
+            // Tambahan 2 soal random agar latihan tetap variatif, total 16 soal tanpa pengulangan.
+            rest.slice(0, 2).forEach(item => selected.push(item));
+            return shuffleArray(selected);
+        }
+
+        const anagramWords = [
+            {
+                        "word": "PERNIKA",
+                        "hint": "Operasi pada spektrum elektromagnetik untuk keunggulan informasi melalui deteksi, gangguan, dan perlindungan sinyal."
+            },
+            {
+                        "word": "SPEKTRUM",
+                        "hint": "Ruang/fenomena gelombang elektromagnetik tempat RF, microwave, infrared, cahaya tampak, X-Ray, dan gamma berada."
+            },
+            {
+                        "word": "FREKUENSI",
+                        "hint": "Jumlah gelombang per detik; satuannya Hertz dan berbanding terbalik dengan panjang gelombang."
+            },
+            {
+                        "word": "SUPPORT",
+                        "hint": "Pilar ES: mencari, mendeteksi, mengintersepsi terbatas, dan menganalisis sinyal."
+            },
+            {
+                        "word": "ATTACK",
+                        "hint": "Pilar EA: mengganggu atau menipu penggunaan spektrum target melalui jamming/spoofing."
+            },
+            {
+                        "word": "PROTECTION",
+                        "hint": "Pilar EP: melindungi komunikasi sendiri dari intersepsi dan gangguan."
+            },
+            {
+                        "word": "JAMMING",
+                        "hint": "EA yang menurunkan SNR dengan interferensi/noise agar komunikasi terganggu."
+            },
+            {
+                        "word": "SPOOFING",
+                        "hint": "Serangan yang mengirim sinyal palsu agar penerima percaya informasi yang salah."
+            },
+            {
+                        "word": "BANDWIDTH",
+                        "hint": "Lebar pita frekuensi; menjelaskan toleransi ±5 kHz di sekitar 461,150 MHz pada praktikum HT."
+            },
+            {
+                        "word": "FILTER",
+                        "hint": "Bagian penerima yang membuat sinyal dekat frekuensi pusat masih dapat diterima."
+            },
+            {
+                        "word": "ZADIG",
+                        "hint": "Utilitas untuk mengganti driver bawaan RTL-SDR menjadi WinUSB."
+            },
+            {
+                        "word": "WINUSB",
+                        "hint": "Driver generik agar dongle RTL-SDR terbaca oleh software SDR."
+            },
+            {
+                        "word": "WATERFALL",
+                        "hint": "Tampilan SDR yang menunjukkan riwayat aktivitas sinyal terhadap waktu."
+            },
+            {
+                        "word": "DEMODULASI",
+                        "hint": "Proses mengambil informasi asli dari gelombang pembawa."
+            },
+            {
+                        "word": "MORSE",
+                        "hint": "Kode titik dan garis; media pengiriman ciphertext dalam praktikum."
+            },
+            {
+                        "word": "ONETIMEPAD",
+                        "hint": "Metode enkripsi dengan kunci sepanjang pesan; memakai rumus C=P+K dan P=C-K."
+            },
+            {
+                        "word": "CIPHERTEXT",
+                        "hint": "Pesan hasil enkripsi yang kemudian dapat dikirim dalam bentuk Morse."
+            },
+            {
+                        "word": "PLAINTEXT",
+                        "hint": "Pesan asli sebelum dienkripsi."
+            },
+            {
+                        "word": "PADDING",
+                        "hint": "Karakter pelengkap, misalnya X, agar panjang pesan sesuai kebutuhan praktikum OTP."
+            },
+            {
+                        "word": "FREQUENCYHOPPING",
+                        "hint": "EP: teknik berpindah frekuensi cepat agar sulit dijam."
+            },
+            {
+                        "word": "SPREADSPECTRUM",
+                        "hint": "EP: menyebarkan sinyal ke pita lebih lebar agar gangguan pada satu titik tidak langsung memutus komunikasi."
+            },
+            {
+                        "word": "INTERFERENSI",
+                        "hint": "Gangguan/tabrakan sinyal yang dapat menurunkan kualitas komunikasi."
+            },
+            {
+                        "word": "NOISEFLOOR",
+                        "hint": "Lantai gangguan pada spektrum; naiknya nilai ini bisa mengindikasikan jamming."
+            },
+            {
+                        "word": "PUSHTOTALK",
+                        "hint": "Prinsip HT: tombol ditekan untuk memancar, dilepas untuk menerima."
+            },
+            {
+                        "word": "TINYSA",
+                        "hint": "Perangkat kecil yang dapat digunakan untuk melihat/menganalisis spektrum dalam simulasi."
+            },
+            {
+                        "word": "ESP32",
+                        "hint": "Mikrokontroler yang relevan untuk perangkat swakriya simulasi Pernika."
+            },
+            {
+                        "word": "LORA",
+                        "hint": "Komunikasi RF jarak jauh daya rendah; umum pada 433/868/915 MHz."
+            },
+            {
+                        "word": "ETHICS",
+                        "hint": "Batas penting praktikum: legal, berizin, tidak menyadap pihak lain, dan tidak membuat harmful interference."
+            }
+];
+
+        const morseWords = [
+            "HT",
+            "SDR",
+            "OTP",
+            "SNR",
+            "RF",
+            "UHF",
+            "VHF",
+            "AM",
+            "FM",
+            "GPS",
+            "LORA",
+            "WIFI",
+            "RADAR",
+            "DRONE",
+            "UAV",
+            "NOISE",
+            "MORSE",
+            "SANDI",
+            "CIPHER",
+            "PERNIKA",
+            "SPEKTRUM",
+            "JAMMER",
+            "FILTER",
+            "ZADIG",
+            "DONGLE",
+            "WINUSB",
+            "ATTACK",
+            "DEFENSE",
+            "SIGNAL",
+            "BANDWIDTH"
+];
+
+        const morseDictionary = {
+            'A': { word: "A-bon", morse: ".-" }, 'B': { word: "Bo-na-par-te", morse: "-..." },
+            'C': { word: "Co-ba-co-ba", morse: "-.-." }, 'D': { word: "Do-mi-nan", morse: "-.." },
+            'E': { word: "Es", morse: "." }, 'F': { word: "Fa-ther-jo-se", morse: "..-." },
+            'G': { word: "Go-lon-gan", morse: "--." }, 'H': { word: "Hal-ma-he-ra", morse: "...." },
+            'I': { word: "Is-lam", morse: ".." }, 'J': { word: "Ja-go-lo-ro", morse: ".---" },
+            'K': { word: "Ko-man-do", morse: "-.-" }, 'L': { word: "Le-mo-na-de", morse: ".-.." },
+            'M': { word: "Mo-tor", morse: "--" }, 'N': { word: "No-tes", morse: "-." },
+            'O': { word: "O-mo-to", morse: "---" }, 'P': { word: "Per-to-lon-gan", morse: ".--." },
+            'Q': { word: "Qo-mo-ka-ro", morse: "--.-" }, 'R': { word: "Ra-so-ve", morse: ".-." },
+            'S': { word: "Sa-ha-ra", morse: "..." }, 'T': { word: "Ton", morse: "-" },
+            'U': { word: "U-nes-co", morse: "..-" }, 'V': { word: "Ver-si-ka-ro", morse: "...-" },
+            'W': { word: "Wi-yo-no", morse: ".--" }, 'X': { word: "Xo-sen-de-ro", morse: "-..-" },
+            'Y': { word: "Yo-si-mo-to", morse: "-.--" }, 'Z': { word: "Zo-ro-as-ter", morse: "--.." }
+        };
+
+        // --- GLOBAL STATE ---
+        let state = {
+            mode: 'menu', 
+            score: 0,
+            lives: 3,
+            questions: [],
+            currentIndex: 0,
+            timer: null,
+            timeLeft: 0,
+            maxTime: 0,
+            
+            currentPuzzle: null,
+            scrambledLetters: [],
+            userAnswerObj: [], 
+
+            currentMorseWord: "",
+            currentMorseCharIndex: 0,
+            currentMorseInput: ""
+        };
+
+        // --- AUDIO SYSTEM ---
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        let audioCtx;
+        function initAudio() {
+            if (!audioCtx) audioCtx = new AudioContext();
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+        }
+        function playTone(duration, frequency = 600, type = 'sine') {
+            initAudio();
+            const oscillator = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            oscillator.type = type;
+            oscillator.frequency.value = frequency;
+            oscillator.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+            oscillator.start();
+            gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime + duration/1000);
+            oscillator.stop(audioCtx.currentTime + duration/1000);
+        }
+        function playDot() { playTone(120, 750); }
+        function playDash() { playTone(350, 750); }
+        function playError() { playTone(300, 150, 'sawtooth'); }
+        function playSuccess() { playTone(400, 900, 'square'); }
+        function playClick() { playTone(50, 1200, 'triangle'); }
+
+        const container = document.getElementById('app-container');
+        const statsHeader = document.getElementById('stats-header');
+
+        function updateStats() {
+            document.getElementById('lives-display').innerText = state.lives;
+            document.getElementById('score-display').innerText = state.score;
+            if (state.lives <= 0 && state.mode !== 'menu' && state.mode !== 'result') endGame(false);
+        }
+
+        function startTimer(seconds, onTimeout) {
+            clearInterval(state.timer);
+            state.maxTime = seconds;
+            state.timeLeft = seconds;
+            const bar = document.getElementById('timer-bar-fill');
+            const timeText = document.getElementById('time-text');
+            state.timer = setInterval(() => {
+                state.timeLeft -= 0.1;
+                if(bar) {
+                    const percentage = (state.timeLeft / state.maxTime) * 100;
+                    bar.style.width = `${percentage}%`;
+                    bar.style.backgroundColor = percentage < 25 ? '#ef4444' : percentage < 50 ? '#eab308' : '#10b981';
+                }
+                if(timeText) timeText.innerText = Math.ceil(state.timeLeft) + "s";
+                if(state.timeLeft <= 0) { clearInterval(state.timer); onTimeout(); }
+            }, 100);
+        }
+
+        // --- MENU ---
+        function renderMenu() {
+            state.mode = 'menu';
+            statsHeader.classList.add('hidden');
+            clearInterval(state.timer);
+            document.removeEventListener('keydown', handleGlobalKeydown);
+            
+            container.innerHTML = `
+                <div class="text-center w-full max-w-2xl bg-slate-900/90 p-8 rounded-2xl border border-sky-900/50 shadow-2xl backdrop-blur-sm relative overflow-hidden">
+                    <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-sky-500 to-transparent opacity-50"></div>
+                    <div class="text-6xl mb-6 text-sky-400 drop-shadow-[0_0_15px_rgba(56,189,248,0.5)]"><i class="fa-solid fa-satellite-dish"></i></div>
+                    <h2 class="text-3xl md:text-4xl font-black mb-3 neon-text text-white uppercase tracking-tight">Simulator Master Class</h2>
+                    <p class="text-slate-400 mb-8 font-mono text-sm">Target: UTS 7 Pertemuan | Pernika, Spektrum, HT, SDR, Jammer, Morse, OTP</p>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                        <button onclick="initGame('quiz')" class="flex flex-col items-center p-6 bg-slate-800 hover:bg-sky-900/60 border border-slate-700 hover:border-sky-500 rounded-xl transition-all btn-game group">
+                            <i class="fa-solid fa-list-check text-3xl text-emerald-400 mb-3 group-hover:scale-110 transition-transform"></i>
+                            <h3 class="font-bold text-white mb-1">Misi 1: Taktik</h3>
+                            <p class="text-xs text-slate-400">Kasus Analitis Operasi (Diacak)</p>
+                        </button>
+                        <button onclick="initGame('keyword')" class="flex flex-col items-center p-6 bg-slate-800 hover:bg-sky-900/60 border border-slate-700 hover:border-sky-500 rounded-xl transition-all btn-game group">
+                            <i class="fa-solid fa-keyboard text-3xl text-purple-400 mb-3 group-hover:scale-110 transition-transform"></i>
+                            <h3 class="font-bold text-white mb-1">Misi 2: Esai Cepat</h3>
+                            <p class="text-xs text-slate-400">Ketik Istilah Teknis Cepat (Keyboard)</p>
+                        </button>
+                        <button onclick="initGame('morse')" class="flex flex-col items-center p-6 bg-slate-800 hover:bg-sky-900/60 border border-slate-700 hover:border-sky-500 rounded-xl transition-all btn-game group">
+                            <i class="fa-solid fa-tower-cell text-3xl text-amber-400 mb-3 group-hover:scale-110 transition-transform"></i>
+                            <h3 class="font-bold text-white mb-1">Misi 3: Morse</h3>
+                            <p class="text-xs text-slate-400">Latihan Telegraf Suara Asli</p>
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function initGame(mode) {
+            initAudio();
+            state.mode = mode;
+            state.score = 0;
+            state.lives = 3;
+            state.currentIndex = 0;
+            statsHeader.classList.remove('hidden');
+            updateStats();
+            document.addEventListener('keydown', handleGlobalKeydown);
+
+            if(mode === 'quiz') {
+                // Soal tidak looping dalam satu sesi dan selalu mewakili 7 pertemuan sebelum UTS.
+                let pool = buildBalancedQuiz().map(x=>({q:x[0], correct:x[1], w1:x[2], w2:x[3], w3:x[4], exp:x[5]}));
+                state.questions = pool;
+                renderQuiz();
+            } else if(mode === 'keyword') {
+                state.questions = shuffleArray([...anagramWords]).slice(0, 7);
+                renderKeywordQuiz();
+            } else if(mode === 'morse') {
+                state.questions = shuffleArray([...morseWords]).slice(0, 6);
+                startNextMorseWord();
+            }
+        }
+
+        // --- GLOBAL KEYDOWN HANDLER ---
+        function handleGlobalKeydown(e) {
+            if(state.lives <= 0) return;
+            if(state.mode === 'keyword') {
+                if(e.key === 'Backspace' || e.key === 'Escape') { resetWord(); return; }
+                const key = e.key.toUpperCase();
+                if(/^[A-Z]$/.test(key)) {
+                    for(let i=0; i<state.scrambledLetters.length; i++) {
+                        if(state.scrambledLetters[i].letter === key && document.getElementById(`letter-btn-${i}`).style.visibility !== 'hidden') {
+                            selectLetter(i); break;
+                        }
+                    }
+                }
+            } else if (state.mode === 'morse') {
+                if (e.key === 'ArrowLeft' || e.key === '.') {
+                    const btn = document.getElementById('btn-dot');
+                    if(btn) { btn.classList.add('bg-amber-600', 'translate-y-[6px]', 'border-b-0'); handleMorseInput('.'); setTimeout(() => btn.classList.remove('bg-amber-600', 'translate-y-[6px]', 'border-b-0'), 100); }
+                } else if (e.key === 'ArrowRight' || e.key === '-') {
+                    const btn = document.getElementById('btn-dash');
+                    if(btn) { btn.classList.add('bg-amber-600', 'translate-y-[6px]', 'border-b-0'); handleMorseInput('-'); setTimeout(() => btn.classList.remove('bg-amber-600', 'translate-y-[6px]', 'border-b-0'), 100); }
+                }
+            }
+        }
+
+        // --- MISI 1: QUIZ ---
+        function renderQuiz() {
+            if(state.lives <= 0) return;
+            if (state.currentIndex >= state.questions.length) { endGame(true, "Penguasaan 7 pertemuan sebelum UTS sudah kuat!"); return; }
+            
+            const q = state.questions[state.currentIndex];
+            let choices = [q.correct, q.w1, q.w2, q.w3].sort(() => 0.5 - Math.random());
+            let cIdx = choices.indexOf(q.correct);
+
+            container.innerHTML = `
+                <div class="w-full max-w-2xl fade-in">
+                    <div class="mb-3 flex justify-between items-end"><span class="text-emerald-400 font-bold uppercase text-sm"><i class="fa-solid fa-list-check mr-2"></i>Misi 1: Uji 7 Pertemuan</span><span class="text-slate-400 text-sm font-mono font-bold">SOAL ${state.currentIndex + 1}/${state.questions.length}</span></div>
+                    <div class="w-full h-1.5 bg-slate-800 rounded-full mb-6"><div id="timer-bar-fill" class="h-full bg-emerald-400 timer-bar" style="width:100%;"></div></div>
+                    <div id="quiz-card" class="bg-slate-900 p-6 md:p-8 rounded-2xl border border-slate-700 shadow-xl relative">
+                        <div id="time-text" class="absolute -top-3 -right-3 w-10 h-10 bg-slate-800 border-2 border-slate-700 text-white font-bold rounded-full flex items-center justify-center text-xs"></div>
+                        <h3 class="text-lg font-semibold mb-6 leading-relaxed text-white">${q.q}</h3>
+                        <div class="grid grid-cols-1 gap-3">
+                            ${choices.map((c, i) => `<button onclick="handleQuizAnswer(${i}, ${cIdx}, '${q.exp.replace(/'/g, "\\'")}')" class="text-left w-full p-4 rounded-xl border border-slate-700 bg-slate-800/80 hover:bg-sky-900/50 hover:border-sky-500 transition-colors text-slate-300 hover:text-white flex items-center group"><div class="min-w-[32px] h-8 rounded bg-slate-950 flex items-center justify-center mr-3 font-bold text-sky-400 border border-slate-700">${String.fromCharCode(65+i)}</div><span class="flex-1 text-sm md:text-base">${c}</span></button>`).join('')}
+                        </div>
+                    </div>
+                    <div id="explanation-box" class="hidden mt-6 bg-sky-950/50 p-5 rounded-xl border border-sky-900 text-sky-100 text-sm shadow-inner"></div>
+                </div>
+            `;
+            startTimer(35, () => handleQuizAnswer(-1, cIdx, q.exp));
+        }
+
+        function handleQuizAnswer(sIdx, cIdx, exp) {
+            clearInterval(state.timer);
+            const card = document.getElementById('quiz-card');
+            const expBox = document.getElementById('explanation-box');
+            const btns = card.querySelectorAll('button');
+            btns.forEach(b => b.disabled = true);
+
+            if (sIdx === cIdx) {
+                playSuccess(); state.score += 50;
+                btns[sIdx].className = "text-left w-full p-4 rounded-xl border border-emerald-400 bg-emerald-600 text-white flex items-center";
+            } else {
+                playError(); state.lives--; card.classList.add('shake');
+                if (sIdx >= 0) btns[sIdx].className = "text-left w-full p-4 rounded-xl border border-red-500 bg-red-600/80 text-white flex items-center";
+                btns[cIdx].className = "text-left w-full p-4 rounded-xl border border-emerald-500 bg-emerald-600/50 text-white flex items-center";
+            }
+            expBox.classList.remove('hidden');
+            expBox.innerHTML = `<h4 class="font-bold text-sky-400 mb-2"><i class="fa-solid fa-microscope mr-2"></i>Evaluasi Kasus:</h4><p class="leading-relaxed">${exp}</p>`;
+            updateStats();
+            if (state.lives > 0) setTimeout(() => { state.currentIndex++; renderQuiz(); }, 5000);
+        }
+
+        // --- MISI 2: KEYWORD (Dapat Diketik) ---
+        function renderKeywordQuiz() {
+            if(state.lives <= 0) return;
+            if (state.currentIndex >= state.questions.length) { endGame(true, "Memori Otot Tangan Terlatih. Esai pasti lancar!"); return; }
+
+            state.currentPuzzle = state.questions[state.currentIndex];
+            state.userAnswerObj = [];
+            let letters = state.currentPuzzle.word.split('');
+            let scrambled = letters.map((l, i) => ({ letter: l, id: i })).sort(() => 0.5 - Math.random());
+            while(scrambled.map(x=>x.letter).join('') === state.currentPuzzle.word && scrambled.length>1) scrambled.sort(() => 0.5 - Math.random());
+            state.scrambledLetters = scrambled;
+
+            container.innerHTML = `
+                <div class="w-full max-w-2xl fade-in flex flex-col items-center">
+                    <div class="w-full mb-3 flex justify-between"><span class="text-purple-400 font-bold uppercase text-sm"><i class="fa-solid fa-keyboard mr-2"></i>Misi 2: Dekripsi Esai Cepat</span><span class="text-slate-400 text-sm font-mono font-bold">KATA ${state.currentIndex + 1}/${state.questions.length}</span></div>
+                    <div class="w-full h-1.5 bg-slate-800 rounded-full mb-8"><div id="timer-bar-fill" class="h-full bg-purple-400 timer-bar" style="width:100%;"></div></div>
+                    <div class="bg-slate-900 p-8 rounded-2xl border border-slate-700 shadow-xl w-full text-center relative">
+                        <i class="fa-solid fa-quote-left text-4xl text-slate-800 absolute top-4 left-4"></i>
+                        <p class="text-lg md:text-xl text-slate-300 font-medium mb-10 leading-relaxed px-6">"${state.currentPuzzle.hint}"</p>
+                        <div id="answer-slots" class="flex flex-wrap justify-center gap-2 mb-8 min-h-[50px]">
+                            ${state.currentPuzzle.word.split('').map(() => `<div class="w-10 h-12 md:w-12 md:h-14 rounded-lg border-2 border-slate-700 bg-slate-950 flex items-center justify-center text-xl md:text-2xl font-bold text-white shadow-inner"></div>`).join('')}
+                        </div>
+                        <div id="scrambled-letters" class="flex flex-wrap justify-center gap-2">
+                            ${state.scrambledLetters.map((obj, i) => `<button onclick="selectLetter(${i})" id="letter-btn-${i}" class="w-10 h-12 md:w-12 md:h-14 rounded-lg bg-slate-700 hover:bg-purple-600 border border-slate-600 text-xl font-bold text-white shadow-lg btn-game transition-transform">${obj.letter}</button>`).join('')}
+                        </div>
+                        <p class="mt-6 text-xs text-slate-500 font-mono"><i class="fa-solid fa-keyboard"></i> Anda dapat MENGETIK langsung menggunakan KEYBOARD komputer.</p>
+                        <div class="mt-4"><button onclick="resetWord()" class="px-4 py-2 rounded-lg bg-slate-800 text-slate-300 text-sm border border-slate-600 hover:bg-slate-700">Reset / Backspace</button></div>
+                    </div>
+                </div>
+            `;
+            startTimer(30, () => checkKeywordAnswer(true));
+        }
+
+        function selectLetter(i) {
+            playClick();
+            document.getElementById(`letter-btn-${i}`).style.visibility = 'hidden';
+            state.userAnswerObj.push({ letter: state.scrambledLetters[i].letter, id: i });
+            updateAnswerSlots();
+        }
+
+        function resetWord() {
+            playClick(); state.userAnswerObj = [];
+            state.scrambledLetters.forEach((_, i) => document.getElementById(`letter-btn-${i}`).style.visibility = 'visible');
+            updateAnswerSlots();
+        }
+
+        function updateAnswerSlots() {
+            const slots = document.getElementById('answer-slots').children;
+            let currentWord = "";
+            for(let i=0; i<state.currentPuzzle.word.length; i++) {
+                if(i < state.userAnswerObj.length) {
+                    slots[i].innerText = state.userAnswerObj[i].letter;
+                    slots[i].className = "w-10 h-12 md:w-12 md:h-14 rounded-lg border-2 border-purple-500 bg-purple-900/50 flex items-center justify-center text-xl md:text-2xl font-bold text-white shadow-inner";
+                    currentWord += state.userAnswerObj[i].letter;
+                } else {
+                    slots[i].innerText = "";
+                    slots[i].className = "w-10 h-12 md:w-12 md:h-14 rounded-lg border-2 border-slate-700 bg-slate-950 flex items-center justify-center text-xl md:text-2xl font-bold text-white shadow-inner";
+                }
+            }
+            if(currentWord.length === state.currentPuzzle.word.length) checkKeywordAnswer(false, currentWord);
+        }
+
+        function checkKeywordAnswer(isTimeout, word="") {
+            clearInterval(state.timer);
+            const isCorrect = word === state.currentPuzzle.word;
+            const slots = document.getElementById('answer-slots').children;
+            document.querySelectorAll('[id^="letter-btn-"]').forEach(b => b.disabled = true);
+
+            if(isCorrect) {
+                playSuccess(); state.score += 100;
+                for(let s of slots) s.className = "w-10 h-12 md:w-12 md:h-14 rounded-lg border-2 border-emerald-400 bg-emerald-600 flex items-center justify-center text-xl md:text-2xl font-bold text-white shadow-inner";
+            } else {
+                playError(); state.lives--; document.getElementById('answer-slots').parentElement.classList.add('shake');
+                for(let i=0; i<slots.length; i++) {
+                    slots[i].innerText = state.currentPuzzle.word[i];
+                    slots[i].className = "w-10 h-12 md:w-12 md:h-14 rounded-lg border-2 border-red-500 bg-red-900/80 flex items-center justify-center text-xl md:text-2xl font-bold text-white shadow-inner";
+                }
+            }
+            updateStats();
+            if (state.lives > 0) setTimeout(() => { state.currentIndex++; renderKeywordQuiz(); }, 2500);
+        }
+
+        // --- MISI 3: MORSE ---
+        function startNextMorseWord() {
+            if(state.lives <= 0) return;
+            if(state.currentIndex >= state.questions.length) { endGame(true, "Refleks Morse Sempurna. Anda telah menguasai metode substitusi."); return; }
+            state.currentMorseWord = state.questions[state.currentIndex];
+            state.currentMorseCharIndex = 0;
+            state.currentMorseInput = "";
+            renderMorseBoard();
+        }
+
+        function renderMorseBoard() {
+            if(state.lives <= 0) return;
+            container.innerHTML = `
+                <div class="w-full max-w-md flex flex-col items-center">
+                    <div class="w-full mb-3 flex justify-between items-end"><span class="text-amber-400 font-bold uppercase text-sm"><i class="fa-solid fa-tower-cell mr-2"></i>Misi 3: CW Morse</span><span class="text-slate-400 text-sm font-mono font-bold">KATA ${state.currentIndex + 1}/${state.questions.length}</span></div>
+                    <div class="w-full h-1.5 bg-slate-800 rounded-full mb-6"><div id="timer-bar-fill" class="h-full bg-amber-400 timer-bar" style="width:100%;"></div></div>
+                    <div class="w-full bg-slate-900 rounded-2xl p-6 border border-slate-700 shadow-xl mb-6">
+                        <div class="text-center mb-3 text-slate-500 font-mono text-xs font-bold tracking-widest">CIPHERTEXT (KIRIM VIA MORSE):</div>
+                        <div class="flex justify-center space-x-3 text-4xl font-black tracking-widest mb-6 font-mono">
+                            ${state.currentMorseWord.split('').map((c, i) => `<span class="${i === state.currentMorseCharIndex ? 'text-amber-400 border-b-4 border-amber-400 pb-1 scale-110 drop-shadow-[0_0_8px_rgba(251,191,36,0.8)]' : (i < state.currentMorseCharIndex ? 'text-emerald-600 opacity-50' : 'text-slate-300')}">${c}</span>`).join('')}
+                        </div>
+                        <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 h-28 flex flex-col justify-center items-center shadow-inner relative">
+                            <div class="text-[10px] text-slate-600 absolute top-2 left-3 font-mono">SINYAL INPUT:</div>
+                            <div id="morse-input-display" class="text-5xl morse-font text-white tracking-[0.2em] font-bold h-12 flex items-center justify-center"></div>
+                        </div>
+                        <div id="hint-box" class="mt-5 text-center text-sm font-mono font-bold h-8 transition-all flex justify-center items-center opacity-0"></div>
+                    </div>
+                    <div class="flex w-full space-x-4">
+                        <button id="btn-dot" onclick="handleMorseInput('.')" class="flex-1 bg-slate-800 active:bg-amber-600 text-white rounded-2xl h-36 border-b-[6px] border-slate-950 active:border-b-0 active:translate-y-[6px] transition-all flex flex-col items-center justify-center shadow-lg relative group">
+                            <span class="text-6xl font-black mb-1 leading-none text-slate-200">.</span><span class="text-[10px] font-mono text-amber-500/70 uppercase tracking-widest mt-2">A,I,U,E</span><span class="absolute bottom-2 text-[9px] text-slate-600">Panah Kiri</span>
+                        </button>
+                        <button id="btn-dash" onclick="handleMorseInput('-')" class="flex-1 bg-slate-800 active:bg-amber-600 text-white rounded-2xl h-36 border-b-[6px] border-slate-950 active:border-b-0 active:translate-y-[6px] transition-all flex flex-col items-center justify-center shadow-lg relative group">
+                            <span class="text-6xl font-black mb-1 leading-none text-slate-200">-</span><span class="text-[10px] font-mono text-amber-500/70 uppercase tracking-widest mt-2">Vokal O</span><span class="absolute bottom-2 text-[9px] text-slate-600">Panah Kanan</span>
+                        </button>
+                    </div>
+                </div>
+            `;
+            startTimer(8, () => handleMorseFail());
+        }
+
+        function handleMorseInput(char) {
+            if(state.lives <= 0) return;
+            char === '.' ? playDot() : playDash();
+            state.currentMorseInput += char;
+            document.getElementById('morse-input-display').innerText = state.currentMorseInput;
+
+            const tChar = state.currentMorseWord[state.currentMorseCharIndex];
+            const tMorse = morseDictionary[tChar].morse;
+
+            if (tMorse === state.currentMorseInput) {
+                clearInterval(state.timer);
+                playSuccess(); state.score += 50; updateStats();
+                document.getElementById('morse-input-display').classList.replace('text-white', 'text-amber-400');
+                setTimeout(() => {
+                    state.currentMorseInput = ""; state.currentMorseCharIndex++;
+                    if(state.currentMorseCharIndex >= state.currentMorseWord.length) { state.currentIndex++; startNextMorseWord(); }
+                    else renderMorseBoard();
+                }, 400);
+            } else if (!tMorse.startsWith(state.currentMorseInput)) {
+                handleMorseFail();
+            }
+        }
+
+        function handleMorseFail() {
+            clearInterval(state.timer);
+            playError(); state.lives--;
+            if (state.lives <= 0) { updateStats(); return; }
+            updateStats();
+
+            const display = document.getElementById('morse-input-display');
+            if(display) { display.classList.replace('text-white', 'text-red-500'); display.parentElement.parentElement.classList.add('shake'); }
+            
+            const hintBox = document.getElementById('hint-box');
+            if(hintBox) {
+                let dict = morseDictionary[state.currentMorseWord[state.currentMorseCharIndex]];
+                hintBox.innerHTML = `<span class="bg-amber-500/20 text-amber-300 border border-amber-500/50 px-3 py-1 rounded tracking-widest shadow-sm">${dict.word}</span> <i class="fa-solid fa-arrow-right mx-2 text-slate-600"></i><span class="text-white text-lg tracking-[0.2em] font-bold">${dict.morse}</span>`;
+                hintBox.classList.remove('opacity-0'); hintBox.classList.add('opacity-100');
+            }
+            setTimeout(() => { if (state.lives > 0) { state.currentMorseInput = ""; renderMorseBoard(); } }, 3000);
+        }
+
+        // --- END GAME ---
+        function endGame(isWin, winMsg="") {
+            clearInterval(state.timer);
+            document.removeEventListener('keydown', handleGlobalKeydown);
+            statsHeader.classList.add('hidden');
+
+            container.innerHTML = `
+                <div class="text-center w-full max-w-md bg-slate-900/90 p-8 rounded-2xl border border-slate-700 shadow-2xl backdrop-blur-sm">
+                    <div class="text-7xl mb-6 ${isWin ? 'text-emerald-400' : 'text-red-500'}"><i class="fa-solid ${isWin ? 'fa-shield-check' : 'fa-triangle-exclamation'}"></i></div>
+                    <h2 class="text-3xl font-black mb-3 ${isWin ? 'text-emerald-400' : 'text-red-500'} tracking-tight">${isWin ? 'OPERASI BERHASIL' : 'OPERASI GAGAL'}</h2>
+                    <p class="text-slate-300 mb-8">${isWin ? winMsg : 'Pemahaman hancur karena tekanan. Sistem anti-curang menyala. Simulasi diulang!'}</p>
+                    <div class="bg-slate-950 p-5 rounded-xl border border-slate-800 mb-8 shadow-inner relative">
+                        <div class="text-xs text-slate-500 font-mono font-bold tracking-widest">SKOR AKHIR</div>
+                        <div class="text-5xl font-black text-white font-mono">${state.score}</div>
+                    </div>
+                    <button onclick="renderMenu()" class="w-full py-4 bg-sky-600 hover:bg-sky-500 text-white font-bold rounded-xl text-lg transition-all btn-game">KEMBALI KE PANGKALAN</button>
+                </div>
+            `;
+        }
+
+        renderMenu();
+    </script>
+</body>
+</html>
