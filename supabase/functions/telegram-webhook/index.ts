@@ -10,6 +10,7 @@ serve(async (req) => {
       const chatId = update.message.chat.id;
       const text = update.message.text;
       const BOT_TOKEN = Deno.env.get("TELEGRAM_BOT_TOKEN") ?? "";
+      const supabase = createClient(Deno.env.get("SUPABASE_URL") ?? "", Deno.env.get("SERVICE_ROLE_KEY") ?? "");
 
       const sendMessage = async (pesan: string) => {
         await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
@@ -19,75 +20,60 @@ serve(async (req) => {
         });
       };
 
-      // 1. ROUTING: Perintah /start
+      // 1. ROUTING: /start
       if (text.startsWith("/start")) {
         const welcomeText = 
           "🤖 <b>Halo! Saya Bot ClassHub.</b>\n\n" +
-          "Ada yang bisa saya bantu? Kamu mau lihat apa hari ini?\n\n" +
-          "<b>📌 Menu Utama:</b>\n" +
-          "/jadwal - Jadwal kuliah hari ini\n" +
-          "/tugas - Daftar tugas aktif\n" +
-          "/pengumuman - Pengumuman & info kelas pengganti\n\n" +
-          "<b>🛠 Lainnya:</b>\n" +
+          "<b>📌 Menu:</b>\n" +
+          "/jadwal - Jadwal tetap mingguan\n" +
+          "/tugas - Daftar tugas\n" +
+          "/pengumuman - Pengumuman terbaru\n" +
+          "/pengganti - Jadwal kelas pengganti\n" +
           "/spin - Spin Wheel";
         await sendMessage(welcomeText);
       }
 
-      // 2. ROUTING: Perintah /tugas
+      // 2. ROUTING: /tugas (Tabel: assignments)
       else if (text.startsWith("/tugas")) {
-        const supabase = createClient(Deno.env.get("SUPABASE_URL") ?? "", Deno.env.get("SERVICE_ROLE_KEY") ?? "");
-        const { data: tugasData, error } = await supabase
-          .from("assignments")
-          .select("title, deadline, description, courses(name)")
-          .order("deadline", { ascending: true })
-          .limit(5);
-
+        const { data: tugasData } = await supabase.from("assignments").select("title, deadline, courses(name)").order("deadline", { ascending: true }).limit(5);
         let balasan = "📝 <b>Daftar Tugas Aktif:</b>\n\n";
-        if (error || !tugasData?.length) balasan += "<i>Tidak ada tugas aktif.</i>";
-        else {
-          tugasData.forEach((item, index) => {
-            balasan += `${index + 1}. <b>${item.title}</b> (${item.courses?.name || "-"})\n`;
-            balasan += `📅 Deadline: ${new Date(item.deadline).toLocaleDateString('id-ID', { dateStyle: 'full' })}\n\n`;
-          });
-        }
+        balasan += tugasData?.length ? tugasData.map((i, idx) => `${idx + 1}. <b>${i.title}</b> (${i.courses?.name})\n📅 Deadline: ${new Date(i.deadline).toLocaleDateString('id-ID', { dateStyle: 'full' })}`).join("\n\n") : "Tidak ada tugas aktif.";
         await sendMessage(balasan);
       }
 
-      // 3. ROUTING: Perintah /jadwal & /pengumuman
-      else if (text.startsWith("/jadwal") || text.startsWith("/pengumuman")) {
-        const supabase = createClient(Deno.env.get("SUPABASE_URL") ?? "", Deno.env.get("SERVICE_ROLE_KEY") ?? "");
-        const todayISO = new Date().toISOString().slice(0, 10);
+      // 3. ROUTING: /jadwal (Tabel: weekly_schedules)
+      else if (text.startsWith("/jadwal")) {
         const dayEng = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"][new Date().getDay()];
-
-        const { data: rutin } = await supabase
-          .from("weekly_schedules")
-          .select("*, courses(name, lecturer), time_slots!weekly_schedules_start_slot_id_fkey(start_time)")
-          .eq("day_of_week", dayEng)
-          .eq("is_active", true);
-
-        const { data: pengganti } = await supabase
-          .from("calendar_events")
-          .select("*, courses(name, lecturer), time_slots!calendar_events_start_slot_id_fkey(start_time)")
-          .eq("event_date", todayISO);
-
-        let balasan = `📚 <b>Info Hari Ini (${todayISO}):</b>\n\n`;
+        const { data: rutin } = await supabase.from("weekly_schedules").select("*, courses(name), time_slots!weekly_schedules_start_slot_id_fkey(start_time), time_slots!weekly_schedules_end_slot_id_fkey(end_time)").eq("day_of_week", dayEng).eq("is_active", true);
         
-        balasan += "<b>Jadwal Rutin:</b>\n" + (rutin?.length ? rutin.map((i, idx) => 
-          `${idx+1}. ${i.courses?.name} (${i.time_slots?.start_time?.slice(0,5) || "??:??"})`
-        ).join("\n") : "Tidak ada jadwal rutin.");
+        let balasan = "📚 <b>Jadwal Kuliah Hari Ini:</b>\n\n";
+        balasan += rutin?.length ? rutin.map(i => `<b>[${i.courses?.name}]</b> [${i.time_slots[0]?.start_time?.slice(0,5)}-${i.time_slots[1]?.end_time?.slice(0,5)}]`).join("\n") : "Tidak ada jadwal rutin hari ini.";
+        await sendMessage(balasan);
+      }
+
+      // 4. ROUTING: /pengganti (Tabel: calendar_events)
+      else if (text.startsWith("/pengganti")) {
+        const todayISO = new Date().toISOString().slice(0, 10);
+        const { data: pengganti } = await supabase.from("calendar_events").select("notes, courses(name)").eq("event_date", todayISO);
         
-        balasan += "\n\n<b>Info Kelas/Pengganti:</b>\n" + (pengganti?.length ? pengganti.map((i, idx) => 
-          `${idx+1}. ${i.courses?.name} - ${i.notes || "Tanpa catatan"}`
-        ).join("\n") : "Tidak ada info khusus.");
+        let balasan = "🗓 <b>Jadwal Kelas Pengganti Hari Ini:</b>\n\n";
+        balasan += pengganti?.length ? pengganti.map(i => `• <b>${i.courses?.name}:</b> ${i.notes}`).join("\n") : "Tidak ada jadwal kelas pengganti.";
+        await sendMessage(balasan);
+      }
+
+      // 5. ROUTING: /pengumuman (Tabel: announcements)
+      else if (text.startsWith("/pengumuman")) {
+        const { data: info } = await supabase.from("announcements").select("title, content").order("created_at", { ascending: false }).limit(3);
         
+        let balasan = "📢 <b>Pengumuman Terbaru:</b>\n\n";
+        balasan += info?.length ? info.map(i => `<b>${i.title}</b>\n${i.content}`).join("\n\n") : "Tidak ada pengumuman saat ini.";
         await sendMessage(balasan);
       }
       
-      // 4. ROUTING: Perintah /spin
+      // 6. ROUTING: /spin
       else if (text.startsWith("/spin")) {
         const kandidat = ["Aishwa", "Faishal", "Nala", "Obed", "Rifa", "Sulthan", "Diro", "Devon", "Alba", "Yasser", "Nelson", "Dota", "Garra", "Radit", "Divo", "Intan", "Igan"];
-        const pemenang = kandidat[Math.floor(Math.random() * kandidat.length)];
-        await sendMessage(`🎡 <b>Spin Wheel berputar...</b>\n\n🎉 Selamat! Yang terpilih adalah: <b>${pemenang}</b>!`);
+        await sendMessage(`🎡 <b>Spin Wheel:</b> Terpilih: <b>${kandidat[Math.floor(Math.random() * kandidat.length)]}</b>!`);
       }
     }
     return new Response("OK", { status: 200 });
