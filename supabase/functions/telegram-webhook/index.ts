@@ -27,7 +27,23 @@ serve(async (req) => {
 
       // 1. ROUTING: Perintah /start
       if (text.startsWith("/start")) {
-        const welcomeText = "🤖 <b>Halo! Saya Bot ClassHub RPL Kriptografi.</b>\n\nPerintah yang tersedia:\n/jadwal - Lihat jadwal hari ini\n/tugas - Lihat daftar tugas";
+        const welcomeText = 
+          "🤖 <b>Halo! Saya Bot ClassHub RPL Kriptografi.</b>\n\n" +
+          "Saya di sini untuk mempermudah perkuliahan dan manajemen kelas kita. Ada yang bisa saya bantu? Kamu mau lihat apa hari ini?\n\n" +
+          "<b>📌 Akademik & Tugas</b>\n" +
+          "/jadwal - Jadwal kuliah\n" +
+          "/tugas - Daftar tugas\n" +
+          "/deadline - Deadline tugas\n" +
+          "/materi - Link materi\n" +
+          "/pengganti - Jadwal pengganti\n\n" +
+          "<b>📢 Informasi Kelas</b>\n" +
+          "/pengumuman - Pengumuman terbaru\n" +
+          "/hariini - Ringkasan hari ini\n" +
+          "/ulangtahun - Ulang Tahun Hari Ini\n\n" +
+          "<b>🛠 Lainnya</b>\n" +
+          "/spin - Spin Wheel\n" +
+          "/help - Bantuan";
+          
         await sendMessage(welcomeText);
       }
 
