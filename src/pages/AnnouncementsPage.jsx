@@ -101,6 +101,12 @@ export default function AnnouncementsPage() {
       excludeUserId: profile?.id
     });
 
+    await sendTelegramNotification({
+      title: `📢 Pengumuman baru dari ${profile?.nickname || 'Anggota'}`,
+      body: trimmedContent,
+      url: `${window.location.origin}/?page=announcements&announcement_id=${data?.id}`
+    });
+
     setLoading(false);
     setContent('');
     load();

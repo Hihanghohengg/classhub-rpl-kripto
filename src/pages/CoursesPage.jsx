@@ -12,7 +12,6 @@ import {
 import { supabase } from '../lib/supabase.js';
 import { useAuth } from '../context/AuthContext.jsx';
 import Modal from '../components/Modal.jsx';
-import { sendTelegramNotification } from '../lib/telegram.js';
 
 const dayOptions = [
   ['monday', 'Senin'],

@@ -1002,6 +1002,14 @@ function TaskForm({ courses, profile, members, initialData, onDone }) {
       excludeUserId: profile?.id
     });
 
+    await sendTelegramNotification({
+      title: '📝 Tugas Baru Ditambahkan',
+      body: `${f.title.trim()} • ${selectedCourseName}${
+        f.deadline ? ` • Deadline: ${f.deadline}` : ''
+      }`,
+      url: `${window.location.origin}/?page=tasks&assignment_id=${data?.id}`
+    });
+
     setLoading(false);
     onDone();
   };

@@ -529,6 +529,12 @@ function ReplacementForm({ courses, slots, profile, onDone }) {
       excludeUserId: profile?.id
     });
 
+    await sendTelegramNotification({
+      title: '📅 Jadwal Pengganti Baru',
+      body: `${selectedCourseName} • ${f.event_date}`,
+      url: `${window.location.origin}/?page=calendar&event_id=${data?.id}`
+    });
+
     setLoading(false);
     onDone();
   };

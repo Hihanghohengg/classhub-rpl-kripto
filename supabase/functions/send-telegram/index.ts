@@ -1,13 +1,30 @@
-import { serve } from "https://deno.land/std@0.224.0/http/server.ts";
+declare const Deno: {
+  env: {
+    get(key: string): string | undefined;
+  };
+  serve(handler: (req: Request) => Response | Promise<Response>): void;
+};
 
-serve(async (req) => {
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS'
+};
+
+Deno.serve(async (req: Request) => {
+  if (req.method === 'OPTIONS') {
+    return new Response('ok', {
+      headers: corsHeaders
+    });
+  }
+
   try {
     // 1. Menerima payload/data dari aplikasi web ClassHub
     const {
       title = "Pengumuman Baru",
       body = "",
       url = ""
-    } = await req.json();
+    } = await req.json() as any;
 
     const BOT_TOKEN = Deno.env.get("TELEGRAM_BOT_TOKEN");
     const CHAT_ID = Deno.env.get("TELEGRAM_CHAT_ID");
@@ -41,20 +58,23 @@ serve(async (req) => {
     // 4. Kembalikan status sukses ke aplikasi web
     return new Response(JSON.stringify(result), {
       headers: {
+        ...corsHeaders,
         "Content-Type": "application/json"
       }
     });
 
   } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err);
     // Tangkap error jika terjadi kegagalan
     return new Response(
       JSON.stringify({
         success: false,
-        error: err.message
+        error: msg
       }),
       {
         status: 500,
         headers: {
+          ...corsHeaders,
           "Content-Type": "application/json"
         }
       }
