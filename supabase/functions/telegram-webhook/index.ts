@@ -63,7 +63,6 @@ serve(async (req) => {
 
       // 5. ROUTING: /pengumuman (Tabel: announcements)
       else if (text.startsWith("/pengumuman")) {
-        // Menggunakan "content" dan relasi ke "profiles" karena "title" tidak eksis di tabel
         const { data: info, error } = await supabase
           .from("announcements")
           .select("content, profiles(nickname, full_name)")
@@ -71,17 +70,18 @@ serve(async (req) => {
           .order("created_at", { ascending: false })
           .limit(3);
         
-        let balasan = "📢 <b>Pengumuman Terbaru:</b>\n\n";
+        let balasan = "🛠 <b>Cek Pengumuman v2:</b>\n\n";
         
-        if (info && info.length > 0) {
+        if (error) {
+          balasan += `⚠️ <b>Error Supabase:</b> ${error.message}`;
+        } else if (info && info.length > 0) {
            balasan += info.map(i => {
              const authorName = i.profiles?.nickname || i.profiles?.full_name || "Anggota";
-             // Membatasi panjang karakter agar tidak memenuhi layar HP (opsional)
              const safeContent = i.content.length > 300 ? i.content.slice(0, 300) + '...' : i.content;
              return `🗣 <b>${authorName}</b>\n${safeContent}`;
            }).join("\n\n---\n\n");
         } else {
-           balasan += "Tidak ada pengumuman saat ini.";
+           balasan += `Data terbaca: 0 baris.\n\n🔍 <b>Analisis:</b>\nJika di database ada isinya, berarti variabel SERVICE_ROLE_KEY di server hosting webhook Anda kosong/salah, sehingga akses diblokir oleh sistem keamanan database.`;
         }
         
         await sendMessage(balasan);
