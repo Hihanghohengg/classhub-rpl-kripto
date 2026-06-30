@@ -53,28 +53,41 @@ serve(async (req) => {
         await sendMessage(balasan);
       }
 
-      // 3. ROUTING: Perintah /jadwal & /pengumuman (Disatukan logikanya)
+      // 3. ROUTING: Perintah /jadwal & /pengumuman
       else if (text.startsWith("/jadwal") || text.startsWith("/pengumuman")) {
         const supabase = createClient(Deno.env.get("SUPABASE_URL") ?? "", Deno.env.get("SERVICE_ROLE_KEY") ?? "");
         const todayISO = new Date().toISOString().slice(0, 10);
         const dayEng = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"][new Date().getDay()];
 
-        // Ambil data jadwal rutin & pengganti dalam satu logika
-        const { data: rutin } = await supabase.from("weekly_schedules").select("*, courses(name, lecturer)").eq("day_of_week", dayEng).eq("is_active", true);
-        const { data: pengganti } = await supabase.from("calendar_events").select("*, courses(name, lecturer)").eq("event_date", todayISO);
+        const { data: rutin } = await supabase
+          .from("weekly_schedules")
+          .select("*, courses(name, lecturer), time_slots!weekly_schedules_start_slot_id_fkey(start_time)")
+          .eq("day_of_week", dayEng)
+          .eq("is_active", true);
+
+        const { data: pengganti } = await supabase
+          .from("calendar_events")
+          .select("*, courses(name, lecturer), time_slots!calendar_events_start_slot_id_fkey(start_time)")
+          .eq("event_date", todayISO);
 
         let balasan = `📚 <b>Info Hari Ini (${todayISO}):</b>\n\n`;
         
-        // Logika penggabungan jadwal dan pengumuman/pengganti
-        balasan += "<b>Jadwal Rutin:</b>\n" + (rutin?.length ? rutin.map((i, idx) => `${idx+1}. ${i.courses?.name} (${i.start_slot?.start_time.slice(0,5)})`).join("\n") : "Tidak ada jadwal rutin.");
-        balasan += "\n\n<b>Info Kelas/Pengganti:</b>\n" + (pengganti?.length ? pengganti.map((i, idx) => `${idx+1}. ${i.courses?.name} - ${i.notes}`).join("\n") : "Tidak ada info khusus/pengganti.");
+        balasan += "<b>Jadwal Rutin:</b>\n" + (rutin?.length ? rutin.map((i, idx) => 
+          `${idx+1}. ${i.courses?.name} (${i.time_slots?.start_time?.slice(0,5) || "??:??"})`
+        ).join("\n") : "Tidak ada jadwal rutin.");
+        
+        balasan += "\n\n<b>Info Kelas/Pengganti:</b>\n" + (pengganti?.length ? pengganti.map((i, idx) => 
+          `${idx+1}. ${i.courses?.name} - ${i.notes || "Tanpa catatan"}`
+        ).join("\n") : "Tidak ada info khusus.");
         
         await sendMessage(balasan);
       }
       
       // 4. ROUTING: Perintah /spin
       else if (text.startsWith("/spin")) {
-        await sendMessage("🎡 <b>Spin Wheel:</b> Fitur ini segera hadir!");
+        const kandidat = ["Aishwa", "Faishal", "Nala", "Obed", "Rifa", "Sulthan", "Diro", "Devon", "Alba", "Yasser", "Nelson", "Dota", "Garra", "Radit", "Divo", "Intan", "Igan"];
+        const pemenang = kandidat[Math.floor(Math.random() * kandidat.length)];
+        await sendMessage(`🎡 <b>Spin Wheel berputar...</b>\n\n🎉 Selamat! Yang terpilih adalah: <b>${pemenang}</b>!`);
       }
     }
     return new Response("OK", { status: 200 });
