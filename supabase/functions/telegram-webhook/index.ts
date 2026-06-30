@@ -16,7 +16,7 @@ serve(async (req) => {
         await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ chat_id: chatId, text: pesan, parse_mode: "HTML" })
+          body: JSON.stringify({ chat_id: chatId, text: pesan, parse_mode: "HTML", disable_web_page_preview: true })
         });
       };
 
@@ -63,10 +63,27 @@ serve(async (req) => {
 
       // 5. ROUTING: /pengumuman (Tabel: announcements)
       else if (text.startsWith("/pengumuman")) {
-        const { data: info } = await supabase.from("announcements").select("title, content").order("created_at", { ascending: false }).limit(3);
+        // Menggunakan "content" dan relasi ke "profiles" karena "title" tidak eksis di tabel
+        const { data: info, error } = await supabase
+          .from("announcements")
+          .select("content, profiles(nickname, full_name)")
+          .order("is_pinned", { ascending: false })
+          .order("created_at", { ascending: false })
+          .limit(3);
         
         let balasan = "📢 <b>Pengumuman Terbaru:</b>\n\n";
-        balasan += info?.length ? info.map(i => `<b>${i.title}</b>\n${i.content}`).join("\n\n") : "Tidak ada pengumuman saat ini.";
+        
+        if (info && info.length > 0) {
+           balasan += info.map(i => {
+             const authorName = i.profiles?.nickname || i.profiles?.full_name || "Anggota";
+             // Membatasi panjang karakter agar tidak memenuhi layar HP (opsional)
+             const safeContent = i.content.length > 300 ? i.content.slice(0, 300) + '...' : i.content;
+             return `🗣 <b>${authorName}</b>\n${safeContent}`;
+           }).join("\n\n---\n\n");
+        } else {
+           balasan += "Tidak ada pengumuman saat ini.";
+        }
+        
         await sendMessage(balasan);
       }
       
